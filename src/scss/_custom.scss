@@ -1,0 +1,16 @@
+// Here you can add other styles
+// .input-group-text {
+//     background-color: #dc2126;
+// }
+// .icon {
+//     color: white;
+// }
+
+.btn-primary {
+    --cui-btn-color: rgba(255, 255, 255, 0.87);
+    --cui-btn-bg: #dc2126;
+    --cui-btn-border-color: #dc2126;
+    --cui-btn-hover-color: rgba(255, 255, 255, 0.87);
+    --cui-btn-hover-bg: #f1801a;
+    --cui-btn-hover-border-color: #ef7f1a;
+}
