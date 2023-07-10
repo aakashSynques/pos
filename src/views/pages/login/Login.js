@@ -15,21 +15,21 @@ import {
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilLockLocked, cilUser } from "@coreui/icons";
-import logo from '../../../assets/brand/logo.png'
-
+import logo from "../../../assets/brand/logo.png";
 const Login = () => {
+
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
         <CRow className="justify-content-center">
-          <CCol md={8}>
+          <CCol md={4}>
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
                   <CForm>
                     {/* <h1>Login</h1> */}
-                    <img src={logo} alt='logo' />
-                    <p className="text-medium-emphasis pt-2">                     
+                    <img src={logo} alt="logo" />
+                    <p className="text-medium-emphasis pt-2">
                       Sign In to your account
                     </p>
                     <CInputGroup className="mb-3">
@@ -53,9 +53,14 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton color="primary" className="px-4">
-                          Login
-                        </CButton>
+                        <Link to="/dashboard">
+                          <CButton
+                            color="primary"
+                            className="px-4"
+                          >
+                            Login
+                          </CButton>
+                        </Link>
                       </CCol>
                       <CCol xs={6} className="text-right">
                         <CButton color="link" className="px-0">
@@ -64,18 +69,21 @@ const Login = () => {
                       </CCol>
                     </CRow>
                   </CForm>
-                  <p className="text-medium-emphasis" style={{ 'fontSize': '13px', 'paddingTop' : '20px'}}>                     
-                  All rights reserved © Q4 Retail by SynQues.
-                    </p>
+                  <p
+                    className="text-medium-emphasis"
+                    style={{ fontSize: "13px", paddingTop: "20px" }}
+                  >
+                    All rights reserved © Q4 Retail by SynQues.
+                  </p>
                 </CCardBody>
               </CCard>
-              
-              <CCard
+
+              {/* <CCard
                 className="text-white  py-5"
                 style={{ width: "44%" }}
               >
                 <CCardBody className="text-center">
-                  {/* <div>
+                  <div>
                     <h2>Sign up</h2>
                     <p>
                       Lorem ipsum dolor sit amet, consectetur adipisicing elit,
@@ -92,9 +100,9 @@ const Login = () => {
                         Register Now!
                       </CButton>
                     </Link>
-                  </div> */}
+                  </div>
                 </CCardBody>
-              </CCard>
+              </CCard> */}
             </CCardGroup>
           </CCol>
         </CRow>

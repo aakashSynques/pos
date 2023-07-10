@@ -1,34 +1,13 @@
 import React, { useState } from 'react'
-import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCollapse,
-  CDropdownItem,
-  CDropdownMenu,
-  CDropdownToggle,
-  CForm,
-  CFormInput,
-  CImage,
-  CNavbar,
-  CNavbarNav,
-  CNavbarBrand,
-  CNavbarText,
-  CNavbarToggler,
-  CNavLink,
-  CDropdown,
-  CButton,
-} from '@coreui/react'
-import { DocsLink } from 'src/components'
 
 const CNavbars = () => {
-  const [visible, setVisible] = useState(false)
-  const [isOpenDropdown, setIsOpenDropdown] = useState(false)
-  const [navbarText, setNavbarText] = useState(false)
+  // const [visible, setVisible] = useState(false)
+  // const [isOpenDropdown, setIsOpenDropdown] = useState(false)
+  // const [navbarText, setNavbarText] = useState(false)
 
   return (
     <>
-      <CCard className="mb-4">
+      {/* <CCard className="mb-4">
         <CCardHeader>
           CNavbar
           <DocsLink name="CNavbar" />
@@ -166,7 +145,7 @@ const CNavbars = () => {
             </CForm>
           </CNavbar>
         </CCardBody>
-      </CCard>
+      </CCard> */}
     </>
   )
 }
