@@ -51,16 +51,22 @@ const OutletOptions = () => {
           <b>Booking Sale</b>
           <p></p>
         </CButton>
-        <CButton className="light-outlet" style={{ background: "#fff", color: "#000" }}>
+        <CButton
+          className="light-outlet"
+          style={{ background: "#fff", color: "#000" }}
+        >
           <b>Collection Status</b>
-              </CButton>
-              <CButton className="light-outlet" style={{ background: "#fff", color: "#000" }}>
+        </CButton>
+        <CButton
+          className="light-outlet"
+          style={{ background: "#fff", color: "#000" }}
+        >
           <b>Expenses/Purchase Status</b>
-              </CButton>
-              <CButton className="light-outlet" style={{ background: "#d9534f"}}>
+        </CButton>
+        <CButton className="light-outlet" style={{ background: "#d9534f" }}>
           <b>Clear Sale</b>
-              </CButton>
-              <CButton className="light-outlet" style={{ background: "#d9534f"}}>
+        </CButton>
+        <CButton className="light-outlet" style={{ background: "#d9534f" }}>
           <b>Discard Sale</b>
         </CButton>
       </div>

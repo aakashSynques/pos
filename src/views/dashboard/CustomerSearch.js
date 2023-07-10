@@ -85,7 +85,7 @@ const CustomerSearch = () => {
             <CRow>
               <CCol sm={6} className="font-size">
                 <button
-                  class="btn btn-success btn-lg btn-block pay-btn"
+                  className="btn btn-success btn-lg btn-block pay-btn"
                   type="button"
                 >
                   PAY <font size="1">[ Shift + Enter ]</font>
@@ -93,7 +93,7 @@ const CustomerSearch = () => {
               </CCol>
               <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
                 <h4 className="total-price">
-                  <i class="fa fa-inr"></i> 0.00
+                  <i className="fa fa-inr"></i> 0.00
                 </h4>
                 <small>0 Item(s)</small>
               </CCol>

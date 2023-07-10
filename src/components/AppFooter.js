@@ -5,7 +5,7 @@ const AppFooter = () => {
   return (
     <CFooter>
     
-      <div className="ms-auto">
+      <div className="ms-auto font-size" >
         <span className="me-1">Powered by</span>
         <a href="" target="_blank" rel="noopener noreferrer">
         All rights reserved © Q4 Retail by SynQues.

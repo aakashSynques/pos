@@ -59,7 +59,7 @@ const ProductList = () => {
                             <b>
                               <a
                                 href=''
-                                class="text-primary text-link"
+                                className="text-primary text-link"
                               >
                                 9
                               </a>
@@ -67,7 +67,7 @@ const ProductList = () => {
                           </td>
                           <td align="center">1</td>
                           <td align="right">
-                            <i class="fa fa-inr"></i> 336.00
+                            <i className="fa fa-inr"></i> 336.00
                           </td>
                         </tr>
                         <tr style={{"background" : "#efefef"}}>
@@ -75,7 +75,7 @@ const ProductList = () => {
                             Total Amount&nbsp;
                           </th>
                           <th style={{"text-align ": "right"}}>
-                            <i class="fa fa-inr"></i> 336.00
+                            <i className="fa fa-inr"></i> 336.00
                           </th>
                         </tr>
                       </tbody>
