@@ -9,22 +9,23 @@ const CustomerSearch = () => {
           type="text"
           placeholder="Search Customer..."
           style={{
-            fontSize: "12px", borderRadius: 0,
+            fontSize: "12px",
+            borderRadius: 0,
           }}
           className="radius-0"
         />
 
         {/* cart itmes */}
-        <div className="card-box text-center">
+        <div className="card-box text-center container">
           <br />
           <br />
           <br />
           <br />
           <font size="5" color="#e4e4e4">
             No product found in cart
-          </font>{" "}
+          </font>
           <br />
-          <FaShoppingCart className="fa-stack-1x fa-inverse" />
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
         </div>
         <div className="select-table">
           <CContainer>
@@ -98,7 +99,7 @@ const CustomerSearch = () => {
                 <small>0 Item(s)</small>
               </CCol>
             </CRow>
-                      <hr style={{    margin: "4px 0"}} />
+            <hr style={{ margin: "4px 0" }} />
             <CRow>
               <CCol sm={6} className="font-size">
                 Tax GST (2.5% CGST)
@@ -106,7 +107,7 @@ const CustomerSearch = () => {
               <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
                 Rs 0.00
               </CCol>
-            </CRow>         
+            </CRow>
           </CContainer>
         </div>
       </div>

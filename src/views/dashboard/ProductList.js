@@ -9,6 +9,12 @@ import {
 } from "@coreui/react";
 import React from "react";
 import SearchBar from "./SearchBar";
+import RecentInvoice from "./invices/RecentInvoice";
+import OnGoingKot from "./invices/OnGoingKot";
+import ReturnInvoice from "./invices/ReturnInvoice";
+import UpcomingBooking from "./invices/UpcomingBooking";
+import TotalPunchedInvoice from "./invices/TotalPunchedInvoice";
+import PendingBooking from "./invices/PendingBooking";
 const ProductList = () => {
   return (
     <>
@@ -16,145 +22,34 @@ const ProductList = () => {
         <SearchBar />
         <CContainer className="category-list-box">
           <CRow>
+            {/* Recent Invice section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              <CCard>
-                <CCardHeader>
-                  Recent Invoice(s)
-                  <CLink className="text-primary pull-right">
-                    <i className="fa fa-external-link fa-xs"></i>
-                  </CLink>
-                </CCardHeader>
-                <CCardBody>
-                  <div id="DB_RecentPunchedInvoice">
-                    <small className="text-danger">
-                      No, Invoices Punched..
-                    </small>
-                  </div>
-                </CCardBody>
-              </CCard>
+              <RecentInvoice />
             </CCol>
 
+            {/* on going kot section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              <CCard>
-                <CCardHeader>
-                  OnGoing KOT(s)
-                  <CLink className="text-primary pull-right">
-                    <i className="fa fa-external-link fa-xs"></i>
-                  </CLink>
-                </CCardHeader>
-                <CCardBody>
-                  <div id="DB_RecentPunchedInvoice">
-                    {/* <small className="text-danger">
-                      No, Invoices Punched..
-                    </small> */}
-                    <table width="100%" className="table table-bordered" style={{    "fontSize": "11px"}}>
-                      <tbody>
-                        <tr style={{"background" : "#efefef"}}>
-                          <th>Table No</th>
-                          <th>KOTs</th>
-                          <th>Amount</th>
-                        </tr>
-                        <tr>
-                          <td>
-                            <b>
-                              <a
-                                href=''
-                                className="text-primary text-link"
-                              >
-                                9
-                              </a>
-                            </b>
-                          </td>
-                          <td align="center">1</td>
-                          <td align="right">
-                            <i className="fa fa-inr"></i> 336.00
-                          </td>
-                        </tr>
-                        <tr style={{"background" : "#efefef"}}>
-                          <th colspan="2" style={{"text-align ": "right"}}>
-                            Total Amount&nbsp;
-                          </th>
-                          <th style={{"text-align ": "right"}}>
-                            <i className="fa fa-inr"></i> 336.00
-                          </th>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </CCardBody>
-              </CCard>
+              <OnGoingKot />
             </CCol>
 
+            {/* Recent Return Invoice(s) section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              <CCard>
-                <CCardHeader>
-                  Recent Return Invoice(s)
-                  <CLink className="text-primary pull-right">
-                    <i className="fa fa-external-link fa-xs"></i>
-                  </CLink>
-                </CCardHeader>
-                <CCardBody>
-                  <div id="DB_RecentPunchedInvoice">
-                    <small className="text-danger">
-                      No, Invoices Punched..
-                    </small>
-                  </div>
-                </CCardBody>
-              </CCard>
+              <ReturnInvoice />
             </CCol>
 
+            {/* Upcoming Booking */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              <CCard>
-                <CCardHeader>
-                  Upcomming Booking
-                  <CLink className="text-primary pull-right">
-                    <i className="fa fa-external-link fa-xs"></i>
-                  </CLink>
-                </CCardHeader>
-                <CCardBody>
-                  <div id="DB_RecentPunchedInvoice">
-                    <small className="text-danger">
-                      No, Invoices Punched..
-                    </small>
-                  </div>
-                </CCardBody>
-              </CCard>
+              <UpcomingBooking />
             </CCol>
 
+            {/* Total Punched Invoice(s) section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              <CCard>
-                <CCardHeader>
-                  Total Punched Invoice(s)
-                  <CLink className="text-primary pull-right">
-                    <i className="fa fa-external-link fa-xs"></i>
-                  </CLink>
-                </CCardHeader>
-                <CCardBody>
-                  <div id="DB_RecentPunchedInvoice">
-                    <small className="text-danger">
-                      No, Invoices Punched..
-                    </small>
-                  </div>
-                </CCardBody>
-              </CCard>
+              <TotalPunchedInvoice />
             </CCol>
 
+            {/* Pending Booking(s) section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              <CCard>
-                <CCardHeader>
-                  Pending Booking(s)
-                  <CLink className="text-primary pull-right">
-                    <i className="fa fa-external-link fa-xs"></i>
-                  </CLink>
-                </CCardHeader>
-                <CCardBody>
-                  <div id="DB_RecentPunchedInvoice">
-                    <small className="text-danger">
-                      No, Invoices Punched..
-                    </small>
-                  </div>
-                </CCardBody>
-              </CCard>
+              <PendingBooking />
             </CCol>
           </CRow>
         </CContainer>
@@ -162,5 +57,4 @@ const ProductList = () => {
     </>
   );
 };
-
 export default ProductList;

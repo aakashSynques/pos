@@ -118,6 +118,27 @@
 .outlet-btn p { 
 margin-bottom: 1px;
 }
+.card-box i{
+  background: rgb(189 189 189 / 25%);
+  color: white;
+  padding: 17px;
+  border-radius: 50%;
+  font-size: 35px;
+}
+.ongoing tr th, td{
+  padding: 3px!important;
+  font-size: 11px;
+}
+.status-btn{
+  font-size: 8px;
+  padding: 1px 8px;
+  border-radius: 5px;
+}
+.pending-booking{
+  width: 25%;
+  line-height: 14px;
+
+}
 
 @media (min-width: 768px) {
   .sidebar.sidebar-fixed {
@@ -143,3 +164,5 @@ margin-bottom: 1px;
 //     margin-left: 0px;
 //     width: 180px;
 // }
+
+

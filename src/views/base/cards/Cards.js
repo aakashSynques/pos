@@ -380,7 +380,7 @@ const Cards = () => {
             <p className="text-medium-emphasis small">
               You can instantly change the text arrangement of any card—in its whole or specific
               parts—with{' '}
-              <a href="https://coreui.io/docs/utilities/text/#text-alignment">text align classes</a>
+              <a href="">text align classes</a>
               .
             </p>
             <DocsExample href="components/card/#text-alignment">
