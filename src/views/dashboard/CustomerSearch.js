@@ -86,7 +86,7 @@ const CustomerSearch = () => {
             <CRow>
               <CCol sm={6} className="font-size">
                 <button
-                  className="btn btn-success btn-lg btn-block pay-btn"
+                  className="btn pay-btn"
                   type="button"
                 >
                   PAY <font size="1">[ Shift + Enter ]</font>

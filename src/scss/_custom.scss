@@ -15,9 +15,9 @@
   --cui-btn-hover-border-color: #ef7f1a;
 }
 .location-btn {
-  background: white;
-  border: 1px solid gray;
-  color: black;
+  background: white!important;
+  border: 1px solid gray!important;
+  color: black!important;
   margin-bottom: 6px;
 }
 .location-btn:hover {
@@ -89,17 +89,17 @@
   padding: 9px;
 }
 .pay-btn {
-  background: rgb(38, 185, 154);
-  background-color: rgb(38, 185, 154);
-  padding: 4px 15px;
-  border-radius: 2px;
-  color: white;
+  background-color: rgb(38, 185, 154)!important;
+  padding: 4px 15px!important;
+  border-radius: 2px!important;
+  color: white!important;
 }
 .total-price {
     font-size: 14px;
   font-weight: 400;
-  color: #26b99a;
+  color: #26b99a!important;
   margin: 0px;
+  color: white;
 }
 .gray-outlet {
   background: #ffffff;
@@ -112,8 +112,10 @@
 .outlet-btn button {
   margin-bottom: 8px;
   width: 100%;
-  font-size: 12px;
+  font-size: 11px;
   border: none;
+  background: #605d5d1f;
+  color: #000000b8;
 }
 .outlet-btn p { 
 margin-bottom: 1px;
@@ -134,12 +136,79 @@ margin-bottom: 1px;
   padding: 1px 8px;
   border-radius: 5px;
 }
-.pending-booking{
-  width: 25%;
+.pending-booking th{
   line-height: 14px;
-
 }
-
+.booking-or-table tbody,td, tr {
+  font-size: 13px !important;
+}
+.badge {
+  color: #fff;
+  background-color: #777;
+  border-radius: 10px;
+}
+// .booking-or-table tfoot, th, thead {
+//   background-color: #909090 !important;
+//   font-size: 12px;
+//   color: white!important;
+// }
+.btn-margin {
+  margin: 0px 2px;
+  padding: 2px 6px!important;
+  font-size: 12px!important;
+  color: #fbfbfb!important;
+}
+.btn-warning {
+  background: #f0ad4e!important;
+  border-color: #f0ad4e;
+}
+.label-info {
+  background-color: #5bc0de;
+  color: white;
+  padding: 2px 5px;
+  font-size: 10px;
+  border-radius: 3px;
+}
+.ongoing th {
+  background-color: #efefef !important;
+  font-size: 11px;
+}.booking-or-table th{
+  background-color: #efefef !important;
+  font-size: 13px;
+}
+.label-danger {
+  background-color: #d9534f;
+  color: white;
+  padding: 2px 5px;
+  font-size: 10px;
+  border-radius: 3px;
+}
+.btn-danger {
+  background: #d9534f!important;
+  border-color: #d9534f;
+}
+.label-primary {
+  background-color: #1A82C3;
+  color: white;
+  padding: 2px 5px;
+  font-size: 10px;
+  border-radius: 3px;
+}
+.nav-pills .nav-link {
+  background: #efefef;
+  color: black;
+  font-size: 12px;
+  border: 1px solid #dddddd;
+  margin-right: 4px;
+  margin-bottom: 6px;
+}
+.nav-pills .nav-link:hover {
+  color: gray!important;
+}
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  background: azure!important;
+    color: black!important;
+}
 @media (min-width: 768px) {
   .sidebar.sidebar-fixed {
     position: fixed;
@@ -159,6 +228,10 @@ margin-bottom: 1px;
     max-width: 1430px;
   }
 }
+@media (min-width: 1200px){
+.modal-xl {
+    --bs-modal-width: 1480px!important;
+}}
 
 // html:not([dir=rtl]) .sidebar:not(.sidebar-end) {
 //     margin-left: 0px;

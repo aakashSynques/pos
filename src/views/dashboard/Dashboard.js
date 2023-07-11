@@ -285,7 +285,7 @@ const Dashboard = () => {
       <SelectLocation />
       <CContainer>
         <CRow>
-          <CCol sm={5}>
+          <CCol sm={5} className="p-0">
             <ProductList />
           </CCol>
 

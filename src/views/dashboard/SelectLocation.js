@@ -27,7 +27,7 @@ const SelectLocation = () => {
           <CModalTitle>BNS - Outlets </CModalTitle>
         </CModalHeader>
         <CModalBody>
-          <CButton className="btn btn-secondary btn-default btn-block location-btn">
+          <CButton className="btn btn-block location-btn">
             <div>
               <h3 className="mb-0">10 No. Market</h3>
               <p className="mb-0">
@@ -38,7 +38,7 @@ const SelectLocation = () => {
             </div>
           </CButton>
 
-          <CButton className="btn btn-secondary btn-default btn-block location-btn">
+          <CButton className="btn btn-block location-btn">
             <div>
               <h3 className="mb-0">M.P. Nagar</h3>
               <p className="mb-0">
@@ -47,7 +47,7 @@ const SelectLocation = () => {
               <p className="mb-0">+91 755 4292222, 4075555</p>
             </div>
           </CButton>
-          <CButton className="btn btn-secondary btn-default btn-block location-btn">
+          <CButton className="btn btn-block location-btn">
             <div>
               <h3 className="mb-0">New Market</h3>
               <p className="mb-0">
@@ -57,7 +57,7 @@ const SelectLocation = () => {
               <p className="mb-0">+91 755 4283333</p>
             </div>
           </CButton>
-          <CButton className="btn btn-secondary btn-default btn-block location-btn">
+          <CButton className="btn btn-block location-btn">
             <div>
               <h3 className="mb-0">Lalghati</h3>
               <p className="mb-0">
@@ -67,7 +67,7 @@ const SelectLocation = () => {
             </div>
           </CButton>
 
-          <CButton className="btn btn-secondary btn-default btn-block location-btn">
+          <CButton className="btn btn-block location-btn">
             <div>
               <h3 className="mb-0">Indore - Vijay Nagar</h3>
               <p className="mb-0">
@@ -78,7 +78,7 @@ const SelectLocation = () => {
             </div>
           </CButton>
 
-          <CButton className="btn btn-secondary btn-default btn-block location-btn">
+          <CButton className="btn btn-block location-btn">
             <div>
               <h3 className="mb-0">Gwalior - DB City Mall</h3>
               <p className="mb-0">
