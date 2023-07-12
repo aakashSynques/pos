@@ -103,7 +103,7 @@ const PendingBooking = () => {
                 active={activeKey === 1}
                 onClick={() => setActiveKey(1)}
               >
-                Today's Pending Delivery <span class="badge"> 20</span>
+                Today's Pending Delivery <span className="badge"> 20</span>
               </CNavLink>
             </CNavItem>
             <CNavItem>
@@ -112,7 +112,7 @@ const PendingBooking = () => {
                 active={activeKey === 2}
                 onClick={() => setActiveKey(2)}
               >
-                Today's Delivered Booking <span class="badge"> 0</span>
+                Today's Delivered Booking <span className="badge"> 0</span>
               </CNavLink>
             </CNavItem>
             <CNavItem>
@@ -121,7 +121,7 @@ const PendingBooking = () => {
                 active={activeKey === 3}
                 onClick={() => setActiveKey(3)}
               >
-                Future Booking(s) <span class="badge"> 8</span>
+                Future Booking(s) <span className="badge"> 8</span>
               </CNavLink>
             </CNavItem>
           </CNav>

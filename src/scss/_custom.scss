@@ -140,7 +140,7 @@ margin-bottom: 1px;
   line-height: 14px;
 }
 .booking-or-table tbody,td, tr {
-  font-size: 13px !important;
+  font-size: 11px !important;
 }
 .badge {
   color: #fff;
@@ -208,6 +208,9 @@ margin-bottom: 1px;
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   background: azure!important;
     color: black!important;
+}
+.pending-booking tr{
+  font-size: 5px;
 }
 @media (min-width: 768px) {
   .sidebar.sidebar-fixed {

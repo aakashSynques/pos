@@ -50,7 +50,7 @@ const Future = () => {
               Irene Francis
               <small style={{ color: "gray;" }}> (9975102225)</small>
               <br />
-              <i class="fa fa-map-marker"></i> IRENE FRANCIS, FLAT NO. 9,
+              <i className="fa fa-map-marker"></i> IRENE FRANCIS, FLAT NO. 9,
               BUILDING NO. 4, SUKHWANI PARK, PIMPRI PUNE (MAHARASHTRA) - 411018.
             </td>
             <td>5</td>
@@ -67,18 +67,18 @@ const Future = () => {
               <i className="fa fa-inr"></i> 650.00
             </td>
             <td align="center">
-              <button class="btn  btn-success btn-margin">
-                <i class="fa fa-print"></i>
+              <button className="btn  btn-success btn-margin">
+                <i className="fa fa-print"></i>
               </button>
             </td>
             <td align="center">
-              <button class="btn btn-secondary btn-margin">
-                <i class="fa fa-edit"></i>
+              <button className="btn btn-secondary btn-margin">
+                <i className="fa fa-edit"></i>
               </button>
             </td>
             <td align="center">
-              <button class="btn btn-danger btn-margin">
-                <i class="fa fa-times"></i>
+              <button className="btn btn-danger btn-margin">
+                <i className="fa fa-times"></i>
               </button>
             </td>
           </tr>
@@ -124,18 +124,18 @@ const Future = () => {
               <i className="fa fa-inr"></i> 650.00
             </td>
             <td align="center">
-              <button class="btn  btn-success btn-margin">
-                <i class="fa fa-print"></i>
+              <button className="btn  btn-success btn-margin">
+                <i className="fa fa-print"></i>
               </button>
             </td>
             <td align="center">
-              <button class="btn btn-secondary btn-margin">
-                <i class="fa fa-edit"></i>
+              <button className="btn btn-secondary btn-margin">
+                <i className="fa fa-edit"></i>
               </button>
             </td>
             <td align="center">
-              <button class="btn btn-danger btn-margin">
-                <i class="fa fa-times"></i>
+              <button className="btn btn-danger btn-margin">
+                <i className="fa fa-times"></i>
               </button>
             </td>
           </tr>

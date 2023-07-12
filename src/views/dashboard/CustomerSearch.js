@@ -25,7 +25,7 @@ const CustomerSearch = () => {
             No product found in cart
           </font>
           <br />
-          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+          <i className="fa fa-shopping-cart" aria-hidden="true"></i>
         </div>
         <div className="select-table">
           <CContainer>
