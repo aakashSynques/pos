@@ -1,25 +1,25 @@
 import {
   CContainer,
   CRow,
-  CCol,
-  CCardHeader,
-  CLink,
-  CCardBody,
-  CCard,
+  CCol
 } from "@coreui/react";
 import React from "react";
-import SearchBar from "./SearchBar";
-import RecentInvoice from "./invices/RecentInvoice";
-import OnGoingKot from "./invices/OnGoingKot";
-import ReturnInvoice from "./invices/ReturnInvoice";
-import UpcomingBooking from "./invices/UpcomingBooking";
-import TotalPunchedInvoice from "./invices/TotalPunchedInvoice";
-import PendingBooking from "./invices/PendingBooking";
-const ProductList = () => {
+import RecentInvoice from "./invoices/RecentInvoice";
+import OnGoingKot from "./invoices/OnGoingKot";
+import ReturnInvoice from "./invoices/ReturnInvoice";
+import UpcomingBooking from "./invoices/UpcomingBooking";
+import TotalPunchedInvoice from "./invoices/TotalPunchedInvoice";
+import PendingBooking from "./invoices/PendingBooking";
+import ProductsSearchBar from "./ProductsSearchBar";
+import data from './data.json'
+
+const InvoicesListBox = () => {
   return (
     <>
       <div className="product-search-section">
-        <SearchBar />
+        {/* Seach box */}
+        {/* <ProductsSearchBar data={ data } /> */}
+        <ProductsSearchBar />
         <CContainer className="category-list-box">
           <CRow>
             {/* Recent Invice section */}
@@ -57,4 +57,4 @@ const ProductList = () => {
     </>
   );
 };
-export default ProductList;
+export default InvoicesListBox;

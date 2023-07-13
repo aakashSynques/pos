@@ -1,10 +1,10 @@
 import React from "react";
-import SearchBar from "./SearchBar";
 import { CCol, CContainer, CRow } from "@coreui/react";
-import ProductList from "./ProductList";
+import InvoicesListBox from "./InvoicesListBox";
 import SelectLocation from "./SelectLocation";
 import CustomerSearch from "./CustomerSearch";
 import OutletOptions from "./OutletOptions";
+import OutletSelectionModal from "./OutletSelectionModal";
 const Dashboard = () => {
   return (
     <>
@@ -283,16 +283,15 @@ const Dashboard = () => {
         </CCol>
       </CRow> */}
       <SelectLocation />
+      {/* <OutletSelectionModal /> */}
       <CContainer>
         <CRow>
           <CCol sm={5} className="p-0">
-            <ProductList />
+            <InvoicesListBox />
           </CCol>
-
           <CCol sm={5}>
             <CustomerSearch />
           </CCol>
-
           <CCol sm={2}>
               <OutletOptions />
           </CCol>

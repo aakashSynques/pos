@@ -9,7 +9,7 @@ import {
   CButton,
 } from "@coreui/react";
 import React from "react";
-import SearchBar from "./SearchBar";
+
 const OutletOptions = () => {
   return (
     <>
@@ -27,6 +27,9 @@ const OutletOptions = () => {
           </p>
         </CButton>
         <br /> <br />
+
+
+
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>New Sale</b>
           <p></p>

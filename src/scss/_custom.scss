@@ -5,7 +5,9 @@
 // .icon {
 //     color: white;
 // }
-
+a {
+  text-decoration: none !important;
+}
 .btn-primary {
   --cui-btn-color: rgba(255, 255, 255, 0.87);
   --cui-btn-bg: #dc2126;
@@ -15,14 +17,14 @@
   --cui-btn-hover-border-color: #ef7f1a;
 }
 .location-btn {
-  background: white!important;
-  border: 1px solid gray!important;
-  color: black!important;
+  background: white !important;
+  border: 1px solid gray !important;
+  color: black !important;
   margin-bottom: 6px;
 }
 .location-btn:hover {
-  background: #f3f3f3;
-  border: 1px solid gray;
+  background: #f3f3f3 !important;
+  border: 1px solid gray !important;
   color: black;
 }
 .location-btn h3 {
@@ -89,15 +91,15 @@
   padding: 9px;
 }
 .pay-btn {
-  background-color: rgb(38, 185, 154)!important;
-  padding: 4px 15px!important;
-  border-radius: 2px!important;
-  color: white!important;
+  background-color: rgb(38, 185, 154) !important;
+  padding: 4px 15px !important;
+  border-radius: 2px !important;
+  color: white !important;
 }
 .total-price {
-    font-size: 14px;
+  font-size: 14px;
   font-weight: 400;
-  color: #26b99a!important;
+  color: #26b99a !important;
   margin: 0px;
   color: white;
 }
@@ -117,29 +119,32 @@
   background: #605d5d1f;
   color: #000000b8;
 }
-.outlet-btn p { 
-margin-bottom: 1px;
+.outlet-btn p {
+  margin-bottom: 1px;
 }
-.card-box i{
+.card-box i {
   background: rgb(189 189 189 / 25%);
   color: white;
   padding: 17px;
   border-radius: 50%;
   font-size: 35px;
 }
-.ongoing tr th, td{
-  padding: 3px!important;
+.ongoing tr th,
+td {
+  padding: 3px !important;
   font-size: 11px;
 }
-.status-btn{
+.status-btn {
   font-size: 8px;
   padding: 1px 8px;
   border-radius: 5px;
 }
-.pending-booking th{
+.pending-booking th {
   line-height: 14px;
 }
-.booking-or-table tbody,td, tr {
+.booking-or-table tbody,
+td,
+tr {
   font-size: 11px !important;
 }
 .badge {
@@ -154,12 +159,12 @@ margin-bottom: 1px;
 // }
 .btn-margin {
   margin: 0px 2px;
-  padding: 2px 6px!important;
-  font-size: 12px!important;
-  color: #fbfbfb!important;
+  padding: 2px 6px !important;
+  font-size: 12px !important;
+  color: #fbfbfb !important;
 }
 .btn-warning {
-  background: #f0ad4e!important;
+  background: #f0ad4e !important;
   border-color: #f0ad4e;
 }
 .label-info {
@@ -172,7 +177,8 @@ margin-bottom: 1px;
 .ongoing th {
   background-color: #efefef !important;
   font-size: 11px;
-}.booking-or-table th{
+}
+.booking-or-table th {
   background-color: #efefef !important;
   font-size: 13px;
 }
@@ -184,11 +190,11 @@ margin-bottom: 1px;
   border-radius: 3px;
 }
 .btn-danger {
-  background: #d9534f!important;
+  background: #d9534f !important;
   border-color: #d9534f;
 }
 .label-primary {
-  background-color: #1A82C3;
+  background-color: #1a82c3;
   color: white;
   padding: 2px 5px;
   font-size: 10px;
@@ -203,15 +209,45 @@ margin-bottom: 1px;
   margin-bottom: 6px;
 }
 .nav-pills .nav-link:hover {
-  color: gray!important;
+  color: gray !important;
 }
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  background: azure!important;
-    color: black!important;
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background: azure !important;
+  color: black !important;
 }
-.pending-booking tr{
+.pending-booking tr {
   font-size: 5px;
 }
+.product-price {
+  position: relative;
+  top: -10px;
+  float: right;
+  margin: 0;
+  line-height: 0;
+}
+.porduct-list a{
+  color: #000000;
+}
+.product-list-abslute{
+  position: absolute;
+  width: 535px;
+  max-height: 450px;
+  z-index: 9999;
+}
+.porduct-list {
+  padding: 3px 16px;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  border: 1px dashed #efefef;
+  color: #000000;
+  background: #ffffff;
+}
+.product-list:hover{
+  background: #e6cf06;
+}
+
 @media (min-width: 768px) {
   .sidebar.sidebar-fixed {
     position: fixed;
@@ -231,14 +267,13 @@ margin-bottom: 1px;
     max-width: 1430px;
   }
 }
-@media (min-width: 1200px){
-.modal-xl {
-    --bs-modal-width: 1480px!important;
-}}
+@media (min-width: 1200px) {
+  .modal-xl {
+    --bs-modal-width: 1480px !important;
+  }
+}
 
 // html:not([dir=rtl]) .sidebar:not(.sidebar-end) {
 //     margin-left: 0px;
 //     width: 180px;
 // }
-
-
