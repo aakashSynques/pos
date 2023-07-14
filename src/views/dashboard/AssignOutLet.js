@@ -11,14 +11,10 @@ import {
 import { outletsAllAssignedList } from "../../db/outlets.constant";
 import { fetch } from "../../utils";
 
-const SelectLocation = () => {
+const AssignOutLet = () => {
   const [outletmodel, setOutletmodel] = useState(false);
   const [selectedOutlet, setSelectedOutlet] = useState(null); // Track the selected outlet
   const [outletList, setOutletList] = useState([]); // api data
-
-  useEffect(() => {
-    setOutletmodel(true); // Show the modal when the component mounts
-  }, []);
 
   const [data, setData] = useState(outletsAllAssignedList);
 
@@ -43,6 +39,21 @@ const SelectLocation = () => {
 
   return (
     <>
+      <CButton
+        className="gray-outlet"
+        onClick={() => setOutletmodel(!outletmodel)}
+      >
+        <b>OUTLET</b> <br />{" "}
+        {selectedOutlet && (
+          <div>
+            <p>{selectedOutlet.outlet_name}</p>
+          </div>
+        )}
+        <p className="" style={{ color: "green" }}>
+          {/* {outletName} */}
+        </p>
+      </CButton>
+
       <CModal
         size="sm"
         visible={outletmodel}
@@ -53,7 +64,7 @@ const SelectLocation = () => {
           <CModalTitle>BNS - Outlets </CModalTitle>
         </CModalHeader>
         <CModalBody>
-        {outletList.map((outlet) => (
+          {outletList.map((outlet) => (
             <CButton
               className="btn btn-block location-btn w-100"
               key={outlet.outlet_id}
@@ -68,13 +79,8 @@ const SelectLocation = () => {
           ))}
         </CModalBody>
       </CModal>
-      {/* {selectedOutlet && (
-        <div>
-          <p>{selectedOutlet.outlet_name}</p>
-        </div>
-      )} */}
     </>
   );
 };
 
-export default SelectLocation;
+export default AssignOutLet;

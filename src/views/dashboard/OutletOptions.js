@@ -9,17 +9,21 @@ import {
   CButton,
 } from "@coreui/react";
 import React from "react";
+import AssignOutLet from "./AssignOutLet";
 
-const OutletOptions = () => {
+const OutletOptions = ({ outletName} ) => {
   return (
     <>
       <div className="outlet-btn">
-        <CButton className="gray-outlet">
+        {/* <CButton className="gray-outlet">
           <b>OUTLET</b> <br />
           <p className="" style={{ color: "green" }}>
-            10 No. Market
+          {outletName}
           </p>
-        </CButton>
+        </CButton> */}
+        <AssignOutLet />
+
+
         <CButton className="gray-outlet">
           <b>OUTLET</b> <br />
           <p className="" style={{ color: "green" }}>

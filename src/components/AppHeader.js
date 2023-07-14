@@ -16,6 +16,7 @@ import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from '@coreui/icons'
 
 import { AppBreadcrumb } from './index'
 import { AppHeaderDropdown } from './header/index'
+import logos from "../assets/brand/logon.png";
 
 
 const AppHeader = () => {
@@ -23,21 +24,21 @@ const AppHeader = () => {
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
   return (
-    <CHeader position="sticky" className="mb-4">
+    <CHeader position="sticky" className="mb-2">
       <CContainer fluid>
-        <CHeaderToggler
+        {/* <CHeaderToggler
           className="ps-1"
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
         >
           <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
+        </CHeaderToggler> */}
         <CHeaderBrand className="mx-auto d-md-none" to="/">
           {/* <CIcon icon={logo} height={48} alt="Logo" /> */}
         </CHeaderBrand>
         <CHeaderNav className="d-none d-md-flex me-auto">
           <CNavItem>
             <CNavLink to="/dashboard" component={NavLink}>
-              Dashboard
+            <img src={logos} alt='logo' height={40} />
             </CNavLink>
           </CNavItem>
          

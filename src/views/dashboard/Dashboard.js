@@ -7,7 +7,7 @@ import OutletOptions from "./OutletOptions";
 import OutletSelectionModal from "./OutletSelectionModal";
 const Dashboard = () => {
   return (
-    <>
+    <div className="bg-light-1">
       {/* <WidgetsDropdown />
       <CCard className="mb-4">
         <CCardBody>
@@ -297,7 +297,7 @@ const Dashboard = () => {
           </CCol>
         </CRow>
       </CContainer>
-    </>
+    </div>
   );
 };
 
