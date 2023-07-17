@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
 import {
   CAvatar,
   CBadge,
@@ -8,30 +8,57 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
-} from '@coreui/react'
-import {
-  cilBell,
-} from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
+} from "@coreui/react";
+import { cilBell } from "@coreui/icons";
+import CIcon from "@coreui/icons-react";
 
-import avatar8 from './../../assets/images/avatars/3.jpg'
+import avatar8 from "./../../assets/images/avatars/3.jpg";
 const AppHeaderDropdown = () => {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    // Retrieve user data from local storage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
         <CAvatar src={avatar8} size="md" />
+        {user ? (
+          <div>
+            <small style={{ color: "red" }}>{user.user_name}</small>
+            {/* Render other user information */}
+          </div>
+        ) : (
+          <small>Please login to view the dashboard.</small>
+        )}
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownHeader className="bg-light fw-semibold py-2">Account</CDropdownHeader>
-        <CDropdownItem href='/'>
+        <CDropdownHeader className="bg-light fw-semibold py-2">
+          {user ? (
+            <div>
+              <small style={{ color: "red" }}>Welcome, {user.user_name}!</small>
+              {/* Render other user information */}
+            </div>
+          ) : (
+            <small>Please login to view the dashboard.</small>
+          )}
+        </CDropdownHeader>
+        <CDropdownItem href="#">
           <CIcon icon={cilBell} className="me-2" />
-          Logout
+          Profile
         </CDropdownItem>
-        <CDropdownItem href='/'>
+        <CDropdownItem href="#">
           <CIcon icon={cilBell} className="me-2" />
           Change Password
         </CDropdownItem>
-       
+        <CDropdownItem href="/">
+          <CIcon icon={cilBell} className="me-2" />
+          Logout
+        </CDropdownItem>
+
         {/* <CDropdownItem href="#">
           <CIcon icon={cilEnvelopeOpen} className="me-2" />
           Messages
@@ -83,7 +110,7 @@ const AppHeaderDropdown = () => {
         </CDropdownItem> */}
       </CDropdownMenu>
     </CDropdown>
-  )
-}
+  );
+};
 
-export default AppHeaderDropdown
+export default AppHeaderDropdown;
