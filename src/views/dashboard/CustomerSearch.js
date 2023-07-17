@@ -1,11 +1,15 @@
 import { CFormInput, CFormSelect, CRow, CCol, CContainer } from "@coreui/react";
 import { FaShoppingCart } from "react-icons/fa";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { fetch } from "../../utils";
+import CustomerSearchBox from "./CustomerSearchBox";
 const CustomerSearch = () => {
   return (
     <>
       <div className="custormer-search p-1" style={{ background: "white" }}>
-        <CFormInput
+        
+
+        {/* <CFormInput
           type="text"
           placeholder="Search Customer..."
           style={{
@@ -13,7 +17,15 @@ const CustomerSearch = () => {
             borderRadius: 0,
           }}
           className="radius-0"
-        />
+        /> */}<CustomerSearchBox />
+
+
+
+
+
+
+
+
 
         {/* cart itmes */}
         <div className="card-box text-center container">

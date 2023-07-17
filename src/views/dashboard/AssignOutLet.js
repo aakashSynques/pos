@@ -5,22 +5,17 @@ import {
   CModalBody,
   CModalHeader,
   CModalTitle,
-  CModalFooter,
-  CFont,
 } from "@coreui/react";
-import { outletsAllAssignedList } from "../../db/outlets.constant";
 import { fetch } from "../../utils";
 
 const AssignOutLet = () => {
   const [outletmodel, setOutletmodel] = useState(false);
-  const [selectedOutlet, setSelectedOutlet] = useState(null); // Track the selected outlet
-  const [outletList, setOutletList] = useState([]); // api data
-
-  const [data, setData] = useState(outletsAllAssignedList);
+  const [selectedOutlet, setSelectedOutlet] = useState(null);
+  const [outletList, setOutletList] = useState([]);
 
   const handleSelectOutlet = (outlet) => {
-    setSelectedOutlet(outlet); // Set the selected outlet
-    setOutletmodel(false); // Close the modal
+    setSelectedOutlet(outlet);
+    setOutletmodel(false);
   };
 
   const getOutletList = async () => {
@@ -33,8 +28,40 @@ const AssignOutLet = () => {
       console.log(err);
     }
   };
+
   useEffect(() => {
     getOutletList();
+  }, []);
+
+  // delivery data
+  const [deliverymodel, setDeliverymodel] = useState(false);
+  const [selectedDelivery, setSelectedDelivery] = useState(null);
+  const [deliveryList, setDeliveryList] = useState([]);
+
+  const handleSelectDelivery = (delivery) => {
+    setSelectedDelivery(delivery);
+    setDeliverymodel(false);
+  };
+
+  const getDeliveryList = async () => {
+    try {
+      const token = localStorage.getItem("pos_token");
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await fetch(
+        "/api/outlets/config-data",
+        "get",
+        null,
+        headers
+      );
+      setDeliveryList(response.data.delivery_heads);
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getDeliveryList();
   }, []);
 
   return (
@@ -43,17 +70,13 @@ const AssignOutLet = () => {
         className="gray-outlet"
         onClick={() => setOutletmodel(!outletmodel)}
       >
-        <b>OUTLET</b> <br />{" "}
+        <b>OUTLET</b> <br />
         {selectedOutlet && (
           <div>
             <p>{selectedOutlet.outlet_name}</p>
           </div>
         )}
-        <p className="" style={{ color: "green" }}>
-          {/* {outletName} */}
-        </p>
       </CButton>
-
       <CModal
         size="sm"
         visible={outletmodel}
@@ -61,7 +84,7 @@ const AssignOutLet = () => {
         backdrop="static"
       >
         <CModalHeader>
-          <CModalTitle>BNS - Outlets </CModalTitle>
+          <CModalTitle>BNS - Outlets</CModalTitle>
         </CModalHeader>
         <CModalBody>
           {outletList.map((outlet) => (
@@ -77,6 +100,42 @@ const AssignOutLet = () => {
               </div>
             </CButton>
           ))}
+        </CModalBody>
+      </CModal>
+
+      <CButton
+        className="gray-outlet"
+        onClick={() => setDeliverymodel(!deliverymodel)}
+      >
+        <b>DELIVERY</b> <br />
+        {selectedDelivery && (
+          <div>
+            <p>{selectedDelivery.delivery_heads}</p>
+          </div>
+        )}
+      </CButton>
+      <CModal
+        size="sm"
+        visible={deliverymodel}
+        className="outletmodelform"
+        backdrop="static"
+      >
+        <CModalHeader>
+          <CModalTitle>BNS - Outlets</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          {Array.isArray(deliveryList) &&
+            deliveryList.map((delivery) => (
+              <CButton
+                className="btn btn-block location-btn w-100"
+                key={delivery}
+                onClick={() => handleSelectDelivery(delivery)}
+              >
+                <div>
+                  <h3 className="mb-0">{delivery}</h3>
+                </div>
+              </CButton>
+            ))}
         </CModalBody>
       </CModal>
     </>

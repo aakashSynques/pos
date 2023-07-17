@@ -6,7 +6,7 @@ import {
   CInputGroupText,
   CFormInput,
 } from "@coreui/react";
-import jsonData from "./data.json"; // Import the JSON data
+// import jsonData from "./data.json"; // Import the JSON data
 import { fetch } from "../../utils"; 
 
 export default function ProductsSearchBar() {

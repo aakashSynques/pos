@@ -11,7 +11,7 @@ import UpcomingBooking from "./invoices/UpcomingBooking";
 import TotalPunchedInvoice from "./invoices/TotalPunchedInvoice";
 import PendingBooking from "./invoices/PendingBooking";
 import ProductsSearchBar from "./ProductsSearchBar";
-import data from './data.json'
+// import data from './data.json'
 
 const InvoicesListBox = () => {
   return (

@@ -6,7 +6,7 @@ import {
   CInputGroupText,
   CFormInput,
 } from "@coreui/react";
-import jsonData from "./data.json"; // Import the JSON data
+// import jsonData from "./data.json"; // Import the JSON data
 import { fetch } from "../../utils";
 
 export default function ProductsSearchBar() {
@@ -15,7 +15,7 @@ export default function ProductsSearchBar() {
   const [productSearch, setProductSearch] = useState([]); // api data
 
   useEffect(() => {
-    setAllItems(jsonData); // Set the JSON data to allItems state
+    setAllItems(); // Set the JSON data to allItems state
   }, []);
 
   const getProductSearch = async () => {

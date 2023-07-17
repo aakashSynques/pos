@@ -25,7 +25,7 @@ const OutletOptions = ({ outletName} ) => {
 
 
         <CButton className="gray-outlet">
-          <b>OUTLET</b> <br />
+          <b>Dilivery Mode</b> <br />
           <p className="" style={{ color: "green" }}>
             10 No. Market
           </p>
