@@ -3,31 +3,16 @@ import { FaShoppingCart } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import { fetch } from "../../utils";
 import CustomerSearchBox from "./CustomerSearchBox";
+import ProductsSearchBar from "./ProductsSearchBar";
+import CartDisplay from "./CartDisplay";
+
+
 const CustomerSearch = () => {
   return (
     <>
       <div className="custormer-search p-1" style={{ background: "white" }}>
-        
-
-        {/* <CFormInput
-          type="text"
-          placeholder="Search Customer..."
-          style={{
-            fontSize: "12px",
-            borderRadius: 0,
-          }}
-          className="radius-0"
-        /> */}<CustomerSearchBox />
-
-
-
-
-
-
-
-
-
-        {/* cart itmes */}
+        <CustomerSearchBox />
+        <CartDisplay />
         <div className="card-box text-center container">
           <br />
           <br />
@@ -97,10 +82,7 @@ const CustomerSearch = () => {
 
             <CRow>
               <CCol sm={6} className="font-size">
-                <button
-                  className="btn pay-btn"
-                  type="button"
-                >
+                <button className="btn pay-btn" type="button">
                   PAY <font size="1">[ Shift + Enter ]</font>
                 </button>
               </CCol>

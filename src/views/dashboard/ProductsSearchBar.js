@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import {
-  CInputGroup,
-  CInputGroupPrepend,
-  CInputGroupText,
-  CFormInput,
-} from "@coreui/react";
-// import jsonData from "./data.json"; // Import the JSON data
+import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
+import { useCart } from "./useCart"; // Import the custom hook
 
-export default function ProductsSearchBar() {
+const ProductsSearchBar = () => {
   const [query, setQuery] = useState("");
   const [allItems, setAllItems] = useState([]);
-  const [productSearch, setProductSearch] = useState([]); // api data
+  const [productSearch, setProductSearch] = useState([]);
+  const { addToCart } = useCart(); // Use the custom hook
 
   useEffect(() => {
+    // Fetch and set the JSON data to allItems state (if needed)
     setAllItems(); // Set the JSON data to allItems state
   }, []);
 
@@ -24,19 +21,20 @@ export default function ProductsSearchBar() {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/products/all", "get", null, headers);
       setProductSearch(response.data.prodAllList);
-      console.log(response.data.prodAllList);
     } catch (err) {
       console.log(err);
     }
   };
+
   useEffect(() => {
     getProductSearch();
   }, []);
 
   const filteredItems = useMemo(() => {
-    if (query === "") return productSearch; // Return the entire list if query is empty
-    return productSearch.filter((product) =>
-      product.prod_name.toLowerCase().search(query.toLowerCase()) !== -1
+    if (query === "") return productSearch;
+    return productSearch.filter(
+      (product) =>
+        product.prod_name.toLowerCase().search(query.toLowerCase()) !== -1
     );
   }, [query, productSearch]);
 
@@ -58,8 +56,8 @@ export default function ProductsSearchBar() {
         <div className="product-list-abslute">
           {query !== "" &&
             filteredItems.map((product) => (
-              <div key={product.prod_id} className="porduct-list">
-                <Link to={`${product.prod_name}`}>
+              <div key={product.prod_id} className="product-list">
+                <Link onClick={() => addToCart(product)}>
                   <div>
                     <b>{product.prod_name}</b>
                     <br />
@@ -68,7 +66,7 @@ export default function ProductsSearchBar() {
                     </small>
                   </div>
                   <div className="product-price">
-                    {/* <i className="fa fa-inr"></i> {item.rate_chart.prod_rate} */}
+                    {/* Display the product price here */}
                   </div>
                   <br />
                 </Link>
@@ -76,7 +74,7 @@ export default function ProductsSearchBar() {
             ))}
           {/* Render a message if no items match the search query */}
           {query !== "" && filteredItems.length === 0 && (
-            <div className="porduct-list">
+            <div className="product-list">
               No items found matching the search query.
             </div>
           )}
@@ -84,4 +82,6 @@ export default function ProductsSearchBar() {
       </div>
     </div>
   );
-}
+};
+
+export default ProductsSearchBar;

@@ -1,19 +1,3 @@
-// import axios from 'axios';
-
-// export const fetch = async (
-//     endPoint = '',
-//     method = 'get',
-//     data = null,
-//     headers={}
-// ) => {
-//     return await axios({
-//         baseURL:,
-//         url:endPoint,
-//         method,
-//         data,
-//         headers,
-//     })
-// }
 
 import axios from 'axios';
 export const fetch = async (

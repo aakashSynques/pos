@@ -1,97 +1,84 @@
-// import React, { useState, useEffect } from "react";
-// import { fetch } from "../../utils";
-
-// const CustomerSearchBox = () => {
-//     const [searchQuery, setSearchQuery] = useState("");
-//     const [searchResults, setSearchResults] = useState([]);
-  
-//     const handleSearch = async () => {
-//       try {
-//         const token = localStorage.getItem("pos_token");
-//         const headers = { Authorization: `Bearer ${token}` };
-//         const body = { query: searchQuery };
-  
-//         const response = await fetch("http://posapi.q4hosting.com/api/customers/search/POS", "post", body, headers);
-  
-//         if (response.status === 200) {
-//           const { data } = response;
-//           setSearchResults(data); // Update the search results
-//         } else {
-//           console.log("Search failed");
-//         }
-//       } catch (err) {
-//         console.log(err);
-//       }
-//     };
-  
-//     useEffect(() => {
-//       handleSearch();
-//     }, []); // Perform the initial search on component mount
-  
-//     return (
-//       <div>
-//         <input
-//           type="text"
-//           value={searchQuery}
-//           onChange={(e) => setSearchQuery(e.target.value)}
-//         />
-//         <button onClick={handleSearch}>Search</button>
-  
-//         <ul>
-//           {searchResults.map((result) => (
-//             <li key={result.id}>{result.name}</li> // Adjust the key and value based on your API response
-//           ))}
-//         </ul>
-//       </div>
-//     );
-// };
-  
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
+import {
+  CInputGroup,
+  CInputGroupPrepend,
+  CInputGroupText,
+  CFormInput,
+} from "@coreui/react";
 import { fetch } from "../../utils";
 
-const CustomerSearchBox = () => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-  
-    const handleSearch = async () => {
-      try {
-        const token = localStorage.getItem("pos_token");
-        const headers = { Authorization: `Bearer ${token}` };
-        const body = { query: searchQuery };
-  
-        const response = await fetch("http://posapi.q4hosting.com/api/customers/search/POS", "post", body, headers);
-  
-        if (response.status === 200) {
-          const { data } = response;
-          setSearchResults(data); // Update the search results
-        } else {
-          console.log("Search failed");
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-  
-    useEffect(() => {
-      handleSearch();
-    }, []); // Perform the initial search on component mount
-  
-    return (
-      <div>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <button onClick={handleSearch}>Search</button>
-  
-        <ul>
-          {searchResults.map((result) => (
-            <li key={result.id}>{result.name}</li> // Adjust the key and value based on your API response
-          ))}
-        </ul>
-      </div>
-    );
-}
+export default function CustomerSearchBox() {
+  const [query, setQuery] = useState("");
+  const [customerSearchResults, setCustomerSearchResults] = useState([]);
 
-export default CustomerSearchBox
+  useEffect(() => {
+    getProductSearch();
+  }, [query]);
+
+  const getProductSearch = async () => {
+    try {
+      const token = localStorage.getItem("pos_token");
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = { query };
+      const response = await fetch("http://posapi.q4hosting.com/api/customers/search/POS", "post", body, headers);
+      setCustomerSearchResults(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSelectCustomer = (customerName) => {
+    setQuery(customerName);
+  };
+
+  const filteredItems = useMemo(() => {
+    if (query === "") return customerSearchResults;
+    return customerSearchResults.filter((customer) =>
+      customer.json.customer_name.toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query, customerSearchResults]);
+
+  return (
+    <div>
+      <CInputGroup>
+        <CFormInput
+          type="text"
+          placeholder="Search Customer Name"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          style={{
+            fontSize: "12px",
+            borderRadius: 0,
+          }}
+        />
+      </CInputGroup>
+      <div className="product-list-abslute">
+        {query !== "" &&
+          filteredItems.map((customer) => (
+            <div
+              key={customer.json.cust_id}
+              className="porduct-list"
+              onClick={() => handleSelectCustomer(customer.json.customer_name)}
+            >
+              <Link to={`${customer.value}`}>
+                <div>
+                  <b>{customer.json.customer_name}</b>
+                  <br />
+                  <small className="pull-left">
+                    Customer Type: {customer.data.cust_type_name}
+                  </small>
+                </div>
+                <br />
+              </Link>
+            </div>
+          ))}
+        {query !== "" && filteredItems.length === 0 && (
+          <div className="porduct-list">
+            No customers found matching the search query.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

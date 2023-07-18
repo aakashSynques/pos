@@ -37,7 +37,6 @@ const AssignOutLet = () => {
   const [deliverymodel, setDeliverymodel] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [deliveryList, setDeliveryList] = useState([]);
-
   const handleSelectDelivery = (delivery) => {
     setSelectedDelivery(delivery);
     setDeliverymodel(false);
@@ -54,7 +53,7 @@ const AssignOutLet = () => {
         headers
       );
       setDeliveryList(response.data.delivery_heads);
-      console.log(response);
+      // console.log(response);
     } catch (err) {
       console.log(err);
     }
@@ -114,6 +113,7 @@ const AssignOutLet = () => {
           </div>
         )}
       </CButton>
+
       <CModal
         size="sm"
         visible={deliverymodel}

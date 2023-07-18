@@ -81,7 +81,7 @@ a {
   --cui-sidebar-occupy-start: 12rem;
 }
 .card-box {
-  height: 40vh;
+  height: 250px;
 }
 .card-box svg {
   background: #e4e4e4;
@@ -250,14 +250,14 @@ tr {
   overflow-y: scroll;
   margin-top: 4px;
 }
-.porduct-list {
+.product-list {
   padding: 3px 16px;
   font-size: 11px;
   white-space: nowrap;
   overflow: hidden;
   border: 1px dashed #efefef;
-  color: #000000;
-  background: #ffffff;
+  color: #000000!important;
+  background: #ffffff!important;
 }
 .product-list:hover{
   background: #e6cf06;
