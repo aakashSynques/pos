@@ -3,26 +3,21 @@ import { FaShoppingCart } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import { fetch } from "../../utils";
 import CustomerSearchBox from "./CustomerSearchBox";
-import ParentComponent from "./ParentComponent";
+import CartSection from "./CartSection";
+import { useSelector } from "react-redux";
 
 
 const CustomerSearch = () => {
+  const cartItems = useSelector((state) => state.cart.cartItems);
+
   return (
     <>
       <div className="custormer-search p-1" style={{ background: "white" }}>
+        {/* customer search box */}
         <CustomerSearchBox />
-        {/* <ParentComponent /> */}
-        <div className="card-box text-center container">
-          <br />
-          <br />
-          <br />
-          <br />
-          <font size="5" color="#e4e4e4">
-            No product found in cart
-          </font>
-          <br />
-          <i className="fa fa-shopping-cart" aria-hidden="true"></i>
-        </div>
+        
+        <CartSection cartItems={cartItems} />
+    
         <div className="select-table">
           <CContainer>
             <CRow>
@@ -51,7 +46,7 @@ const CustomerSearch = () => {
                 Sub Total
               </CCol>
               <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-                Rs 0.00
+              <i className="fa fa-inr"></i> 0.00
               </CCol>
             </CRow>
             <CRow>
@@ -59,7 +54,7 @@ const CustomerSearch = () => {
                 Discount
               </CCol>
               <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-                Rs 0.00
+              <i className="fa fa-inr"></i> 0.00
               </CCol>
             </CRow>
             <CRow>
@@ -67,7 +62,7 @@ const CustomerSearch = () => {
                 Tax GST (2.5% SGST)
               </CCol>
               <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-                Rs 0.00
+              <i className="fa fa-inr"></i> 0.00
               </CCol>
             </CRow>
             <CRow>
@@ -75,7 +70,7 @@ const CustomerSearch = () => {
                 Tax GST (2.5% CGST)
               </CCol>
               <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-                Rs 0.00
+              <i className="fa fa-inr"></i> 0.00
               </CCol>
             </CRow>
 

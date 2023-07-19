@@ -2,11 +2,14 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../action/actions"; // Import the addToCart action
 
-const ProductsSearchBar = ({ addToCart }) => {
+const ProductsSearchBar = () => {
   const [query, setQuery] = useState("");
   const [allItems, setAllItems] = useState([]);
   const [productSearch, setProductSearch] = useState([]);
+  const dispatch = useDispatch(); // Use the useDispatch hook from React-Redux
 
   useEffect(() => {
     // Fetch and set the JSON data to allItems state (if needed)
@@ -51,24 +54,22 @@ const ProductsSearchBar = ({ addToCart }) => {
             }}
           />
         </CInputGroup>
-        
+
         <div className="product-list-abslute">
           {query !== "" &&
             filteredItems.map((product) => (
               <div key={product.prod_id} className="product-list">
-                <Link onClick={() => addToCart(product)}>
-                  <div>
-                    <b>{product.prod_name}</b>
-                    <br />
-                    <small className="pull-left">
-                      Code : {product.prod_code} {product.category_name}
-                    </small>
-                  </div>
+                <span onClick={() => dispatch(addToCart(product))}>
+                  <b>{product.prod_name}</b>
+                  <br />
+                  <small className="pull-left">
+                    Code : {product.prod_code} {product.category_name}
+                  </small>
                   <div className="product-price">
-                    {/* Display the product price here */}
+                    <i class="fa fa-inr"></i> 200
                   </div>
                   <br />
-                </Link>
+                </span>
               </div>
             ))}
           {/* Render a message if no items match the search query */}
@@ -84,5 +85,3 @@ const ProductsSearchBar = ({ addToCart }) => {
 };
 
 export default ProductsSearchBar;
-
-
