@@ -3,8 +3,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import { fetch } from "../../utils";
 import CustomerSearchBox from "./CustomerSearchBox";
-import ProductsSearchBar from "./ProductsSearchBar";
-import CartDisplay from "./CartDisplay";
+import ParentComponent from "./ParentComponent";
 
 
 const CustomerSearch = () => {
@@ -12,7 +11,7 @@ const CustomerSearch = () => {
     <>
       <div className="custormer-search p-1" style={{ background: "white" }}>
         <CustomerSearchBox />
-        <CartDisplay />
+        {/* <ParentComponent /> */}
         <div className="card-box text-center container">
           <br />
           <br />

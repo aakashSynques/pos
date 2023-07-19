@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import {
-  CInputGroup,
-  CInputGroupPrepend,
-  CInputGroupText,
-  CFormInput,
-} from "@coreui/react";
+import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
 
 export default function CustomerSearchBox() {
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const [customerSearchResults, setCustomerSearchResults] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getProductSearch();
@@ -21,10 +18,14 @@ export default function CustomerSearchBox() {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
       const body = { query };
-      const response = await fetch("http://posapi.q4hosting.com/api/customers/search/POS", "post", body, headers);
-      setCustomerSearchResults(response.data);
+      setLoading(true);
+      const response = await fetch("/api/customers/search/POS", "post", body, headers);
+      setCustomerSearchResults(response.data.suggestions);
+      console.log(response.data)
+      setLoading(false);
     } catch (err) {
-      console.log(err);
+      // setError("An error occurred while fetching customer data.");
+      setLoading(false);
     }
   };
 
@@ -34,9 +35,14 @@ export default function CustomerSearchBox() {
 
   const filteredItems = useMemo(() => {
     if (query === "") return customerSearchResults;
-    return customerSearchResults.filter((customer) =>
-      customer.json.customer_name.toLowerCase().includes(query.toLowerCase())
-    );
+    // Check if customerSearchResults is an array before filtering
+    if (Array.isArray(customerSearchResults)) {
+      return customerSearchResults.filter(
+        (customer) =>
+          customer.json.customer_name.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    return []; // Return an empty array if customerSearchResults is not an array
   }, [query, customerSearchResults]);
 
   return (
@@ -51,19 +57,23 @@ export default function CustomerSearchBox() {
             fontSize: "12px",
             borderRadius: 0,
           }}
+          
         />
+
       </CInputGroup>
       <div className="product-list-abslute">
-        {query !== "" &&
+        {loading && <div>Loading...</div>}
+        {!loading &&
+          query !== "" &&
           filteredItems.map((customer) => (
             <div
               key={customer.json.cust_id}
-              className="porduct-list"
-              onClick={() => handleSelectCustomer(customer.json.customer_name)}
+              className="product-list" // Corrected the class name here
+              onClick={() => handleSelectCustomer(customer.value)}
             >
-              <Link to={`${customer.value}`}>
+              <Link to={`/customer/${customer.json.cust_id}`}>
                 <div>
-                  <b>{customer.json.customer_name}</b>
+                  <b>{customer.value}</b>
                   <br />
                   <small className="pull-left">
                     Customer Type: {customer.data.cust_type_name}
@@ -73,11 +83,12 @@ export default function CustomerSearchBox() {
               </Link>
             </div>
           ))}
-        {query !== "" && filteredItems.length === 0 && (
-          <div className="porduct-list">
+        {!loading && query !== "" && filteredItems.length === 0 && (
+          <div className="product-list"> {/* Corrected the class name here */}
             No customers found matching the search query.
           </div>
         )}
+        {/* {error && <div>Error: {error}</div>} */}
       </div>
     </div>
   );

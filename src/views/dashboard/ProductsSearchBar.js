@@ -2,13 +2,11 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
-import { useCart } from "./useCart"; // Import the custom hook
 
-const ProductsSearchBar = () => {
+const ProductsSearchBar = ({ addToCart }) => {
   const [query, setQuery] = useState("");
   const [allItems, setAllItems] = useState([]);
   const [productSearch, setProductSearch] = useState([]);
-  const { addToCart } = useCart(); // Use the custom hook
 
   useEffect(() => {
     // Fetch and set the JSON data to allItems state (if needed)
@@ -53,6 +51,7 @@ const ProductsSearchBar = () => {
             }}
           />
         </CInputGroup>
+        
         <div className="product-list-abslute">
           {query !== "" &&
             filteredItems.map((product) => (
@@ -85,3 +84,5 @@ const ProductsSearchBar = () => {
 };
 
 export default ProductsSearchBar;
+
+
