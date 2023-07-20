@@ -476,8 +476,8 @@ a {
 	color: $color_3 !important;
 }
 .total-price {
-	font-size: 14px;
-	font-weight: 400;
+	font-size: 20px;
+	font-weight: 700;
 	color: $color_4 !important;
 	margin: 0px;
 	color: $color_3;
@@ -704,6 +704,13 @@ thead {
 	background-color: $background-color_10 !important;
 	padding: 30px 8px;
 }
+// .incree-decreement{
+
+// }
+
+
+
+
 @media (min-width: 1400px) {
 	.container {
 		max-width: 1550px !important;

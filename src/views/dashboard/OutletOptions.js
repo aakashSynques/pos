@@ -15,25 +15,9 @@ const OutletOptions = ({ outletName} ) => {
   return (
     <>
       <div className="outlet-btn">
-        {/* <CButton className="gray-outlet">
-          <b>OUTLET</b> <br />
-          <p className="" style={{ color: "green" }}>
-          {outletName}
-          </p>
-        </CButton> */}
         <AssignOutLet />
-
-
-        <CButton className="gray-outlet">
-          <b>Dilivery Mode</b> <br />
-          <p className="" style={{ color: "green" }}>
-            10 No. Market
-          </p>
-        </CButton>
+        
         <br /> <br />
-
-
-
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>New Sale</b>
           <p></p>

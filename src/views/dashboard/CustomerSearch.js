@@ -8,17 +8,17 @@ import { useSelector } from "react-redux";
 
 
 const CustomerSearch = () => {
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const cartItems = useSelector((state) => state.cart.cartItems); // cart list
 
   return (
     <>
       <div className="custormer-search p-1" style={{ background: "white" }}>
         {/* customer search box */}
         <CustomerSearchBox />
-        
-        <CartSection cartItems={cartItems} />
+        {/* cart list */}
+        <CartSection cartItems={cartItems} /> 
     
-        <div className="select-table">
+        {/* <div className="select-table">
           <CContainer>
             <CRow>
               <CCol sm={3} className="font-size">
@@ -36,10 +36,11 @@ const CustomerSearch = () => {
               </CCol>
             </CRow>
           </CContainer>
-        </div>
+        </div> */}
 
         {/* pricing table */}
-        <div className="bil-table">
+        {/* <hr />
+        <div className="bil-table mt-3"> 
           <CContainer>
             <CRow>
               <CCol sm={6} className="font-size">
@@ -97,7 +98,7 @@ const CustomerSearch = () => {
               </CCol>
             </CRow>
           </CContainer>
-        </div>
+        </div> */}
       </div>
     </>
   );
