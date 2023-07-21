@@ -1,5 +1,5 @@
 // actions.js
-import { ADD_TO_CART, REMOVE_FROM_CART } from "./actionTypes";
+import { ADD_TO_CART, REMOVE_FROM_CART, SET_SELECTED_OUTLET_ID } from "./actionTypes";
 
 export const addToCart = (product) => ({
   type: ADD_TO_CART,
@@ -33,3 +33,14 @@ export const setUser = (user) => ({
 export const logoutUser = () => ({
   type: "LOGOUT_USER",
 });
+
+
+// select outlet
+
+
+export const setSelectedOutletId = (outletId) => {
+  return {
+    type: "SET_SELECTED_OUTLET_ID",
+    payload: outletId,
+  };
+};

@@ -11,12 +11,11 @@ import {
 import React from "react";
 import AssignOutLet from "./AssignOutLet";
 
-const OutletOptions = ({ outletName} ) => {
+const OutletOptions = ({ outletName }) => {
   return (
     <>
       <div className="outlet-btn">
         <AssignOutLet />
-        
         <br /> <br />
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>New Sale</b>

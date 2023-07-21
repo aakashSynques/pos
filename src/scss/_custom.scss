@@ -751,3 +751,13 @@ thead {
 		--bs-modal-width: 1480px !important;
 	}
 }
+@media (min-width: 992px){
+.container, .container-lg, .container-md, .container-sm {
+	max-width: 1550px !important;
+}}
+.adjest{
+    position: absolute;
+    left: 45px;
+    width: 622px;
+    top: 115px;
+}
