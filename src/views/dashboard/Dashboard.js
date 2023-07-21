@@ -3,7 +3,7 @@ import { CCol, CContainer, CRow } from "@coreui/react";
 import InvoicesListBox from "./InvoicesListBox";
 import CustomerSearch from "./CustomerSearch";
 import OutletOptions from "./OutletOptions";
-import OutletSelectionModal from "./OutletSelectionModal";
+// import OutletSelectionModal from "./OutletSelectionModal";
 import SelectOutlets from "./SelectOutlets";
 import { useLocation } from "react-router-dom";
 const Dashboard = () => {
@@ -285,7 +285,6 @@ const Dashboard = () => {
         </CCol>
       </CRow> */}
       <SelectOutlets />
-     
       <CContainer>
         <CRow>
           <CCol sm={5} className="p-0">
