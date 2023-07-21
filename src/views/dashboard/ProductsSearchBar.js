@@ -44,7 +44,6 @@ const ProductsSearchBar = ({ selectedOutlet, outletList }) => {
 
 
   const getPriceForOutlet = (product) => {
-    console.log(outletId);
     // Use the selectedOutlet data to get the correct price
     if (selectedOutlet && selectedOutlet.outlet_id) {
       const outletId = selectedOutlet.outlet_id;
