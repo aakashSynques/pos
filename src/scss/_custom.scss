@@ -761,3 +761,28 @@ thead {
     width: 622px;
     top: 115px;
 }
+.toppings-btn button{
+    padding: 1px 5px;
+    font-size: 7px;
+    line-height: 8px;
+    border-radius: 3px;
+    background: none;
+    color: black;
+    margin: 0 1px;
+    border: 1px solid gray;
+}
+.toppings-btn-style label{
+    width: 32%;
+    border: 1px solid #efefef;
+    line-height: 27px;
+    padding: 0px 0 0 8px;
+    border-radius: 3px;
+    margin: 2px;
+	font-size: 11px;
+    background: #fbfbfb;
+    text-transform: uppercase;
+}
+.toppings-btn-style label button{
+	background: #ededed;
+	font-size: 11px;
+}

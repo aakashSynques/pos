@@ -1,25 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { CButton, CModal, CModalBody, CModalHeader, CModalTitle } from "@coreui/react";
+import {
+  CButton,
+  CModal,
+  CModalBody,
+  CModalHeader,
+  CModalTitle,
+} from "@coreui/react";
 import { fetch } from "../../utils";
 import { connect } from "react-redux";
-import { setOutletList, setDeliveryList, setSelectedOutletId  } from "../../action/actions"; // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
-
-import ProductsSearchBar from "./ProductsSearchBar";
-const AssignOutLet = ({ outletList, deliveryList, setOutletList, setDeliveryList, setSelectedOutletId  }) => {
+import {
+  setOutletList,
+  setDeliveryList,
+  setSelectedOutletId,
+} from "../../action/actions"; // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
+// import ProductsSearchBar from "./ProductsSearchBar";
+const AssignOutLet = ({setSelectedOutletId}) => {
   const [outletmodel, setOutletmodel] = useState(false);
   const [selectedOutlet, setSelectedOutlet] = useState(null);
   const [outletListdata, setOutletListdata] = useState([]);
-
   const handleSelectOutlet = (outlet) => {
     setSelectedOutlet(outlet);
     setOutletmodel(false);
     setSelectedOutletId(outlet.outlet_id); // Dispatch the action to set the selected outlet_id in the Redux store
   };
+  
   const getOutletListdata = async () => {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await fetch("/api/outlets/assigned", "get", null, headers);
+      const response = await fetch(
+        "/api/outlets/assigned",
+        "get",
+        null,
+        headers
+      );
       setOutletListdata(response.data.allAssignedOutlets);
     } catch (err) {
       console.log(err);
@@ -41,7 +55,12 @@ const AssignOutLet = ({ outletList, deliveryList, setOutletList, setDeliveryList
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await fetch("/api/outlets/config-data", "get", null, headers);
+      const response = await fetch(
+        "/api/outlets/config-data",
+        "get",
+        null,
+        headers
+      );
       setDeliveryListdata(response.data.delivery_heads);
     } catch (err) {
       console.log(err);
@@ -54,44 +73,54 @@ const AssignOutLet = ({ outletList, deliveryList, setOutletList, setDeliveryList
 
   return (
     <>
-      <CButton className="gray-outlet" onClick={() => setOutletmodel(!outletmodel)}>
+      <CButton
+        className="gray-outlet"
+        onClick={() => setOutletmodel(!outletmodel)}
+      >
         <b>OUTLET</b> <br />
         {selectedOutlet && (
           <div>
             <p>{selectedOutlet.outlet_name}</p>
           </div>
-        )}        
+        )}
       </CButton>
-      <CModal size="sm" visible={outletmodel} className="outletmodelform" backdrop="static">
+      <CModal
+        size="sm"
+        visible={outletmodel}
+        className="outletmodelform"
+        backdrop="static"
+      >
         <CModalHeader>
           <CModalTitle>BNS - Outlets</CModalTitle>
         </CModalHeader>
         <CModalBody>
           {outletListdata.map((outlet) => (
-              <CButton
-                className="btn btn-block location-btn w-100"
-                key={outlet.outlet_id}
+            <CButton
+              className="btn btn-block location-btn w-100"
+              key={outlet.outlet_id}
               onClick={() => handleSelectOutlet(outlet)}
               data-id={outlet.outlet_id}
-              >
-                <div>
-                  <h3 className="mb-0">{outlet.outlet_name}</h3>
-                  <p className="mb-0">{outlet.outlet_address}</p>
-                  <p className="mb-0">{outlet.outlet_contact_no}</p>
-                </div>
-              </CButton>
-            ))}
+            >
+              <div>
+                <h3 className="mb-0">{outlet.outlet_name}</h3>
+                <p className="mb-0">{outlet.outlet_address}</p>
+                <p className="mb-0">{outlet.outlet_contact_no}</p>
+              </div>
+            </CButton>
+          ))}
         </CModalBody>
-      </CModal>      
+      </CModal>
       {/* Delivery model */}
-<div className="adjest">
-      <ProductsSearchBar selectedOutlet={selectedOutlet}  />
-      </div>
+      {/* <div className="adjest">
+        <ProductsSearchBar selectedOutlet={selectedOutlet} />
+      </div> */}
 
       {/* <ProductsSearchBar /> */}
 
-      
-      <CButton className="gray-outlet" onClick={() => setDeliverymodel(!deliverymodel)}>
+      <CButton
+        className="gray-outlet"
+        onClick={() => setDeliverymodel(!deliverymodel)}
+      >
         <b>DELIVERY</b> <br />
         {selectedDelivery && (
           <div>
@@ -100,7 +129,12 @@ const AssignOutLet = ({ outletList, deliveryList, setOutletList, setDeliveryList
         )}
       </CButton>
 
-      <CModal size="sm" visible={deliverymodel} className="outletmodelform" backdrop="static">
+      <CModal
+        size="sm"
+        visible={deliverymodel}
+        className="outletmodelform"
+        backdrop="static"
+      >
         <CModalHeader>
           <CModalTitle>Delivery Mode</CModalTitle>
         </CModalHeader>
@@ -134,8 +168,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignOutLet);
-
-
-
-
-

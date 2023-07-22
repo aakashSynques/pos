@@ -1,4 +1,4 @@
-import { ADD_TO_CART, REMOVE_FROM_CART } from "../action/actionTypes";
+import { ADD_TO_CART, REMOVE_FROM_CART, PDATE_CART_ITEMS } from "../action/actionTypes";
 
 const initialState = {
   sidebarShow: true,
@@ -19,6 +19,14 @@ const cartReducer = (state = initialState, action) => {
           (item) => item.prod_id !== action.payload
         ),
       };
+    
+      case "UPDATE_CART_ITEMS":
+        return {
+          ...state,
+          cartItems: action.payload, // Replace cartItems with the new data
+        };
+    
+    
     default:
       return state;
   }

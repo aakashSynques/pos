@@ -100,8 +100,7 @@ const SelectOutlets = () => {
           )}
         </CModalBody>
       </CModal>
-
-
+      
 
       {/* Second Modal for delivery mode */}
       <CModal
