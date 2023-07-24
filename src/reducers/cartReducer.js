@@ -20,12 +20,7 @@ const cartReducer = (state = initialState, action) => {
         ),
       };
     
-      case "UPDATE_CART_ITEMS":
-        return {
-          ...state,
-          cartItems: action.payload, // Replace cartItems with the new data
-        };
-    
+   
     
     default:
       return state;

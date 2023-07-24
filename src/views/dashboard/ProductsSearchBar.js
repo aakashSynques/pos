@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
 import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector, connect } from "react-redux";
 import { addToCart } from "../../action/actions"; // Import the addToCart action
-
-const ProductsSearchBar = ({ selectedOutlet, outletList }) => {
+const ProductsSearchBar = () => {
   const [query, setQuery] = useState("");
-  // const [allItems, setAllItems] = useState([]);
   const [productSearch, setProductSearch] = useState([]);
   const dispatch = useDispatch(); // Use the useDispatch hook from React-Redux
-
-  // useEffect(() => {
-  //   // Fetch and set the JSON data to allItems state (if needed)
-  //   setAllItems(); // Set the JSON data to allItems state
-  // }, []);
+  const selectedOutletId = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+  // console.log(selectedOutletId)
 
   const getProductSearch = async () => {
     try {
@@ -22,10 +18,9 @@ const ProductsSearchBar = ({ selectedOutlet, outletList }) => {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/products/all", "get", null, headers);
       setProductSearch(response.data.prodAllList);
-      console.log(response.data.prodAllList);
-
     } catch (err) {
       console.log(err);
+    } finally {
     }
   };
 
@@ -33,33 +28,55 @@ const ProductsSearchBar = ({ selectedOutlet, outletList }) => {
     getProductSearch();
   }, []);
 
+  // product search state
   const filteredItems = useMemo(() => {
+    // const outletId = selectedOutletId.toString();
+    const outletId = selectedOutletId;
+    // console.log(selectedOutletId)
+    console.log(outletId);
     if (query === "") return productSearch;
-    return productSearch.filter(
+
+    const filterProduct = [];
+
+    productSearch.map((p) => {
+      if (p.rate_chart?.[Number(selectedOutletId)]?.[0]?.prod_rate > 0) {
+        filterProduct.push(p);
+      }
+    });
+
+    const filterSearchProduct = filterProduct.filter(
       (product) =>
-        product.prod_name.toLowerCase().search(query.toLowerCase()) !== -1
+        product.prod_name.toLowerCase().search(query.toLowerCase()) !== -1 ||
+        product.prod_code.toLowerCase().search(query.toLowerCase()) !== -1
     );
-  }, [query, productSearch]);
+
+    console.log(outletId);
+    console.log("filterSearchProduct", filterSearchProduct);
+    return filterProduct;
+  }, [query]);
+
+  //&& product.rate_chart[outletId] &&  product.rate_chart[outletId][0].prod_rate > 0
 
   const getPriceForOutlet = (product) => {
-    if (selectedOutlet && selectedOutlet.outlet_id) {
-      const outletId = selectedOutlet.outlet_id.toString(); // Ensure outlet_id is converted to a string
-      // Check if the selected outlet's ID is present in the product's rate chart
-      console.log(selectedOutlet.outlet_id)
-      if (
-        product.rate_chart &&
-        product.rate_chart[outletId] &&
-        product.rate_chart[outletId][0] &&
-        product.rate_chart[outletId][0].prod_rate
-      ) {
-        return product.rate_chart[outletId][0].prod_rate;
+    const outletId = selectedOutletId.toString();
+
+    if (product.rate_chart && product.rate_chart[outletId]) {
+      const rateForOutlet = product.rate_chart[outletId][0];
+      if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
+        return rateForOutlet.prod_rate;
       }
     }
-    // If no selected outlet or price not available, fallback to the default price
-    return product.prod_rate;
+
+    return "prod rate";
   };
- 
-  
+
+
+  // Dispatch the addToCart action with the product and its prod_price
+  const handleAddToCart = (product) => {
+    dispatch(addToCart({ ...product, prod_price: getPriceForOutlet(product) }));
+  };
+
+
   return (
     <div>
       <div>
@@ -75,26 +92,31 @@ const ProductsSearchBar = ({ selectedOutlet, outletList }) => {
             }}
           />
         </CInputGroup>
-
-        {/* <ProductsSearchBar selectedOutlet={selectedOutlet} /> */}
-
         <div className="product-list-abslute">
           {query !== "" &&
             filteredItems.map((product) => (
               <div key={product.prod_id} className="product-list">
-                <span onClick={() => dispatch(addToCart(product))}>
-                  <b>{product.prod_name}</b>
+                <button onClick={() => handleAddToCart(product)}>
+                  
+                  <b className="pull-left">{product.prod_name}</b>
                   <br />
                   <small className="pull-left">
                     Code : {product.prod_code} {product.category_name}
                   </small>
                   <div className="product-price">
                     <i className="fa fa-inr"></i>
+                    {/* {
+                      product &&
+                      product.rate_chart &&
+                      product.rate_chart[Number(selectedOutletId)] &&
+                      product.rate_chart[Number(selectedOutletId)][0] && 
+                      product.rate_chart[Number(selectedOutletId)][0].prod_rate+"a"} */}
+                    {/* {getPriceForOutlet(product)} */}
                     {getPriceForOutlet(product)}
                     {/* Display the price for the selected outlet */}
                   </div>
                   <br />
-                </span>
+                </button>
               </div>
             ))}
 
@@ -110,4 +132,13 @@ const ProductsSearchBar = ({ selectedOutlet, outletList }) => {
   );
 };
 
-export default ProductsSearchBar;
+const mapStateToProps = (state) => ({
+  selectedOutlet: state.outlets.selectedOutletId
+    ? state.outlets.outlets.find(
+        (outlet) => outlet.outlet_id === state.outlets.selectedOutletId
+      )
+    : null,
+  cartItems: state.cart.cartItems,
+});
+// export default connect(mapStateToProps)(ProductsSearchBar);
+export default connect(mapStateToProps)(ProductsSearchBar);

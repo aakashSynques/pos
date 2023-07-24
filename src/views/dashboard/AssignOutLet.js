@@ -8,22 +8,30 @@ import {
 } from "@coreui/react";
 import { fetch } from "../../utils";
 import { connect } from "react-redux";
-import {
-  setOutletList,
-  setDeliveryList,
-  setSelectedOutletId,
-} from "../../action/actions"; // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
+import { setOutletList, setDeliveryList, setSelectedOutletId } from "../../action/actions";
+ // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
 // import ProductsSearchBar from "./ProductsSearchBar";
-const AssignOutLet = ({setSelectedOutletId}) => {
+const AssignOutLet = ({ setSelectedOutletId}) => {
   const [outletmodel, setOutletmodel] = useState(false);
   const [selectedOutlet, setSelectedOutlet] = useState(null);
   const [outletListdata, setOutletListdata] = useState([]);
+  // const [selectedOutletId, setSelectedOutletId] = useState(null); // Add selectedOutletId state variable
+
   const handleSelectOutlet = (outlet) => {
     setSelectedOutlet(outlet);
     setOutletmodel(false);
+    setSelectedOutletId(outlet.outlet_id); // Set the selected outlet_id in the local state
     setSelectedOutletId(outlet.outlet_id); // Dispatch the action to set the selected outlet_id in the Redux store
   };
+  // const mapStateToProps = (state) => ({
+  //   outlets: state.outlets.outlets || [], // Set default value as an empty array
+  // });
   
+  // const mapDispatchToProps = {
+  //   setSelectedOutletId, // Include the action creator in mapDispatchToProps
+  // };
+
+
   const getOutletListdata = async () => {
     try {
       const token = localStorage.getItem("pos_token");
@@ -42,7 +50,11 @@ const AssignOutLet = ({setSelectedOutletId}) => {
   useEffect(() => {
     getOutletListdata();
   }, []);
+
+
   // delivery data
+
+  
   const [deliverymodel, setDeliverymodel] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [deliveryListdata, setDeliveryListdata] = useState([]);
@@ -110,12 +122,10 @@ const AssignOutLet = ({setSelectedOutletId}) => {
           ))}
         </CModalBody>
       </CModal>
-      {/* Delivery model */}
-      {/* <div className="adjest">
-        <ProductsSearchBar selectedOutlet={selectedOutlet} />
-      </div> */}
 
-      {/* <ProductsSearchBar /> */}
+      
+      {/* Delivery model */}
+  
 
       <CButton
         className="gray-outlet"
@@ -164,7 +174,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   setOutletList,
   setDeliveryList,
-  setSelectedOutletId, // Include the action creator in mapDispatchToProps
+  setSelectedOutletId,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignOutLet);
+

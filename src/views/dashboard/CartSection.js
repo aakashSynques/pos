@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart, updateCartItems } from "../../action/actions"; // Import the removeFromCart action
+import { removeFromCart } from "../../action/actions"; // Import the removeFromCart action
 import {
   CFormInput,
   CFormSelect,
@@ -24,6 +24,8 @@ const CartSection = () => {
   // Use a separate state object to store the quantity for each product
   const [productQuantities, setProductQuantities] = useState({});
   const [cartItemsData, setCartItemsData] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
+
 
   // Function to update the quantity for a specific product in the cart
   const updateQuantity = (productId, quantity) => {
@@ -86,18 +88,29 @@ const CartSection = () => {
   useEffect(() => {
     // Call the function to create the cartItemsData and store it in the state
     const data = createCartItemsObject();
-    console.log("productsInCart :", data);
+    console.log("cart :", data);
     // Set the cartItemsData state
     setCartItemsData(data);
   }, [cartItems, productQuantities]);
 
 
-
+ 
   // Function to increment the quantity for a specific product
   const incrementQuantity = (productId) => {
-    const currentQuantity = productQuantities[productId] || 1;
-    updateQuantity(productId, currentQuantity + 1);
+    // Check if the product is already in the cart
+    const currentQuantity = productQuantities[productId] || 0;
+    
+    // If the product is already in the cart, increase the quantity by 1
+    if (currentQuantity > 0) {
+      const updatedQuantity = currentQuantity + 1;
+      updateQuantity(productId, updatedQuantity);
+    } else {
+      // If the product is not in the cart, add it with a quantity of 1
+      updateQuantity(productId, 1);
+    }
   };
+  
+
 
   // Function to decrement the quantity for a specific product
   const decrementQuantity = (productId) => {
@@ -107,12 +120,15 @@ const CartSection = () => {
     }
   };
 
-  // Function to calculate the total amount for a specific product based on its quantity
+
+  
+
   const getTotalAmount = (productId) => {
     const quantity = productQuantities[productId] || 1;
     const item = cartItems.find((item) => item.prod_id === productId);
     if (item) {
-      return item.prod_rate * quantity;
+      // Calculate the total amount based on the selected outlet price and quantity
+      return getPriceForOutlet(item) * quantity;
     }
     return 0;
   };
@@ -135,6 +151,33 @@ const CartSection = () => {
     return totalItems;
   };
 
+// getoutlet price
+  const getPriceForOutlet = (product) => {
+    const outletId = selectedOutletId.toString();
+
+    if (product.rate_chart && product.rate_chart[outletId]) {
+      const rateForOutlet = product.rate_chart[outletId][0];
+      if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
+        return rateForOutlet.prod_rate;
+      }
+    }
+
+    return "prod rate";
+  };
+
+  const selectedOutletId = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+
+  // Update the total amount whenever the product quantities change
+  useEffect(() => {
+    let total = 0;
+    cartItems.forEach((item) => {
+      total += getTotalAmount(item.prod_id);
+    });
+    setTotalAmount(total);
+  }, [cartItems, productQuantities]);
+
 
   return (
     <div className="cartlist">
@@ -153,7 +196,10 @@ const CartSection = () => {
                 <td>
                   <b>{item.prod_name}</b> <br />
                   <small>
-                    {item.category_name} | {item.prod_rate}
+                    {/* {item.category_name} |
+                    {getPriceForOutlet(item)} */}
+                    {item.category_name} | {getPriceForOutlet(item)}
+                    
                   </small>
                   <div className="toppings-btn">
                     <CButton>Note</CButton>
@@ -165,25 +211,18 @@ const CartSection = () => {
                 </td>
 
                 <td className="incree-decreement">
-                  {/* Use the productQuantities object to get the quantity for each product */}
-                  <span
-                    className="btn p-1"
-                    onClick={() => decrementQuantity(item.prod_id)}
-                  >
-                    -
-                  </span>
-                  &nbsp; {productQuantities[item.prod_id] || 1} &nbsp;
-                  <span
-                    className="btn p-1"
-                    onClick={() => incrementQuantity(item.prod_id)}
-                  >
-                    +
-                  </span>
-                </td>
+              {/* Use the incrementQuantity and decrementQuantity functions to update the quantity */}
+              <span className="btn p-1" onClick={() => decrementQuantity(item.prod_id)}>
+                -
+              </span>
+              &nbsp; {productQuantities[item.prod_id] || 1} &nbsp;
+              <span className="btn p-1" onClick={() => incrementQuantity(item.prod_id)}>
+                +
+              </span>
+            </td>
 
                 <td>
                   <i className="fa fa-inr"></i>
-                  {/* {item.prod_rate}  */}
                   {getTotalAmount(item.prod_id)}
 
                   {/* item remove button */}

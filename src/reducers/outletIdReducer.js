@@ -1,6 +1,6 @@
 // outletIdReducer.js
 const initialState = {
-  selectedOutletId: null,
+  selectedOutletId: 0,
 };
 
 const outletIdReducer = (state = initialState, action) => {
