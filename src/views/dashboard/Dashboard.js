@@ -10,7 +10,7 @@ const Dashboard = () => {
  
   return (
     <div className="bg-light-1">
-      <SelectOutlets />
+      {/* <SelectOutlets /> */}
       <CContainer>
         <CRow>
           <CCol sm={5} className="p-0">

@@ -8,34 +8,46 @@ import {
 } from "@coreui/react";
 import { fetch } from "../../utils";
 import { connect } from "react-redux";
-import { setOutletList, setDeliveryList, setSelectedOutletId } from "../../action/actions";
- // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
-// import ProductsSearchBar from "./ProductsSearchBar";
-const AssignOutLet = ({ setSelectedOutletId}) => {
-  const [outletmodel, setOutletmodel] = useState(false);
+import {
+  setOutletList,
+  setDeliveryList,
+  setSelectedOutletId,
+} from "../../action/actions";
+import { BallTriangle } from "react-loader-spinner";
+import { ToastContainer, toast } from "react-toastify";
+
+// Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
+const AssignOutLet = ({ setSelectedOutletId }) => {
+  const [loading, setLoading] = useState(true);
+  const [outletmodel, setOutletmodel] = useState(true);
   const [selectedOutlet, setSelectedOutlet] = useState(null);
   const [outletListdata, setOutletListdata] = useState([]);
-  // const [selectedOutletId, setSelectedOutletId] = useState(null); // Add selectedOutletId state variable
+  const [networkError, setNetworkError] = useState(false);
+  // Function to toggle the outlet modal visibility and fetch data if not already fetched
+  const toggleOutletModal = () => {
+    // console.log("Toggling outletmodel");
+    setOutletmodel((prevState) => !prevState);
+  };
 
   const handleSelectOutlet = (outlet) => {
     setSelectedOutlet(outlet);
-    setOutletmodel(false);
-    setSelectedOutletId(outlet.outlet_id); // Set the selected outlet_id in the local state
+    toggleOutletModal();
     setSelectedOutletId(outlet.outlet_id); // Dispatch the action to set the selected outlet_id in the Redux store
+    toast.success(`Outlet selected:  ${outlet.outlet_name}`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
-  // const mapStateToProps = (state) => ({
-  //   outlets: state.outlets.outlets || [], // Set default value as an empty array
-  // });
-  
-  // const mapDispatchToProps = {
-  //   setSelectedOutletId, // Include the action creator in mapDispatchToProps
-  // };
-
-
   const getOutletListdata = async () => {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
+      setLoading(true);
       const response = await fetch(
         "/api/outlets/assigned",
         "get",
@@ -43,26 +55,31 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
         headers
       );
       setOutletListdata(response.data.allAssignedOutlets);
+      setLoading(false);
+      setNetworkError(false); // Reset networkError state if the request succeeds
     } catch (err) {
       console.log(err);
+      setLoading(false);
+      setNetworkError(true); // Set networkError state to true if there is a network error
     }
   };
   useEffect(() => {
     getOutletListdata();
-  }, []);
+  }, [outletmodel]);
+
+
 
 
   // delivery data
-
-  
   const [deliverymodel, setDeliverymodel] = useState(false);
   const [selectedDelivery, setSelectedDelivery] = useState(null);
   const [deliveryListdata, setDeliveryListdata] = useState([]);
-  const handleSelectDelivery = (delivery) => {
-    setSelectedDelivery(delivery);
-    setDeliverymodel(false);
-  };
+  const [selectedDeliveryMode, setSelectedDeliveryMode] = useState(""); // Step 1: State for selected delivery mode
 
+  // const handleSelectDelivery = (delivery) => {
+  //   setSelectedDelivery(delivery);
+  //   setDeliverymodel(false);
+  // };
   const getDeliveryListdata = async () => {
     try {
       const token = localStorage.getItem("pos_token");
@@ -73,26 +90,47 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
         null,
         headers
       );
-      setDeliveryListdata(response.data.delivery_heads);
+      setDeliveryListdata(response.data.delivery_heads.slice(1));
+      // console.log(response.data.delivery_heads)
+      console.log(response.data.delivery_heads.shift());
     } catch (err) {
       console.log(err);
     }
   };
-
   useEffect(() => {
     getDeliveryListdata();
   }, []);
 
+
+  const handleSelectDelivery = (delivery) => {
+    //selected delivery mode in the state
+    setSelectedDeliveryMode(delivery);
+    setDeliverymodel(false); // Close the modal after selecting
+    toast.success(`Delivery Mode:  ${selectedDeliveryMode}`, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+    console.log(selectedDeliveryMode)
+  };
+
   return (
     <>
+      {/* oulet model */}
+
       <CButton
         className="gray-outlet"
-        onClick={() => setOutletmodel(!outletmodel)}
+        // onClick={() => setOutletmodel(!outletmodel)}
+        onClick={toggleOutletModal}
       >
         <b>OUTLET</b> <br />
         {selectedOutlet && (
           <div>
-            <p>{selectedOutlet.outlet_name}</p>
+            <p className='font-size' style={{"color": "#09a30e"}}>{selectedOutlet.outlet_name}</p>
           </div>
         )}
       </CButton>
@@ -106,35 +144,45 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
           <CModalTitle>BNS - Outlets</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {outletListdata.map((outlet) => (
-            <CButton
-              className="btn btn-block location-btn w-100"
-              key={outlet.outlet_id}
-              onClick={() => handleSelectOutlet(outlet)}
-              data-id={outlet.outlet_id}
-            >
-              <div>
-                <h3 className="mb-0">{outlet.outlet_name}</h3>
-                <p className="mb-0">{outlet.outlet_address}</p>
-                <p className="mb-0">{outlet.outlet_contact_no}</p>
-              </div>
-            </CButton>
-          ))}
+          {loading ? (
+            <div className="loader-container">
+              <BallTriangle color="#00BFFF" height={80} width={80} />
+            </div>
+          ) : networkError ? (
+            <div className="error-message text-danger">
+              <b>Network Error: Unable to fetch data.</b>
+            </div>
+          ) : (
+            outletListdata.map((outlet) => (
+              <CButton
+               className={`btn btn-block location-btn w-100 ${selectedOutlet?.outlet_id === outlet.outlet_id ? "selected-outlet" : ""}`}
+                key={outlet.outlet_id}
+                onClick={() => handleSelectOutlet(outlet)}
+                data-id={outlet.outlet_id}
+              >
+                <div>
+                  <h3 className="mb-0">{outlet.outlet_name}</h3>
+                  <p className="mb-0">{outlet.outlet_address}</p>
+                  <p className="mb-0">{outlet.outlet_contact_no}</p>
+                </div>
+              </CButton>
+            ))
+          )}
         </CModalBody>
       </CModal>
 
       
-      {/* Delivery model */}
-  
 
+{/* ---------------------------------------- Delivery Mode ---------------------------------- */}
+      {/* Delivery model */}
       <CButton
         className="gray-outlet"
         onClick={() => setDeliverymodel(!deliverymodel)}
       >
         <b>DELIVERY</b> <br />
-        {selectedDelivery && (
+        {selectedDeliveryMode && (
           <div>
-            <p>{selectedDelivery.delivery_heads}</p>
+            <p style={{"color": "#09a30e"}}>{selectedDeliveryMode}</p>
           </div>
         )}
       </CButton>
@@ -152,7 +200,9 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
           {Array.isArray(deliveryListdata) &&
             deliveryListdata.map((delivery) => (
               <CButton
-                className="btn btn-block location-btn w-100"
+                // className="btn btn-block location-btn w-100"
+                className={`btn btn-block location-btn w-100 ${selectedDeliveryMode === delivery ? "selected-outlet" : ""}`}
+
                 key={delivery}
                 onClick={() => handleSelectDelivery(delivery)}
               >
@@ -178,4 +228,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssignOutLet);
-

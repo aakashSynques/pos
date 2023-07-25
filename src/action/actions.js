@@ -45,6 +45,14 @@ export const setSelectedOutletId = (outletId) => {
   };
 };
 
+// select delivery mode
+export const setSelectedDeliveryMode = (deliveryMode) => ({
+  type: "SET_SELECTED_DELIVERY_MODE",
+  payload: deliveryMode,
+});
+
+
+
 
 export const updateCartItems = (newCartItems) => {
   return {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart } from "../../action/actions"; // Import the removeFromCart action
+import { ToastContainer, toast } from "react-toastify";
 import {
   CFormInput,
   CFormSelect,
@@ -25,7 +26,6 @@ const CartSection = () => {
   const [productQuantities, setProductQuantities] = useState({});
   const [cartItemsData, setCartItemsData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
-
 
   // Function to update the quantity for a specific product in the cart
   const updateQuantity = (productId, quantity) => {
@@ -81,36 +81,43 @@ const CartSection = () => {
       urno: item.urno,
       associated_prod_urno: item.associated_prod_urno,
       toppings: item.toppings,
-      customized: item.customized
+      customized: item.customized,
     }));
     return cartItemsData;
   };
+
   useEffect(() => {
     // Call the function to create the cartItemsData and store it in the state
     const data = createCartItemsObject();
-    console.log("cart :", data);
+    console.log("cart:",data);
     // Set the cartItemsData state
     setCartItemsData(data);
   }, [cartItems, productQuantities]);
 
-
- 
-  // Function to increment the quantity for a specific product
-  const incrementQuantity = (productId) => {
-    // Check if the product is already in the cart
-    const currentQuantity = productQuantities[productId] || 0;
-    
-    // If the product is already in the cart, increase the quantity by 1
-    if (currentQuantity > 0) {
-      const updatedQuantity = currentQuantity + 1;
-      updateQuantity(productId, updatedQuantity);
-    } else {
-      // If the product is not in the cart, add it with a quantity of 1
-      updateQuantity(productId, 1);
-    }
-  };
-  
-
+// Function to increment the quantity for a specific product
+const incrementQuantity = (productId) => {
+  // Check if the product is already in the cart
+  const currentQuantity = productQuantities[productId] || 0;
+  // If the product is already in the cart, increase the quantity by 1
+  if (currentQuantity > 0) {
+    const updatedQuantity = currentQuantity + 1;
+    updateQuantity(productId, updatedQuantity);
+  } else {
+    // If the product is not in the cart, add it with a quantity of 1
+    const newQuantity = 1;
+    updateQuantity(productId, newQuantity);
+  }
+  // Show success notification using react-toastify
+  toast.success("Product Quantity", {
+    position: "top-right",
+    autoClose: 1000, // Auto close the notification after 1 second
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+  });
+};
 
   // Function to decrement the quantity for a specific product
   const decrementQuantity = (productId) => {
@@ -118,10 +125,17 @@ const CartSection = () => {
     if (currentQuantity > 1) {
       updateQuantity(productId, currentQuantity - 1);
     }
+    toast.success("Product Quantity", {
+      position: "top-right",
+      autoClose: 1000, // Auto close the notification after 8 seconds
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
   };
 
-
-  
 
   const getTotalAmount = (productId) => {
     const quantity = productQuantities[productId] || 1;
@@ -133,6 +147,8 @@ const CartSection = () => {
     return 0;
   };
 
+  
+
   // count sub total total ammout product
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -141,6 +157,32 @@ const CartSection = () => {
     });
     return subTotal;
   };
+
+  
+// calculate SGST rate
+const calculateSGST = () => {
+  const subtotalAmount = getSubTotalAmount();
+  const sgstRate = 2.5; // SGST rate (2.5%)
+  const sgstAmount = (Math.round(subtotalAmount * sgstRate)) / 100;
+  return sgstAmount;
+};
+
+// calculate SGST rate
+const calculateCGST = () => {
+  const subtotalAmount = getSubTotalAmount();
+  const cgstRate = 2.5; // SGST rate (2.5%)
+  const cgstAmount = (Math.round(subtotalAmount * cgstRate)) / 100;
+  return cgstAmount;
+  };
+  
+ // Calculate the final amount
+ const calculateFinalAmount = () => {
+  const subtotal = getSubTotalAmount();
+  const sgst = calculateSGST();
+   const cgst = calculateCGST();
+   const finalammount = (subtotal + sgst + cgst)
+  return finalammount;
+};
 
   // Function to get the total number of items in the cart
   const getTotalItems = () => {
@@ -151,23 +193,22 @@ const CartSection = () => {
     return totalItems;
   };
 
-// getoutlet price
+  // getoutlet price
   const getPriceForOutlet = (product) => {
     const outletId = selectedOutletId.toString();
-
     if (product.rate_chart && product.rate_chart[outletId]) {
       const rateForOutlet = product.rate_chart[outletId][0];
       if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
         return rateForOutlet.prod_rate;
       }
     }
-
     return "prod rate";
   };
 
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
+  // console.log(selectedOutletId)
 
   // Update the total amount whenever the product quantities change
   useEffect(() => {
@@ -178,6 +219,30 @@ const CartSection = () => {
     setTotalAmount(total);
   }, [cartItems, productQuantities]);
 
+  // Function to handle the removal of an item from the cart
+  const handleRemoveFromCart = (productId) => {
+    // Find the item to get its name
+    const item = cartItems.find((item) => item.prod_id === productId);
+    if (item) {
+      // Dispatch the removeFromCart action to remove the item from the cart
+      dispatch(removeFromCart(productId));
+      // Show success notification using react-toastify
+      toast.warning(`${item.prod_name} - Item removed from the cart!`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+
+    // const selectedDeliveryMode = useSelector(
+    //   (state) => state.delivery.selectedDeliveryMode
+    // );
+
+  };
 
   return (
     <div className="cartlist">
@@ -198,8 +263,7 @@ const CartSection = () => {
                   <small>
                     {/* {item.category_name} |
                     {getPriceForOutlet(item)} */}
-                    {item.category_name} | {getPriceForOutlet(item)}
-                    
+                    {item.category_name} | @{getPriceForOutlet(item)}
                   </small>
                   <div className="toppings-btn">
                     <CButton>Note</CButton>
@@ -211,24 +275,30 @@ const CartSection = () => {
                 </td>
 
                 <td className="incree-decreement">
-              {/* Use the incrementQuantity and decrementQuantity functions to update the quantity */}
-              <span className="btn p-1" onClick={() => decrementQuantity(item.prod_id)}>
-                -
-              </span>
-              &nbsp; {productQuantities[item.prod_id] || 1} &nbsp;
-              <span className="btn p-1" onClick={() => incrementQuantity(item.prod_id)}>
-                +
-              </span>
-            </td>
+                  {/* Use the incrementQuantity and decrementQuantity functions to update the quantity */}
+                  <span
+                    className="btn p-1"
+                    onClick={() => decrementQuantity(item.prod_id)}
+                  >
+                    -
+                  </span>
+                  &nbsp; {productQuantities[item.prod_id] || 1} &nbsp;
+                  <span
+                    className="btn p-1"
+                    onClick={() => incrementQuantity(item.prod_id)}
+                  >
+                    +
+                  </span>
+                </td>
 
-                <td>
+                <td className="pt-3">
                   <i className="fa fa-inr"></i>
                   {getTotalAmount(item.prod_id)}
 
                   {/* item remove button */}
                   <span
                     className="btn btn-danger btn-remove"
-                    onClick={() => dispatch(removeFromCart(item.prod_id))}
+                    onClick={() => handleRemoveFromCart(item.prod_id)}
                   >
                     <i className="fa fa-times"></i>
                   </span>
@@ -271,7 +341,7 @@ const CartSection = () => {
               Tax GST (2.5% SGST)
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              <i className="fa fa-inr"></i> 0.00
+              <i className="fa fa-inr"></i>  {calculateSGST()}
             </CCol>
           </CRow>
           <CRow>
@@ -279,7 +349,7 @@ const CartSection = () => {
               Tax GST (2.5% CGST)
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              <i className="fa fa-inr"></i> 0.00
+              <i className="fa fa-inr"></i> {calculateCGST()}
             </CCol>
           </CRow>
 
@@ -291,7 +361,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
-                <i className="fa fa-inr"></i> {getSubTotalAmount()}
+                <i className="fa fa-inr"></i> {calculateFinalAmount()}
               </h4>
               <small>{getTotalItems()} Item(s) </small>
             </CCol>
@@ -299,10 +369,19 @@ const CartSection = () => {
           <hr style={{ margin: "4px 0" }} />
           <CRow>
             <CCol sm={6} className="font-size">
-              Tax GST (2.5% CGST)
+            Delivery Mode [F2]
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              Rs 0.00
+            {/* <div>
+      {selectedDeliveryMode ? (
+        <div>
+          <h3>Selected Delivery Mode:</h3>
+          <p>{selectedDeliveryMode}</p>
+        </div>
+      ) : (
+        <div>No delivery mode selected.</div>
+      )}
+    </div> */} counter
             </CCol>
           </CRow>
         </CContainer>
@@ -320,38 +399,46 @@ const CartSection = () => {
         </CModalHeader>
         <CModalBody>
           <div className="toppings-btn-style">
-            <label>Mojito Toppings
-              <button className='btn btn-sm pull-right' >
+            <label>
+              Mojito Toppings
+              <button className="btn btn-sm pull-right">
                 <span class="badge">
                   <i class="fa fa-plus"></i>
-                </span>&nbsp;
+                </span>
+                &nbsp;
                 <i class="fa fa-inr"></i>
                 <span class="show_price"> 0.000</span>
               </button>
             </label>
-            <label>Mojito Toppings
+            <label>
+              Mojito Toppings
               <button className="btn btn-sm pull-right">
                 <span class="badge">
                   <i class="fa fa-plus"></i>
-                </span>&nbsp;
+                </span>
+                &nbsp;
                 <i class="fa fa-inr"></i>
                 <span class="show_price"> 0.000</span>
               </button>
             </label>
-            <label>Mojito Toppings
+            <label>
+              Mojito Toppings
               <button className="btn btn-sm pull-right">
                 <span class="badge">
                   <i class="fa fa-plus"></i>
-                </span>&nbsp;
+                </span>
+                &nbsp;
                 <i class="fa fa-inr"></i>
                 <span class="show_price"> 0.000</span>
               </button>
             </label>
-            <label>Mojito Toppings
+            <label>
+              Mojito Toppings
               <button className="btn btn-sm pull-right">
                 <span class="badge">
                   <i class="fa fa-plus"></i>
-                </span>&nbsp;
+                </span>
+                &nbsp;
                 <i class="fa fa-inr"></i>
                 <span class="show_price"> 0.000</span>
               </button>

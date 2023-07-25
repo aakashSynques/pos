@@ -5,13 +5,15 @@ import cartReducer from "./reducers/cartReducer"; // Import the cartReducer
 import outletReducer from "./reducers/outletReducer"; // assign outlet
 import deliveryReducer from "./reducers/deliveryReducer"; // delivery mode
 import outletIdReducer from "./reducers/outletIdReducer";
+// import deliveryReducer from "./reducers/deliveryReducer";
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   outlets: outletReducer,
-  deliveries: deliveryReducer,
+  // deliveries: deliveryReducer,
   selectedOutletId: outletIdReducer, // Use selectedOutletId key for outletIdReducer
   // Add other reducers here if needed
+  delivery: deliveryReducer,   // select deliver mode reducer
 });
 
 const mapStateToProps = (state) => ({

@@ -378,12 +378,12 @@ a {
 	--cui-btn-hover-border-color: #ef7f1a;
 }
 .location-btn {
-	background: white !important;
+	background: white!important;
 	border: 1px solid gray !important;
 	color: $color_1 !important;
 	margin-bottom: 6px;
 	&:hover {
-		background: #f3f3f3 !important;
+		background: #f3f3f3;
 		border: 1px solid gray !important;
 		color: $color_1;
 	}
@@ -500,9 +500,9 @@ a {
 .outlet-btn {
 	button {
 		margin-bottom: 8px;
-		width: 100%;
+		width: 100%; 	
 		font-size: 11px;
-		border: none;
+		border: 1px solid #157d15;
 		background-color: $background-color_2;
 		color: $color_6;
 		&:hover {
@@ -790,3 +790,7 @@ thead {
 	background: #ededed;
 	font-size: 11px;
 }
+.selected-outlet {
+	background-color: #205f23!important; /* Set your desired background color here */
+	color: #ffffff!important; /* Set the text color for better contrast */
+  }
