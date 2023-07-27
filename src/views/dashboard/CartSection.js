@@ -20,20 +20,20 @@ import {
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
-  // console.log(cartItems);
+  console.log(cartItems);
   const [toppingModel, setToppingModel] = useState(false);
   // Use a separate state object to store the quantity for each product
   const [productQuantities, setProductQuantities] = useState({});
   const [cartItemsData, setCartItemsData] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // Function to update the quantity for a specific product in the cart
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantityChange = (productId, quantity) => {
     setProductQuantities((prevQuantities) => ({
       ...prevQuantities,
       [productId]: quantity,
     }));
   };
+
 
   const createCartItemsObject = () => {
     const cartItemsData = cartItems.map((item) => ({
@@ -89,53 +89,11 @@ const CartSection = () => {
   useEffect(() => {
     // Call the function to create the cartItemsData and store it in the state
     const data = createCartItemsObject();
-    console.log("cart:",data);
+    console.log("cart:", data);
+    console.log(cartItemsData);
     // Set the cartItemsData state
     setCartItemsData(data);
   }, [cartItems, productQuantities]);
-
-// Function to increment the quantity for a specific product
-const incrementQuantity = (productId) => {
-  // Check if the product is already in the cart
-  const currentQuantity = productQuantities[productId] || 0;
-  // If the product is already in the cart, increase the quantity by 1
-  if (currentQuantity > 0) {
-    const updatedQuantity = currentQuantity + 1;
-    updateQuantity(productId, updatedQuantity);
-  } else {
-    // If the product is not in the cart, add it with a quantity of 1
-    const newQuantity = 1;
-    updateQuantity(productId, newQuantity);
-  }
-  // Show success notification using react-toastify
-  toast.success("Product Quantity", {
-    position: "top-right",
-    autoClose: 1000, // Auto close the notification after 1 second
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  });
-};
-
-  // Function to decrement the quantity for a specific product
-  const decrementQuantity = (productId) => {
-    const currentQuantity = productQuantities[productId] || 1;
-    if (currentQuantity > 1) {
-      updateQuantity(productId, currentQuantity - 1);
-    }
-    toast.success("Product Quantity", {
-      position: "top-right",
-      autoClose: 1000, // Auto close the notification after 8 seconds
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  };
-
 
   const getTotalAmount = (productId) => {
     const quantity = productQuantities[productId] || 1;
@@ -147,8 +105,6 @@ const incrementQuantity = (productId) => {
     return 0;
   };
 
-  
-
   // count sub total total ammout product
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -158,31 +114,30 @@ const incrementQuantity = (productId) => {
     return subTotal;
   };
 
-  
-// calculate SGST rate
-const calculateSGST = () => {
-  const subtotalAmount = getSubTotalAmount();
-  const sgstRate = 2.5; // SGST rate (2.5%)
-  const sgstAmount = (Math.round(subtotalAmount * sgstRate)) / 100;
-  return sgstAmount;
-};
-
-// calculate SGST rate
-const calculateCGST = () => {
-  const subtotalAmount = getSubTotalAmount();
-  const cgstRate = 2.5; // SGST rate (2.5%)
-  const cgstAmount = (Math.round(subtotalAmount * cgstRate)) / 100;
-  return cgstAmount;
+  // calculate SGST rate
+  const calculateSGST = () => {
+    const subtotalAmount = getSubTotalAmount();
+    const sgstRate = 2.5; // SGST rate (2.5%)
+    const sgstAmount = Math.round(subtotalAmount * sgstRate) / 100;
+    return sgstAmount;
   };
-  
- // Calculate the final amount
- const calculateFinalAmount = () => {
-  const subtotal = getSubTotalAmount();
-  const sgst = calculateSGST();
-   const cgst = calculateCGST();
-   const finalammount = (subtotal + sgst + cgst)
-  return finalammount;
-};
+
+  // calculate SGST rate
+  const calculateCGST = () => {
+    const subtotalAmount = getSubTotalAmount();
+    const cgstRate = 2.5; // SGST rate (2.5%)
+    const cgstAmount = Math.round(subtotalAmount * cgstRate) / 100;
+    return cgstAmount;
+  };
+
+  // Calculate the final amount
+  const calculateFinalAmount = () => {
+    const subtotal = getSubTotalAmount();
+    const sgst = calculateSGST();
+    const cgst = calculateCGST();
+    const finalammount = subtotal + sgst + cgst;
+    return finalammount;
+  };
 
   // Function to get the total number of items in the cart
   const getTotalItems = () => {
@@ -241,11 +196,10 @@ const calculateCGST = () => {
     // const selectedDeliveryMode = useSelector(
     //   (state) => state.delivery.selectedDeliveryMode
     // );
-
   };
 
   return (
-    <div className="cartlist">
+    <div className="cartlist pt-2">
       {cartItems.length > 0 ? (
         <table className="table cart-table mt-3">
           <thead>
@@ -261,8 +215,6 @@ const calculateCGST = () => {
                 <td>
                   <b>{item.prod_name}</b> <br />
                   <small>
-                    {/* {item.category_name} |
-                    {getPriceForOutlet(item)} */}
                     {item.category_name} | @{getPriceForOutlet(item)}
                   </small>
                   <div className="toppings-btn">
@@ -274,21 +226,25 @@ const calculateCGST = () => {
                   </div>
                 </td>
 
-                <td className="incree-decreement">
-                  {/* Use the incrementQuantity and decrementQuantity functions to update the quantity */}
-                  <span
-                    className="btn p-1"
-                    onClick={() => decrementQuantity(item.prod_id)}
-                  >
-                    -
-                  </span>
-                  &nbsp; {productQuantities[item.prod_id] || 1} &nbsp;
-                  <span
-                    className="btn p-1"
-                    onClick={() => incrementQuantity(item.prod_id)}
-                  >
-                    +
-                  </span>
+                <td className="incree-decreement">                
+                  {/* <input
+                    type="text"
+                    className="w-25 text "
+                    value={item.prod_qty}
+                    onChange={(e) =>
+                      updateQuantityChange(item.prod_id, e.target.value)
+                    }
+                  /> */}
+                  <input
+                    type="text"
+                    className="w-25 text "
+                    value={item.prod_qty || 1}
+                    onChange={(e) =>
+                      updateQuantityChange(item.prod_id, e.target.value)
+                    }
+                  />
+
+                  
                 </td>
 
                 <td className="pt-3">
@@ -341,7 +297,7 @@ const calculateCGST = () => {
               Tax GST (2.5% SGST)
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              <i className="fa fa-inr"></i>  {calculateSGST()}
+              <i className="fa fa-inr"></i> {calculateSGST()}
             </CCol>
           </CRow>
           <CRow>
@@ -369,10 +325,10 @@ const calculateCGST = () => {
           <hr style={{ margin: "4px 0" }} />
           <CRow>
             <CCol sm={6} className="font-size">
-            Delivery Mode [F2]
+              Delivery Mode [F2]
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-            {/* <div>
+              {/* <div>
       {selectedDeliveryMode ? (
         <div>
           <h3>Selected Delivery Mode:</h3>
@@ -381,7 +337,8 @@ const calculateCGST = () => {
       ) : (
         <div>No delivery mode selected.</div>
       )}
-    </div> */} counter
+    </div> */}{" "}
+              counter
             </CCol>
           </CRow>
         </CContainer>

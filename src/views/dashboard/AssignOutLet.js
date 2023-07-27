@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
   CButton,
+  CCol,
+  CContainer,
   CModal,
   CModalBody,
   CModalHeader,
   CModalTitle,
+  CRow,
 } from "@coreui/react";
 import { fetch } from "../../utils";
 import { connect } from "react-redux";
@@ -32,16 +35,10 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
   const handleSelectOutlet = (outlet) => {
     setSelectedOutlet(outlet);
     toggleOutletModal();
+   // Show the delivery mode modal after selecting an outlet
+  setDeliverymodel(true);
     setSelectedOutletId(outlet.outlet_id); // Dispatch the action to set the selected outlet_id in the Redux store
-    toast.success(`Outlet selected:  ${outlet.outlet_name}`, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+  
   };
   const getOutletListdata = async () => {
     try {
@@ -67,7 +64,23 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
     getOutletListdata();
   }, [outletmodel]);
 
-
+  // outlet select sortcut key F1
+  useEffect(() => {
+    // Add an event listener to handle the F1 key press
+    const handleKeyPressOutlet = (e) => {
+      if (e.key === "F1") {
+        e.preventDefault(); // Prevent default browser behavior
+        toggleOutletModal();
+      }
+    };
+    // Attach the event listener when the component mounts
+    window.addEventListener("keydown", handleKeyPressOutlet);
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyPressOutlet);
+    };
+  }, []); // Empty dependency array to run the effect only once when the component mounts
+  
 
 
   // delivery data
@@ -101,41 +114,48 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
     getDeliveryListdata();
   }, []);
 
+  useEffect(() => {
+    // Add an event listener to handle the F1 key press
+    const handleKeyPressDelivey = (e) => {
+      if (e.key === "F2") { // <-- Correct the key comparison here
+        e.preventDefault(); // Prevent default browser behavior
+        setDeliverymodel(true); // <-- Correct the function call to open the delivery modal
+      }
+    };
+    // Attach the event listener when the component mounts
+    window.addEventListener("keydown", handleKeyPressDelivey);
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyPressDelivey);
+    };
+  }, []); // Empty dependency array to run the effect only once when the component mounts
+  
+
 
   const handleSelectDelivery = (delivery) => {
     //selected delivery mode in the state
     setSelectedDeliveryMode(delivery);
     setDeliverymodel(false); // Close the modal after selecting
-    toast.success(`Delivery Mode:  ${selectedDeliveryMode}`, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
     console.log(selectedDeliveryMode)
   };
 
   return (
     <>
       {/* oulet model */}
-
       <CButton
         className="gray-outlet"
-        // onClick={() => setOutletmodel(!outletmodel)}
         onClick={toggleOutletModal}
       >
-        <b>OUTLET</b> <br />
+        <b>OUTLET - [F1]</b> <br />
         {selectedOutlet && (
           <div>
-            <p className='font-size' style={{"color": "#09a30e"}}>{selectedOutlet.outlet_name}</p>
+            <p className='font-size' style={{ "color": "#09a30e" }}>
+              {selectedOutlet.outlet_name}</p>
           </div>
         )}
       </CButton>
       <CModal
-        size="sm"
+        size="lg"
         visible={outletmodel}
         className="outletmodelform"
         backdrop="static"
@@ -144,30 +164,36 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
           <CModalTitle>BNS - Outlets</CModalTitle>
         </CModalHeader>
         <CModalBody>
-          {loading ? (
-            <div className="loader-container">
-              <BallTriangle color="#00BFFF" height={80} width={80} />
-            </div>
-          ) : networkError ? (
-            <div className="error-message text-danger">
-              <b>Network Error: Unable to fetch data.</b>
-            </div>
-          ) : (
-            outletListdata.map((outlet) => (
-              <CButton
-               className={`btn btn-block location-btn w-100 ${selectedOutlet?.outlet_id === outlet.outlet_id ? "selected-outlet" : ""}`}
-                key={outlet.outlet_id}
-                onClick={() => handleSelectOutlet(outlet)}
-                data-id={outlet.outlet_id}
-              >
-                <div>
-                  <h3 className="mb-0">{outlet.outlet_name}</h3>
-                  <p className="mb-0">{outlet.outlet_address}</p>
-                  <p className="mb-0">{outlet.outlet_contact_no}</p>
-                </div>
-              </CButton>
-            ))
-          )}
+          <CContainer>
+            <CRow>
+            {loading ? (
+              <div className="loader-container">
+                <BallTriangle color="#00BFFF" height={80} width={80} />
+              </div>
+            ) : networkError ? (
+              <div className="error-message text-danger">
+                <b>Network Error: Unable to fetch data.</b>
+              </div>
+            ) : (
+              outletListdata.map((outlet) => (
+                <CCol sm={6}>  
+                <CButton
+                className={`btn btn-block location-btn w-100 ${selectedOutlet?.outlet_id === outlet.outlet_id ? "selected-outlet" : ""}`}
+                  key={outlet.outlet_id}
+                  onClick={() => handleSelectOutlet(outlet)}
+                  data-id={outlet.outlet_id}
+                >
+                  <div>
+                    <h3 className="mb-0">{outlet.outlet_name}</h3>
+                    <p className="mb-0">{outlet.outlet_address}</p>
+                    <p className="mb-0">{outlet.outlet_contact_no}</p>
+                  </div>
+                </CButton>
+                </CCol>
+              ))
+              )}
+              </CRow>
+            </CContainer>
         </CModalBody>
       </CModal>
 
@@ -179,7 +205,7 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
         className="gray-outlet"
         onClick={() => setDeliverymodel(!deliverymodel)}
       >
-        <b>DELIVERY</b> <br />
+        <b>DELIVERY - [F2]</b> <br />
         {selectedDeliveryMode && (
           <div>
             <p style={{"color": "#09a30e"}}>{selectedDeliveryMode}</p>
@@ -202,7 +228,6 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
               <CButton
                 // className="btn btn-block location-btn w-100"
                 className={`btn btn-block location-btn w-100 ${selectedDeliveryMode === delivery ? "selected-outlet" : ""}`}
-
                 key={delivery}
                 onClick={() => handleSelectDelivery(delivery)}
               >

@@ -13,6 +13,7 @@ import { cilBell } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
 
 import avatar8 from "./../../assets/images/avatars/3.jpg";
+import { useNavigate } from "react-router-dom";
 const AppHeaderDropdown = () => {
   const [user, setUser] = useState(null);
   useEffect(() => {
@@ -22,6 +23,15 @@ const AppHeaderDropdown = () => {
       setUser(JSON.parse(storedUser));
     }
   }, []);
+
+  const navigate = useNavigate();
+
+  const signoutHandler = () => {
+    localStorage.removeItem("pos_token");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
@@ -54,7 +64,7 @@ const AppHeaderDropdown = () => {
           <CIcon icon={cilBell} className="me-2" />
           Change Password
         </CDropdownItem>
-        <CDropdownItem href="/">
+        <CDropdownItem onClick={signoutHandler}>
           <CIcon icon={cilBell} className="me-2" />
           Logout
         </CDropdownItem>

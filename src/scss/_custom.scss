@@ -647,7 +647,6 @@ thead {
 }
 .product-price {
 	position: relative;
-	top: -10px;
 	float: right;
 	margin: 0;
 	line-height: 0;
@@ -663,10 +662,9 @@ thead {
 	z-index: 9;
 	max-height: 400px;
 	overflow-y: scroll;
-	margin-top: 4px;
 }
 .product-list {
-	padding: 3px 16px;
+	padding: 3px 10px;
 	font-size: 12px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -794,3 +792,26 @@ thead {
 	background-color: #205f23!important; /* Set your desired background color here */
 	color: #ffffff!important; /* Set the text color for better contrast */
   }
+  .change-focus input{
+	font-size: 12px!important;
+	border-radius: 0!important;
+	outline: none !important;
+         box-shadow: none!important;
+  }  
+  .change-focus input[type=text]:focus {
+	border: 2px dashed #c93333!important;
+	outline: none !important;       
+  }
+  .prod-sign{
+	margin-right: 5px!important;
+    margin-top: 3px!important;
+  }.cat-head{
+	padding: 2px 5px;
+    color: #ffffff;
+    background: #26B99A;
+    font-weight: bold;
+  }
+
+// input[type=text]:focus{
+// 	outline: none !important;
+// }

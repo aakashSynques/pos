@@ -44,7 +44,7 @@ const Login = () => {
         if (responseData && responseData.token) {
           const token = responseData.token;
           localStorage.setItem("pos_token", token);
-          await verifyToken(token);
+          // await verifyToken(token);
           navigate("/dashboard");
           // Show success notification using react-toastify
           toast.success("Login successful!", {
@@ -63,6 +63,7 @@ const Login = () => {
         setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
+      console.log(err)
       setError("An error occurred. Please try again later.");
       toast.error("Login faild!", {
         position: "top-right",
@@ -76,7 +77,6 @@ const Login = () => {
     } finally {
       setLoading(false); // Set loading to false after the login request is completed
     }
-  
   };
 
   // verify token
@@ -104,18 +104,18 @@ const Login = () => {
     } catch (err) {
       console.log(err);
     }
-      // Display error notification if present
-  // if (error) {
-  //   toast.error(error, {
-  //     position: "top-right",
-  //     autoClose: 3000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //   });
-  // }
+    // Display error notification if present
+    // if (error) {
+    //   toast.error(error, {
+    //     position: "top-right",
+    //     autoClose: 3000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //   });
+    // }
   };
 
   return (
@@ -123,11 +123,10 @@ const Login = () => {
       className="align-items-center login-bg"
       style={{ "margin-top": "10%" }}
     >
-     <ToastContainer /> {/* Keep only one ToastContainer at the root */}
+      <ToastContainer /> {/* Keep only one ToastContainer at the root */}
       <div className="container-fluid">
         <CRow className="justify-content-center">
           <CCol md={4}>
-       
             <CCardGroup>
               <CCard
                 className="p-4"

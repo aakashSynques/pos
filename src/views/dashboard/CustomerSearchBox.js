@@ -1,30 +1,54 @@
+
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
 
-export default function CustomerSearchBox() {
+const CustomerSearchBox = () => {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [customerSearchResults, setCustomerSearchResults] = useState([]);
   const [error, setError] = useState(null);
+  const [cache, setCache] = useState({});
 
   useEffect(() => {
-    getProductSearch();
+    const delayDebounceFn = setTimeout(() => {
+      getProductSearch();
+    }, 100); // Debounce API call by 100ms
+
+    return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
   const getProductSearch = async () => {
+    if (query.trim() === "") {
+      setCustomerSearchResults([]);
+      return;
+    }
+
+    setLoading(true);
+
+    // Check if the results are already cached
+    if (cache[query]) {
+      setCustomerSearchResults(cache[query]);
+      setLoading(false);
+      return;
+    }
+
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
       const body = { query };
-      setLoading(true);
       const response = await fetch("/api/customers/search/POS", "post", body, headers);
+
       setCustomerSearchResults(response.data.suggestions);
-      console.log(response.data)
-      setLoading(false);
+      // Cache the results for the current query
+      setCache((prevCache) => ({
+        ...prevCache,
+        [query]: response.data.suggestions,
+      }));
     } catch (err) {
-      // setError("An error occurred while fetching customer data.");
+      setError("An error occurred while fetching customer data.");
+    } finally {
       setLoading(false);
     }
   };
@@ -33,42 +57,63 @@ export default function CustomerSearchBox() {
     setQuery(customerName);
   };
 
-  const filteredItems = useMemo(() => {
-    if (query === "") return customerSearchResults;
-    // Check if customerSearchResults is an array before filtering
-    if (Array.isArray(customerSearchResults)) {
-      return customerSearchResults.filter(
-        (customer) =>
-          customer.json.customer_name.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-    return []; // Return an empty array if customerSearchResults is not an array
+  const MAX_RESULTS = 50; // Limit the number of search results displayed
+  const displayedItems = useMemo(() => {
+    if (query === "") return customerSearchResults.slice(0, MAX_RESULTS);
+
+    return customerSearchResults.filter(
+      (customer) =>
+        customer.json.customer_name.toLowerCase().includes(query.toLowerCase()) ||
+        customer.json.mobile.toLowerCase().includes(query.toLowerCase())
+    ).slice(0, MAX_RESULTS);
   }, [query, customerSearchResults]);
 
+
+
+
+
+  // useEffect to handle the shortcut key (Shift + P) for focusing on the input element
+  useEffect(() => {
+    const handleShortcutKeyPressCustomer = (event) => {
+      if (event.shiftKey && event.key === "C") {
+        // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
+        event.preventDefault();
+        // Focus on the search bar input element
+        const searchInput = document.getElementById("customer-search-input");
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handleShortcutKeyPressCustomer);
+    return () => {
+      document.removeEventListener("keydown", handleShortcutKeyPressCustomer);
+    };
+  }, []);
+  
   return (
     <div>
-      <CInputGroup>
+      <CInputGroup className="change-focus">
         <CFormInput
+          id="customer-search-input"
           type="text"
-          placeholder="Search Customer Name"
+          placeholder="Search Customer Name [Shift + C]"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{
             fontSize: "12px",
             borderRadius: 0,
           }}
-          
         />
-
       </CInputGroup>
       <div className="product-list-abslute">
         {loading && <div>Loading...</div>}
         {!loading &&
           query !== "" &&
-          filteredItems.map((customer) => (
+          displayedItems.map((customer) => (
             <div
               key={customer.json.cust_id}
-              className="product-list" // Corrected the class name here
+              className="product-list"
               onClick={() => handleSelectCustomer(customer.value)}
             >
               <Link to={`/customer/${customer.json.cust_id}`}>
@@ -83,8 +128,8 @@ export default function CustomerSearchBox() {
               </Link>
             </div>
           ))}
-        {!loading && query !== "" && filteredItems.length === 0 && (
-          <div className="product-list"> {/* Corrected the class name here */}
+        {!loading && query !== "" && displayedItems.length === 0 && (
+          <div className="product-list">
             No customers found matching the search query.
           </div>
         )}
@@ -92,4 +137,7 @@ export default function CustomerSearchBox() {
       </div>
     </div>
   );
-}
+};
+
+export default CustomerSearchBox;
+

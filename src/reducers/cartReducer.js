@@ -10,7 +10,7 @@ const cartReducer = (state = initialState, action) => {
     case ADD_TO_CART:
       return {
         ...state,
-        cartItems: [...state.cartItems, action.payload],
+        cartItems: [...state.cartItems, {...action.payload, }],
       };
     case REMOVE_FROM_CART:
       return {
@@ -19,8 +19,6 @@ const cartReducer = (state = initialState, action) => {
           (item) => item.prod_id !== action.payload
         ),
       };
-    
-   
     
     default:
       return state;
