@@ -29,122 +29,79 @@ const CartSection = () => {
   const [quantity, setQuantity] = useState();
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // Function to update the quantity for a specific product in the cart
-  // const updateQuantityChange = (productId, quantity) => {
-  //   setProductQuantities((prevQuantities) => ({
-  //     ...prevQuantities,
-  //     [productId]: quantity,
-  //   }));
-  // };
-
-  // Function to increment the quantity for a specific product
-  // const incrementQuantity = (productId) => {
-  //   let currentQuantity = productQuantities[productId] || 0;
-
-  //   // Check if the product is already in the cart
-  //   const productInCart = cartItems.find((item) => item.prod_id === productId);
-  //   if (productInCart) {
-  //     // If the product is already in the cart, increase the quantity by 1
-  //     const updatedQuantity = currentQuantity + 1;
-  //     updateQuantity(productId, updatedQuantity);
-  //   } else {
-  //     // If the product is not in the cart, add it with a quantity of 1
-  //     const newQuantity = 1;
-  //     updateQuantity(productId, newQuantity);
-
-  //     // Show success notification using react-toastify
-  //     toast.success("Product added to the cart!", {
-  //       position: "top-right",
-  //       autoClose: 1000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //   }
-  // };
-
-  // Function to decrement the quantity for a specific product
-  // const decrementQuantity = (productId) => {
-  //   const currentQuantity = productQuantities[productId] || 1;
-
-  //   // Check if the current quantity is greater than 1
-  //   if (currentQuantity > 1) {
-  //     // If the quantity is greater than 1, decrement the quantity
-  //     updateQuantity(productId, currentQuantity - 1);
-  //   } else {
-  //     // If the quantity is 1 or less, remove the product from the cart
-  //     handleRemoveFromCart(productId);
-  //   }
-  //   toast.success("Product Quantity", {
-  //     position: "top-right",
-  //     autoClose: 1000, // Auto close the notification after 8 seconds
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //   });
-  // };
-
   
- 
-  
-
-  // getoutlet price
-  const getPriceForOutlet = (product) => {
-    const outletId = selectedOutletId.toString();
-    if (product.rate_chart && product.rate_chart[outletId]) {
-      const rateForOutlet = product.rate_chart[outletId][0];
-      if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
-        return rateForOutlet.prod_rate;
-      }
-    }
-    return "prod rate";
-  };
-
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-  // console.log(selectedOutletId)
-
   
-  // Function to handle the removal of an item from the cart
-  // const handleRemoveFromCart = (productId) => {
-  //   // Find the item to get its name
-  //   const item = cartItems.find((item) => item.prod_id === productId);
-  //   if (item) {
-  //     // Dispatch the removeFromCart action to remove the item from the cart
-  //     dispatch(removeFromCart(productId));
-  //     // Show success notification using react-toastify
-  //     toast.warning(`${item.prod_name} - Item removed from the cart!`, {
-  //       position: "top-right",
-  //       autoClose: 3000,
-  //       hideProgressBar: false,
-  //       closeOnClick: true,
-  //       pauseOnHover: true,
-  //       draggable: true,
-  //       progress: undefined,
-  //     });
-  //   }
 
-  //   // const selectedDeliveryMode = useSelector(
-  //   //   (state) => state.delivery.selectedDeliveryMode
-  //   // );
-  // };
+  // Function to calculate the total amount for each item based on quantity and rate
+  const getTotalAmountForItem = (item) => {
+    const rate = item.prod_rate; // Assuming the rate is available in the product object
+    return  rate;
+  };
 
+  // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
     let subTotal = 0;
     cartItems.forEach((item) => {
-      const quantity = item.prod_qty;
-      const rate = getPriceForOutlet(item);
-      const totalAmount = quantity * rate;
+      const totalAmount = getTotalAmountForItem(item);
       subTotal += totalAmount;
     });
     return subTotal;
   };
-  
+
+
+
+   // Constant variable for SGST rate
+   const SGST_RATE = 0.025;
+
+   // Function to calculate the SGST amount for each item
+   const getSGSTAmountForItem = (item) => {
+     const rate = item.prod_rate; // Assuming the rate is available in the product object
+     return rate * SGST_RATE;
+   };
+ 
+   // Function to get the total SGST amount for all products in the cart
+   const getTotalSGSTAmount = () => {
+     let totalSGST = 0;
+     cartItems.forEach((item) => {
+       const SGSTAmount = getSGSTAmountForItem(item);
+       totalSGST += SGSTAmount;
+     });
+     return totalSGST;
+   };
+
+
+    // Constant variable for CGST rate
+  const CGST_RATE = 0.025;
+
+  // Function to calculate the CGST amount for each item
+  const getCGSTAmountForItem = (item) => {
+    const rate = item.prod_rate; // Assuming the rate is available in the product object
+    return rate * CGST_RATE;
+  };
+
+  // Function to get the total CGST amount for all products in the cart
+  const getTotalCGSTAmount = () => {
+    let totalCGST = 0;
+    cartItems.forEach((item) => {
+      const CGSTAmount = getCGSTAmountForItem(item);
+      totalCGST += CGSTAmount;
+    });
+    return totalCGST;
+  };
+
+
+
+  // Function to calculate the final pay amount
+  const getFinalPayAmount = () => {
+    const subtotal = getSubTotalAmount();
+    const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
+    const finalPayAmount = subtotal + totalTaxes;
+    return finalPayAmount;
+  };
+
 
   // /////////////////// quantity update /////////////////////
 
@@ -179,9 +136,8 @@ const CartSection = () => {
                 <td>
                   <b>{item.prod_name}</b> <br />
                   <small>
-                    {/* {item.category_name} |
-                    {getPriceForOutlet(item)} */}
-                    {item.category_name} | @{getPriceForOutlet(item)}
+                  
+                    {item.category_name} | 
                   </small>
                   <div className="toppings-btn">
                     <CButton>Note</CButton>
@@ -208,13 +164,14 @@ const CartSection = () => {
                     onKeyUp={handleKeyUp}
                     ref={qtyRef}
                     maxLength={'4'}
-                  />
+                  /><br />
+                  <button> Parcel</button>
                 </td>
 
                 <td className="pt-3">
-                  <i className="fa fa-inr"></i>
-                  {item.prod_rate}
-
+                  
+                 <b className="rate-font"><i className="fa fa-inr"></i> {item.prod_rate}</b> 
+                  
                   {/* item remove button */}
                   <span
                     className="btn btn-danger btn-remove"
@@ -248,7 +205,8 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-                {getSubTotalAmount()}
+              {getSubTotalAmount()} {/* Display the calculated subtotal */}
+
             </CCol>
           </CRow>
           <CRow>
@@ -265,7 +223,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              66
+              {getTotalSGSTAmount().toFixed(2)} {/* Display the calculated SGST amount */}
             </CCol>
           </CRow>
           <CRow>
@@ -274,7 +232,8 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              00
+              {getTotalCGSTAmount().toFixed(2)} {/* Display the calculated CGST amount */}
+
             </CCol>
           </CRow>
 
@@ -286,7 +245,9 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
-                <i className="fa fa-inr"></i>88
+                <i className="fa fa-inr"></i>
+                {getFinalPayAmount().toFixed(2)} {/* Display the final pay amount */}
+
               </h4>
               {/* <small>{getTotalItems()} Item(s) </small> */}
             </CCol>

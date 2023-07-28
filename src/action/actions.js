@@ -63,6 +63,7 @@ const setQuantity = (cartItemsArray, productId, quantity) => {
     return updatedItems;
   }
 };
+
 const removeCartItem = (cartItemsArray, productId) => {
   return cartItemsArray.filter((item) => item.prod_id !== productId);
 };

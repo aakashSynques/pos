@@ -601,7 +601,6 @@ thead {
 	}
 	b {
 		font-size: 12px;
-		font-family: $font-family_2 !important;
 	}
 }
 .label-danger {
@@ -706,10 +705,23 @@ thead {
 	background-color: $background-color_10 !important;
 	padding: 30px 8px;
 }
-// .incree-decreement{
-
-// }
-
+.incree-decreement input{
+	border: 1px solid #fffcfc;
+    margin-top: 8px;
+}
+.incree-decreement button{
+	color: #BDBDBD;
+    font-size: 9px;
+    line-height: 1;
+    /* margin-bottom: 5px; */
+    /* margin-right: 5px; */
+    padding: 1px 5px;
+    background-color: #fff;
+    /* border-color: #ccc; */
+    box-shadow: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
 
 
 
@@ -828,3 +840,6 @@ thead {
 // input[type=text]:focus{
 // 	outline: none !important;
 // }
+.header.header-sticky {
+    padding: 0;
+}
