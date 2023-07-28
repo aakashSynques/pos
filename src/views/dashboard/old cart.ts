@@ -88,9 +88,58 @@ const CartSection = () => {
   //   });
   // };
 
-  
- 
-  
+  const getTotalAmount = (productId) => {
+    const quantity = 1;
+    const item = cartItems.find((item) => item.prod_id === productId);
+    if (item) {
+      // Calculate the total amount based on the selected outlet price and quantity
+      return getPriceForOutlet(item) * quantity;
+    }
+    return 0;
+  };
+
+  // count sub total total ammout product
+  const getSubTotalAmount = () => {
+    let subTotal = 0;
+    cartItems.forEach((item) => {
+      subTotal += getTotalAmount(item.prod_id);
+    });
+    return subTotal;
+  };
+
+  // calculate SGST rate
+  const calculateSGST = () => {
+    const subtotalAmount = getSubTotalAmount();
+    const sgstRate = 2.5; // SGST rate (2.5%)
+    const sgstAmount = Math.round(subtotalAmount * sgstRate) / 100;
+    return sgstAmount;
+  };
+
+  // calculate SGST rate
+  const calculateCGST = () => {
+    const subtotalAmount = getSubTotalAmount();
+    const cgstRate = 2.5; // SGST rate (2.5%)
+    const cgstAmount = Math.round(subtotalAmount * cgstRate) / 100;
+    return cgstAmount;
+  };
+
+  // Calculate the final amount
+  const calculateFinalAmount = () => {
+    const subtotal = getSubTotalAmount();
+    const sgst = calculateSGST();
+    const cgst = calculateCGST();
+    const finalammount = subtotal + sgst + cgst;
+    return finalammount;
+  };
+
+  // Function to get the total number of items in the cart
+  const getTotalItems = () => {
+    let totalItems = 0;
+    cartItems.forEach((item) => {
+      totalItems += 1;
+    });
+    return totalItems;
+  };
 
   // getoutlet price
   const getPriceForOutlet = (product) => {
@@ -109,7 +158,15 @@ const CartSection = () => {
   );
   // console.log(selectedOutletId)
 
-  
+  // Update the total amount whenever the product quantities change
+  useEffect(() => {
+    let total = 0;
+    cartItems.forEach((item) => {
+      total += getTotalAmount(item.prod_id);
+    });
+    setTotalAmount(total);
+  }, [cartItems, quantity]);
+
   // Function to handle the removal of an item from the cart
   // const handleRemoveFromCart = (productId) => {
   //   // Find the item to get its name
@@ -133,18 +190,6 @@ const CartSection = () => {
   //   //   (state) => state.delivery.selectedDeliveryMode
   //   // );
   // };
-
-  const getSubTotalAmount = () => {
-    let subTotal = 0;
-    cartItems.forEach((item) => {
-      const quantity = item.prod_qty;
-      const rate = getPriceForOutlet(item);
-      const totalAmount = quantity * rate;
-      subTotal += totalAmount;
-    });
-    return subTotal;
-  };
-  
 
   // /////////////////// quantity update /////////////////////
 
@@ -248,7 +293,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-                {getSubTotalAmount()}
+              {getSubTotalAmount()}
             </CCol>
           </CRow>
           <CRow>
@@ -264,8 +309,7 @@ const CartSection = () => {
               Tax GST (2.5% SGST)
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              <i className="fa fa-inr"></i>
-              66
+              <i className="fa fa-inr"></i> {calculateSGST()}
             </CCol>
           </CRow>
           <CRow>
@@ -273,8 +317,7 @@ const CartSection = () => {
               Tax GST (2.5% CGST)
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              <i className="fa fa-inr"></i>
-              00
+              <i className="fa fa-inr"></i> {calculateCGST()}
             </CCol>
           </CRow>
 
@@ -286,9 +329,9 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
-                <i className="fa fa-inr"></i>88
+                <i className="fa fa-inr"></i> {calculateFinalAmount()}
               </h4>
-              {/* <small>{getTotalItems()} Item(s) </small> */}
+              <small>{getTotalItems()} Item(s) </small>
             </CCol>
           </CRow>
           <hr style={{ margin: "4px 0" }} />

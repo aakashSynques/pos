@@ -811,6 +811,19 @@ thead {
     background: #26B99A;
     font-weight: bold;
   }
+  .Toastify__toast {
+    font-size: 11px!important;
+    padding: 5px 9px!important;
+    min-height: 24px!important;
+    border-radius: 4px!important;
+    max-width: 300px!important;}
+.Toastify__toast-container {
+	width: 100%;
+	display: flex;
+	justify-content: end;
+  }
+
+
 
 // input[type=text]:focus{
 // 	outline: none !important;

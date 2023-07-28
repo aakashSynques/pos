@@ -16,7 +16,6 @@ const getTextColorClass = (prod_sign) => {
 const ProductsSearchBar = () => {
   const [query, setQuery] = useState("");
   const [productSearch, setProductSearch] = useState([]);
-
   const dispatch = useDispatch(); // Use the useDispatch hook from React-Redux
   const cartItemsArray = useSelector((state) => state.cart.cartItems);
   const selectedOutletId = useSelector(
@@ -42,15 +41,8 @@ const ProductsSearchBar = () => {
 
   // product search state
   const filteredItems = useMemo(() => {
-    // const outletId = selectedOutletId.toString();
     const outletId = selectedOutletId;
     if (query === "") return productSearch;
-    // const filterProduct = [];
-    // productSearch.map((p) => {
-    //   if (p.rate_chart?.[Number(selectedOutletId)]?.[0]?.prod_rate > 0) {
-    //     filterProduct.push(p);
-    //   }
-    // });
     const filterProduct = productSearch.filter((p) => {
       const outletData = p.rate_chart?.[outletId]?.[0];
       return outletData && outletData.stock_availability > 0;
@@ -64,8 +56,11 @@ const ProductsSearchBar = () => {
     return filterSearchProduct;
   }, [query, selectedOutletId, productSearch]);
 
+  // console.log(filteredItems);
+
   const getPriceForOutlet = (product) => {
     const outletId = selectedOutletId.toString();
+
     if (product.rate_chart && product.rate_chart[outletId]) {
       const rateForOutlet = product.rate_chart[outletId][0];
       if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
@@ -76,119 +71,179 @@ const ProductsSearchBar = () => {
   };
 
   // Dispatch the addToCart action with the product and its prod_price
-  const handleAddToCart = (product) => {
-    // const { cartItems } = product;
-    console.log(cartItemsArray, "70");
-    dispatch(
-      addToCart({
-        // cartItemsArray,
-        ...product,
-        prod_price: getPriceForOutlet(product),
-      })
+  const handleAddToCart = (productId) => {
+    const outletId = selectedOutletId.toString();
+    console.log(outletId);
+    const selectedProductForCart = filteredItems.filter(
+      (item) => item.prod_id === productId
     );
 
+    // const calculateOfferedDiscount = () => {
+
+    // console.log(selectedProductForCart);
+    //   let rc_offered_discount = selectedProductForCart.rate_chart[outletId][0];
+    //   // [0]
+    //   // [rateChart_PaymodeID][
+    //   //   "prod_offered_discount"
+    //   // ]
+
+    //   if (rc_offered_discount > 0) {
+    //     rc_offered_discount =
+    //       Math.round(((rc_prod_rate * rc_offered_discount * -1) / 100) * 1000) /
+    //       1000;
+    //   }
+    //   return rc_offered_discount;
+    // };
+    // console.log(calculateOfferedDiscount());
+
+    const cartItemData = selectedProductForCart.map((item) => ({
+      prod_id: item.prod_id,
+      prod_code: item.prod_code,
+      prod_sign: item.prod_sign,
+      prod_name: item.prod_name,
+      prod_description: item.prod_description,
+      prod_rate: getPriceForOutlet(item),
+      category_id: item.category_id,
+      prod_KOT_status: item.prod_KOT_status,
+      prod_Parcel_status: item.prod_Parcel_status,
+      prod_Discount_status: item.prod_Discount_status,
+      prod_Complementary_status: item.prod_Complementary_status,
+      prod_Toppings_status: item.prod_Toppings_status,
+      prod_Customized_status: item.prod_Customized_status,
+      prod_Delivery_heads: item.prod_Delivery_heads,
+      prod_image: item.prod_image,
+      prod_Recommended: item.prod_Recommended,
+      prod_OnlineListing: item.prod_OnlineListing,
+      prod_TagsGroups: item.prod_TagsGroups,
+      prod_DeActive: item.prod_DeActive,
+      status: item.status,
+      eby: item.eby,
+      eat: item.eat,
+      recipe_outcome_value: item.recipe_outcome_value,
+      recipe_outcome_unit: item.recipe_outcome_unit,
+      stock_status: item.stock_status,
+      stock_current_value: item.stock_current_value,
+      LHB_prod_id: item.LHB_prod_id,
+      category_name: item.category_name,
+      category_heads: item.category_heads,
+      recipeCount: item.recipeCount,
+      is_parcel: item.is_parcel,
+      is_complementary: item.is_complementary,
+      is_complementary_note: item.is_complementary_note,
+      is_note: item.is_note,
+      is_prod_note: item.is_prod_note,
+      prod_qty: item.prod_qty,
+      prod_discount: item.prod_discount,
+      prod_discount_offered: item.prod_discount_offered,
+      total_amount: item.prod_rate,
+      KOT_pick: item.KOT_pick,
+      KOT_ready: item.KOT_ready,
+      KOT_dispatch: item.KOT_dispatch,
+      urno: item.urno,
+      associated_prod_urno: item.associated_prod_urno,
+      toppings: item.toppings,
+      customized: item.customized,
+    }));
+    // console.log(cartItemData);
+    // console.log(cartItemsArray, "cartState");
+
+    dispatch(addToCart(cartItemsArray, cartItemData));
+
     // tostify notification
-    toast.success(`${product.prod_name} - added to cart !`, {
-      position: "top-right",
-      autoClose: 8000, // Auto close the notification after 8 seconds
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+    // toast.success(`${product.prod_name} - added to cart !`, {
+    //   position: "top-right",
+    //   autoClose: 8000, // Auto close the notification after 8 seconds
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    // });
   };
 
   // //////////////////// click outside ///////////////////////////
   const [clickedOut, setClickedOut] = useState(false);
   const ref = useRef(null);
   const onClickOutside = () => {
-    setQuery("");
+    // setQuery("");
+    setClickedOut(true);
   };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ref.current && !ref.current.contains(event.target)) {
         onClickOutside && onClickOutside();
+        setClickedOut(true);
       }
     };
     document.addEventListener("click", handleClickOutside, true);
     return () => {
       document.removeEventListener("click", handleClickOutside, true);
-      // setClickedOut(false);
     };
   }, [onClickOutside]);
 
-  // useEffect to handle the shortcut key (Shift + P) for focusing on the input element
-  useEffect(() => {
-    const handleShortcutKeyPress = (event) => {
-      if (event.shiftKey && event.key === "P") {
-        // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
-        event.preventDefault();
-        // Focus on the search bar input element
-        const searchInput = document.getElementById("product-search-input");
-        if (searchInput) {
-          searchInput.focus();
-        }
+
+// -------------------------product search sortcut key Shit+P-------------------------------
+// useEffect to handle the shortcut key (Shift + P) for focusing on the input element
+useEffect(() => {
+  const handleShortcutKeyPress = (event) => {
+    if (event.shiftKey && event.key === "P") {
+      // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
+      event.preventDefault();
+      // Focus on the search bar input element
+      const searchInput = document.getElementById("product-search-input");
+      if (searchInput) {
+        searchInput.focus();
       }
-    };
-    document.addEventListener("keydown", handleShortcutKeyPress);
-    return () => {
-      document.removeEventListener("keydown", handleShortcutKeyPress);
-    };
-  }, []);
+    }
+  };
+  document.addEventListener("keydown", handleShortcutKeyPress);
+  return () => {
+    document.removeEventListener("keydown", handleShortcutKeyPress);
+  };
+}, []);
+
+// Function to check for special characters in the input
+const isInputValid = (inputValue) => {
+  const specialCharactersRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+  return !specialCharactersRegex.test(inputValue);
+};
 
 
-
-
-
-
-
-  // const getProductSearch = async () => {
-  //   try {
-  //     const token = localStorage.getItem("pos_token");
-  //     const headers = { Authorization: `Bearer ${token}` };
-  //     const response = await fetch("/api/products/all", "get", null, headers);
-  //     setProductSearch(response.data.prodAllList);
-  //     console.log(response.data.prodAllList);
-  //   } catch (err) {
-  //     console.log(err);
-  //   } finally {
-  //   }
-  // };
-
-  useEffect(() => {
-    getProductSearch();
-  }, []);
-
-
- 
 
   return (
     <div>
       <div>
-        <CInputGroup className="change-focus">
+      <CInputGroup className="change-focus">
           <CFormInput
-            id="product-search-input" // Add an id to the input element for referencing
+              id="product-search-input" // Add an id to the input element for referencing
             type="text"
             autocomplete="off"
             placeholder="Search Product Code OR Name... [Shift + P]"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            // onChange={(e) => setQuery(e.target.value)}
+            onClick={() => setClickedOut(false)}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              if (isInputValid(inputValue)) {
+                setQuery(inputValue);
+              } else {
+                console.log(err);
+              }
+            }}
           />
         </CInputGroup>
         <div className="product-list-abslute" ref={ref}>
-        <div className="cat-head"><i class="fa fa-arrow-circle-right"></i> Kitchen</div>
           {query !== "" &&
+          //  clickedOut == false &&
             filteredItems.map((product) => (
               <div key={product.prod_id} className="product-list">
                 <button
                   onClick={() => {
-                    handleAddToCart(product);
+                    handleAddToCart(product.prod_id);
                     setQuery("");
                   }}
                 >
-                  <div className="pull-left fa-stack fa-xs prod-sign">
+                    <div className="pull-left fa-stack fa-xs prod-sign">
                     <span
                       className={`fa-stack fa-xs ${getTextColorClass(
                         product.prod_sign
@@ -210,12 +265,13 @@ const ProductsSearchBar = () => {
                   <div className="product-price">
                     <i className="fa fa-inr"></i>
                     {getPriceForOutlet(product)}
-                  </div>
-
+                  </div>                 
                   <br />
                 </button>
               </div>
-            ))}
+            )
+            )
+          }
 
           {/* Render a message if no items match the search query */}
           {query !== "" && filteredItems.length === 0 && (
@@ -239,3 +295,16 @@ const mapStateToProps = (state) => ({
 });
 // export default connect(mapStateToProps)(ProductsSearchBar);
 export default connect(mapStateToProps)(ProductsSearchBar);
+
+
+
+
+
+
+
+
+
+
+
+
+

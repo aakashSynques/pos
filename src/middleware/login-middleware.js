@@ -13,8 +13,6 @@ const LoginMiddleware = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("pos_token");
 
-    console.log("func triggered", token);
-
     if (!token) {
       setIsLoading(false);
       setIsTokenValid(false);
@@ -37,16 +35,11 @@ const LoginMiddleware = ({ children }) => {
           } else {
             setIsLoading(false);
             setIsTokenValid(true);
-            // dispatch(
-            //   setUser({
-            //     user_id: data.tokenData.m_user_id,
-            //     role_id: data.tokenData.role_id,
-            //     name: data.tokenData.user_name,
-            //     email: data.tokenData.user_email,
-            //     mobile: data.tokenData.user_mobile,
-            //     address: data.tokenData.user_address,
-            //   })
-            // );
+            const { tokenData } = data;
+            // console.log(tokenData);
+            const userInfo = tokenData[0];
+            localStorage.setItem("user", JSON.stringify(userInfo));
+            dispatch(setUser(userInfo));
           }
         })
         .catch((error) => {

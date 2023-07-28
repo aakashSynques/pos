@@ -1,4 +1,9 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, PDATE_CART_ITEMS } from "../action/actionTypes";
+import {
+  ADD_TO_CART,
+  REMOVE_FROM_CART,
+  SET_CART_QTY,
+  PDATE_CART_ITEMS,
+} from "../action/actionTypes";
 
 const initialState = {
   sidebarShow: true,
@@ -10,16 +15,19 @@ const cartReducer = (state = initialState, action) => {
     case ADD_TO_CART:
       return {
         ...state,
-        cartItems: [...state.cartItems, {...action.payload, }],
+        cartItems: action.payload,
+      };
+    case SET_CART_QTY:
+      return {
+        ...state,
+        cartItems: action.payload,
       };
     case REMOVE_FROM_CART:
       return {
         ...state,
-        cartItems: state.cartItems.filter(
-          (item) => item.prod_id !== action.payload
-        ),
+        cartItems: action.payload,
       };
-    
+
     default:
       return state;
   }

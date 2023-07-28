@@ -2,35 +2,86 @@
 import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
+  SET_CART_QTY,
   SET_SELECTED_OUTLET_ID,
   PDATE_CART_ITEMS,
 } from "./actionTypes";
 
-export const addToCart = (product) => ({
-  type: ADD_TO_CART,
-  payload: product,
-});
+// helper functions start
 
-// export const addToCart = (product) => {
-//   const { cartItemsArray } = product;
-//   console.log(cartItemsArray, "27 act");
-//   const existingCartItem =
-//     cartItemsArray.length > 0 &&
-//     cartItemsArray.find((cartItem) => cartItem.prod_id === product.prod_id);
+const addCartItem = (cartItemsArray, cartItem) => {
+  const existingCartItem =
+    cartItemsArray.length > 0 &&
+    cartItemsArray.find((item) => item.prod_id === cartItem.prod_id);
 
-//   if (existingCartItem) {
-//     return cartItemsArray.map((cartItem) =>
-//       cartItem.prod_id === product.prod_id
-//         ? { ...cartItem, prod_qty: cartItem.prod_qty + 1 }
-//         : cartItem
+  if (existingCartItem) {
+    return cartItemsArray.map((item) =>
+      item.prod_id === cartItem.prod_id
+        ? { ...item, prod_qty: item.prod_qty + 1 }
+        : item
+    );
+  }
+  console.log(cartItemsArray, ...cartItemsArray, "28");
+  return [...cartItemsArray, { ...cartItem, prod_qty: 1 }];
+};
+
+// const setQuantity = (cartItemsArray, productId, quantity) => {
+//   if (quantity == 0 || quantity == "") {
+//     const filt = cartItemsArray.filter((item) => item.prod_id !== productId);
+//     console.log("filt");
+//     return filt;
+//   }
+//   else if (quantity >= 1000) {
+//     console.log("1000");
+//     return cartItemsArray.map((item) =>
+//       item.prod_id === productId ? { ...item, prod_qty: 1000 } : item
 //     );
 //   }
-//   return [...cartItemsArray, { ...product, prod_qty: product.prod_qty + 1 }];
+//   else {
+//     console.log("else");
+//     return cartItemsArray.map((item) =>
+//       item.prod_id === productId ? { ...item, prod_qty: quantity } : item
+//     );
+//   }
 // };
+const setQuantity = (cartItemsArray, productId, quantity) => {
+  if (quantity === 0 || quantity === "") {
+    // If quantity is 0 or empty, remove the product from the cart
+    const filteredItems = cartItemsArray.filter((item) => item.prod_id !== productId);
+    return filteredItems;
+  } else {
+    // Otherwise, update the quantity and calculate the new prod_rate
+    const updatedItems = cartItemsArray.map((item) =>
+      item.prod_id === productId
+        ? {
+            ...item,
+            prod_qty: quantity,
+            prod_rate: item.prod_rate * (quantity / item.prod_qty), // Update the prod_rate based on the new quantity
+          }
+        : item
+    );
+    return updatedItems;
+  }
+};
+const removeCartItem = (cartItemsArray, productId) => {
+  return cartItemsArray.filter((item) => item.prod_id !== productId);
+};
 
-export const removeFromCart = (productId) => ({
+// helper functions end
+
+export const addToCart = (cartItemsArray, [cartItem]) => ({
+  type: ADD_TO_CART,
+  payload: addCartItem(cartItemsArray, cartItem),
+});
+
+export const setCartQty = (cartItemsArray, productId, quantity) => ({
+  type: SET_CART_QTY,
+  payload: setQuantity(cartItemsArray, productId, quantity),
+});
+
+export const removeFromCart = (cartItemsArray, productId) => ({
   type: REMOVE_FROM_CART,
-  payload: productId,
+  payload: removeCartItem(cartItemsArray, productId),
 });
 
 export const setOutletList = (outletList) => ({

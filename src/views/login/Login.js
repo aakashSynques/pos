@@ -29,6 +29,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+     // Check if the email and password fields are not empty
+  if (!email || !password) {
+    setError("Please fill in all the required fields.");
+    return;
+  }
     setLoading(true); // Set loading to true while the login request is being processed
     setError(null); // Clear any previous error messages
 
@@ -49,7 +55,7 @@ const Login = () => {
           // Show success notification using react-toastify
           toast.success("Login successful!", {
             position: "top-right",
-            autoClose: 8000, // Auto close the notification after 8 seconds
+            autoClose: 1000, // Auto close the notification after 1 seconds
             hideProgressBar: false,
             closeOnClick: true,
             pauseOnHover: true,
@@ -65,9 +71,9 @@ const Login = () => {
     } catch (err) {
       console.log(err)
       setError("An error occurred. Please try again later.");
-      toast.error("Login faild!", {
+      toast.error("Login Failed!", {
         position: "top-right",
-        autoClose: 8000, // Auto close the notification after 8 seconds
+        autoClose: 1000, // Auto close the notification after 1 seconds
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -138,7 +144,7 @@ const Login = () => {
                     <p className="text-medium-emphasis pt-2">
                       Sign In to your account
                     </p>
-                    <CInputGroup className="mb-3">
+                    <CInputGroup >
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
@@ -147,10 +153,14 @@ const Login = () => {
                         placeholder="Username"
                         onChange={(e) => setEmail(e.target.value)}
                         id="email"
-                        required
+                        required // Add the required attribute here
                       />
                     </CInputGroup>
-                    <CInputGroup className="mb-4">
+                    {error && error === "Please fill in all the required fields." && ( // Display error message for empty fields
+    <p className="text-danger">Enter valid email</p>
+  )}
+
+                    <CInputGroup className="mt-3">
                       <CInputGroupText>
                         <CIcon icon={cilLockLocked} />
                       </CInputGroupText>
@@ -159,10 +169,13 @@ const Login = () => {
                         placeholder="Password"
                         onChange={(e) => setPassword(e.target.value)}
                         id="password"
-                        required
+                        required // Add the required attribute here
                       />
                     </CInputGroup>
-                    <CRow>
+                    {error && error === "Please fill in all the required fields." && ( // Display error message for empty fields
+    <p className="text-danger">enter valid Password</p>
+  )}
+                    <CRow className="mt-4">
                       <CCol xs={6}>
                         <CButton
                           className="px-4 login-btn"

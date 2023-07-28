@@ -15,8 +15,6 @@ const TokenMiddleware = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("pos_token");
 
-    console.log("func triggered", token);
-
     if (!token) {
       setIsLoading(false);
       setIsTokenValid(false);

@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
@@ -38,7 +37,12 @@ const CustomerSearchBox = () => {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
       const body = { query };
-      const response = await fetch("/api/customers/search/POS", "post", body, headers);
+      const response = await fetch(
+        "/api/customers/search/POS",
+        "post",
+        body,
+        headers
+      );
 
       setCustomerSearchResults(response.data.suggestions);
       // Cache the results for the current query
@@ -61,22 +65,41 @@ const CustomerSearchBox = () => {
   const displayedItems = useMemo(() => {
     if (query === "") return customerSearchResults.slice(0, MAX_RESULTS);
 
-    return customerSearchResults.filter(
-      (customer) =>
-        customer.json.customer_name.toLowerCase().includes(query.toLowerCase()) ||
-        customer.json.mobile.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, MAX_RESULTS);
+    return customerSearchResults
+      .filter(
+        (customer) =>
+          customer.json.customer_name
+            .toLowerCase()
+            .includes(query.toLowerCase()) ||
+          customer.json.mobile.toLowerCase().includes(query.toLowerCase())
+      )
+      .slice(0, MAX_RESULTS);
   }, [query, customerSearchResults]);
 
+  // clickoutside to hide the search suggestions
+  const ref = useRef(null);
+  const onClickOutside = () => {
+    setQuery("");
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        onClickOutside && onClickOutside();
+      }
+    };
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, [onClickOutside]);
 
 
-
-
-  // useEffect to handle the shortcut key (Shift + P) for focusing on the input element
+  // useEffect to handle the shortcut key (Shift + c) for focusing on the input element
   useEffect(() => {
     const handleShortcutKeyPressCustomer = (event) => {
       if (event.shiftKey && event.key === "C") {
-        // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
+        // Prevent the default behavior of the "c" key (prevents it from appearing in the input box)
         event.preventDefault();
         // Focus on the search bar input element
         const searchInput = document.getElementById("customer-search-input");
@@ -90,23 +113,20 @@ const CustomerSearchBox = () => {
       document.removeEventListener("keydown", handleShortcutKeyPressCustomer);
     };
   }, []);
-  
+
+
   return (
     <div>
-      <CInputGroup className="change-focus">
+        <CInputGroup className="change-focus">
         <CFormInput
           id="customer-search-input"
           type="text"
           placeholder="Search Customer Name [Shift + C]"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{
-            fontSize: "12px",
-            borderRadius: 0,
-          }}
         />
       </CInputGroup>
-      <div className="product-list-abslute">
+      <div className="product-list-abslute" ref={ref}>
         {loading && <div>Loading...</div>}
         {!loading &&
           query !== "" &&
@@ -140,4 +160,3 @@ const CustomerSearchBox = () => {
 };
 
 export default CustomerSearchBox;
-
