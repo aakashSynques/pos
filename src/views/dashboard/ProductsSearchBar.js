@@ -5,6 +5,7 @@ import { useDispatch, useSelector, connect } from "react-redux";
 import { addToCart } from "../../action/actions"; // Import the addToCart action
 import { ToastContainer, toast } from "react-toastify";
 import classnames from "classnames";
+
 // Determine the text color class based on the value of prod_sign
 const getTextColorClass = (prod_sign) => {
   return classnames({
@@ -28,7 +29,7 @@ const ProductsSearchBar = () => {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/products/all", "get", null, headers);
       setProductSearch(response.data.prodAllList);
-      console.log(response.data.prodAllList);
+      // console.log(response.data.prodAllList);
     } catch (err) {
       console.log(err);
     } finally {
