@@ -16,6 +16,7 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         cartItems: action.payload,
+        // cartItems: [...state.cartItems, action.payload],
       };
     case SET_CART_QTY:
       return {

@@ -24,11 +24,12 @@ import {
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
 
-  console.log(cartItems, "cart in cartsection");
+  console.log(cartItems, "cart");
 
   const dispatch = useDispatch();
   // console.log(cartItems);
   const [toppingModel, setToppingModel] = useState(false);
+
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState();
   const [totalAmount, setTotalAmount] = useState(0);
@@ -38,10 +39,18 @@ const CartSection = () => {
   );
 
   // Function to calculate the total amount for each item based on quantity and rate
+  // const getTotalAmountForItem = (item) => {
+  //   const rate = item.prod_rate; // Assuming the rate is available in the product object
+  //   return rate;
+  // };
   const getTotalAmountForItem = (item) => {
     const rate = item.prod_rate; // Assuming the rate is available in the product object
-    return rate;
+    const toppingsTotalPrice = item.selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
+  return rate + toppingsTotalPrice;
   };
+  // console.log('total + toppping' + selectedToppingsTotalPrice)
+
+
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -103,22 +112,49 @@ const CartSection = () => {
   };
 
   // /////////////////// quantity update /////////////////////
-
   useEffect(() => {
     setQuantity(quantity);
   }, [quantity]);
   const qtyRef = useRef();
 
-  const handleKeyUp = (event) => {
-    //key code for enter
+  //  const handleKeyUp = (event, item) => {
+  //   if (event.key === "Enter") {
+  //     event.preventDefault();
+  //     event.target.blur();
+  //     qtyRef.current.blur();
+
+  //     const newQuantity = parseInt(event.target.value, 10);
+  //     if (newQuantity === 0) {
+  //       // Dispatch the removeFromCart action to remove the product from the cart
+  //       dispatch(removeFromCart(cartItems, item.prod_id));
+  //     } else {
+  //       // Dispatch the setCartQty action to update the product quantity
+  //       dispatch(setCartQty(cartItems, item.prod_id, newQuantity));
+  //     }
+  //   }
+  // };
+  const handleKeyUp = (event, item) => {
     if (event.key === "Enter") {
       event.preventDefault();
       event.target.blur();
       qtyRef.current.blur();
+
+      const newQuantity = parseInt(event.target.value, 10);
+      if (newQuantity === 0) {
+        // Dispatch the removeFromCart action to remove the product from the cart
+        dispatch(removeFromCart(cartItems, item.prod_id));
+      } else {
+        // Dispatch the setCartQty action to update the product quantity
+        dispatch(setCartQty(cartItems, item.prod_id, newQuantity));
+      }
     }
   };
 
-  /// toppings ///
+  /// toppings //
+  // New state variable to store the total price of the selected toppings
+  const [submittedToppings, setSubmittedToppings] = useState(false);
+  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
+    useState(0);
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [toppingsData, setToppingsData] = useState([]);
@@ -143,7 +179,6 @@ const CartSection = () => {
   const filteredToppings = toppingsData.filter((topping) =>
     topping.prod_name.toLowerCase().includes(searchToppingQuery.toLowerCase())
   );
-
   const handleToppingClick = (topping) => {
     const isSelected = selectedToppings.includes(topping.prod_id);
     if (isSelected) {
@@ -155,11 +190,22 @@ const CartSection = () => {
     }
   };
 
- 
+  const handleToppingsSubmit = () => {
+    setSubmittedToppings(true);
+    setToppingModel(false); // Close the toppings model after submitting
+  };
 
-
-
-
+  // Function to calculate the total price of the selected toppings
+  useEffect(() => {
+    const totalToppingPrice = selectedToppings.reduce(
+      (toppingTotal, toppingId) => {
+        const topping = toppingsData.find((t) => t.prod_id === toppingId);
+        return toppingTotal + (topping ? topping.prod_rate : 0);
+      },
+      0
+    );
+    setSelectedToppingsTotalPrice(totalToppingPrice);
+  }, [selectedToppings, toppingsData]);
 
   return (
     <div className="cartlist pt-2">
@@ -178,7 +224,25 @@ const CartSection = () => {
                 <td>
                   <b>{item.prod_name}</b> <br />
                   <small>
-                    {item.category_name} | @ {item.prod_rate}{" "}
+                    {item.category_name} | @ {item.prod_rate} <br />
+                    {/* selected topping list */}
+                    {submittedToppings &&
+                      selectedToppings.map((toppingId) => {
+                        const topping = toppingsData.find(
+                          (t) => t.prod_id === toppingId
+                        );
+                        return (
+                          <div key={toppingId}>
+                            {topping ? (
+                              <span>
+                                {topping.prod_name} | @{" "}
+                                <i className="fa fa-inr"></i>
+                                {topping.prod_rate.toFixed(2)}
+                              </span>
+                            ) : null}
+                          </div>
+                        );
+                      })}
                   </small>
                   <div className="toppings-btn">
                     <CButton>
@@ -197,8 +261,7 @@ const CartSection = () => {
                 <td className="incree-decreement">
                   <input
                     type="text"
-                    className="w-25 text "
-                    // value={item.prod_id}
+                    className="w-25 text"
                     defaultValue={item.prod_qty}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -206,7 +269,7 @@ const CartSection = () => {
                       }
                     }}
                     onChange={(e) => setQuantity(e.target.value)}
-                    onKeyUp={handleKeyUp}
+                    onKeyUp={(e) => handleKeyUp(e, item)} // Pass 'item' here
                     ref={qtyRef}
                     maxLength={"4"}
                   />
@@ -215,7 +278,13 @@ const CartSection = () => {
                 </td>
                 <td className="pt-3">
                   <b className="rate-font">
-                    <i className="fa fa-inr"></i> {item.prod_rate}
+                    <i className="fa fa-inr"></i>
+                    {/* {item.prod_rate.toFixed(2)}{" "} */}
+                    {getTotalAmountForItem(item).toFixed(2)}{" "}
+                    <br />
+                    {/* {submittedToppings && (
+                      <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
+                    )} */}
                   </b>
 
                   {/* item remove button */}
@@ -251,7 +320,8 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getSubTotalAmount()} {/* Display the calculated subtotal */}
+              {getSubTotalAmount().toFixed(2)}{" "}
+              {/* Display the calculated subtotal */}
             </CCol>
           </CRow>
           <CRow>
@@ -378,7 +448,7 @@ const CartSection = () => {
                     {/* {selectedToppings.includes(topping.prod_id)
                       ? topping.prod_rate
                       : "0"} */}
-                      {topping.prod_rate}
+                    {topping.prod_rate.toFixed(3)}
                   </span>
                 </button>
               </label>
@@ -387,7 +457,9 @@ const CartSection = () => {
         </CModalBody>
         <CModalFooter>
           <CButton color="danger">Clear All [Alt + C]</CButton>
-          <CButton color="success">Submit [Alt + Enter]</CButton>
+          <CButton color="success" onClick={handleToppingsSubmit}>
+            Submit [Alt + Enter]
+          </CButton>
           <CButton color="light" onClick={() => setToppingModel(false)}>
             Cancel [Esc]
           </CButton>

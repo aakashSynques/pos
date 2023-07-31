@@ -44,30 +44,72 @@ const addCartItem = (cartItemsArray, cartItem) => {
 //     );
 //   }
 // };
+
+// const setQuantity = (cartItemsArray, productId, quantity) => {
+//   if (quantity === 0 || quantity === "") {
+//     // If quantity is 0 or empty, remove the product from the cart
+//     const filteredItems = cartItemsArray.filter((item) => item.prod_id !== productId);
+//     return filteredItems;
+//   } else {
+//     // Otherwise, update the quantity and calculate the new prod_rate
+//     const updatedItems = cartItemsArray.map((item) =>
+//       item.prod_id === productId
+//         ? {
+//             ...item,
+//             prod_qty: quantity,
+//             prod_rate: item.prod_rate * (quantity / item.prod_qty), // Update the prod_rate based on the new quantity
+//           }
+//         : item
+//     );
+//     return updatedItems;
+//   }
+// };
+
 const setQuantity = (cartItemsArray, productId, quantity) => {
   if (quantity === 0 || quantity === "") {
     // If quantity is 0 or empty, remove the product from the cart
-    const filteredItems = cartItemsArray.filter((item) => item.prod_id !== productId);
+    const filteredItems = cartItemsArray.filter(
+      (item) => item.prod_id !== productId
+    );
     return filteredItems;
+  } else if (quantity >= 1000) {
+    // Show a confirmation box if quantity exceeds 1000
+    const isConfirmed = window.confirm(
+      "Are you sure you want to add 1000 quantity?"
+    );
+    if (isConfirmed) {
+      // Update the quantity and prod_rate if confirmed
+      const updatedItems = cartItemsArray.map((item) =>
+        item.prod_id === productId
+          ? {
+              ...item,
+              prod_qty: 1000, // price limit
+              prod_rate: item.prod_rate * (1000 / item.prod_qty),
+            }
+          : item
+      );
+      return updatedItems;
+    } else {
+      // If not confirmed, do not update the quantity
+      return cartItemsArray;
+    }
   } else {
-    // Otherwise, update the quantity and calculate the new prod_rate
+    // Update the quantity and prod_rate if it's a regular quantity update
     const updatedItems = cartItemsArray.map((item) =>
       item.prod_id === productId
         ? {
             ...item,
             prod_qty: quantity,
-            prod_rate: item.prod_rate * (quantity / item.prod_qty), // Update the prod_rate based on the new quantity
+            prod_rate: item.prod_rate * (quantity / item.prod_qty),
           }
         : item
     );
     return updatedItems;
   }
 };
-
 const removeCartItem = (cartItemsArray, productId) => {
   return cartItemsArray.filter((item) => item.prod_id !== productId);
 };
-
 // helper functions end
 
 export const addToCart = (cartItemsArray, [cartItem]) => ({
