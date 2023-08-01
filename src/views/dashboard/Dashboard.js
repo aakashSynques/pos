@@ -3,6 +3,7 @@ import { CCol, CContainer, CRow } from "@coreui/react";
 import InvoicesListBox from "./InvoicesListBox";
 import CustomerSection from "./CustomerSection";
 import OutletSection from "./OutletSection";
+import ProductsSearchBar from "./ProductsSearchBar";
 
 const Dashboard = () => {
  
@@ -11,6 +12,7 @@ const Dashboard = () => {
       <CContainer>
         <CRow>
           <CCol sm={5} className="p-0">
+            <ProductsSearchBar />
             <InvoicesListBox />
           </CCol>
           <CCol sm={5}>

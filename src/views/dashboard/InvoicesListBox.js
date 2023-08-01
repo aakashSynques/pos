@@ -10,8 +10,7 @@ import ReturnInvoice from "./invoices/ReturnInvoice";
 import UpcomingBooking from "./invoices/UpcomingBooking";
 import TotalPunchedInvoice from "./invoices/TotalPunchedInvoice";
 import PendingBooking from "./invoices/PendingBooking";
-import ProductsSearchBar from "./ProductsSearchBar";
-// import data from './data.json'
+
 
 const InvoicesListBox = () => {
   return (
@@ -19,7 +18,7 @@ const InvoicesListBox = () => {
       <div className="product-search-section">
         {/* Seach box */}
         {/* <ProductsSearchBar data={ data } /> */}
-        <ProductsSearchBar />
+        {/* <ProductsSearchBar /> */}
         <CContainer className="category-list-box">
           <CRow>
             {/* Recent Invice section */}
