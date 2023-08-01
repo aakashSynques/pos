@@ -559,3 +559,85 @@ tr {
   box-shadow: 0px 0px 4px #a1a1a1 !important;
   background: #f9f9f9;
 }
+.cust-label{
+  display: inline;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: bold;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25em;
+  background-color: #777;
+}
+.cust-name b{
+  font-size: 15px;
+  color: black;
+  font-weight: 800;
+}
+.customer-sarch-sec{
+  padding: 7px 12px;
+  background: #efefef!important;
+  margin-bottom: 0px;
+}.customer-sarch-sec button{
+  padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+}.not-found-add-cust{
+  text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 0;
+}.reg-new-btn{
+  width: 35% !important;
+  color: white !important;
+  padding: 1px 0!important;
+  margin-top: 3px;
+  font-size: 12px!important;
+  color: #fff;
+  background-color: #1A82C3 !important;
+}.register-model .modal-header{
+  padding: 11px 17px;
+}.register-model .btn-close{
+  font-size: 10px;
+}
+// .register-model .modal-footer{
+//   padding: 4px 6px;
+// }
+.register-model .btn-success{
+  color: #fff;
+    background-color: #26B99A;
+    border-color: #4cae4c;
+    font-size: 14px;
+    padding: 4px 11px;
+}
+.register-model .input-group-text{
+  padding: 0 12px!important;
+  background: white;
+  width: 35px;
+  color: rgba(128, 128, 128, 0.7803921569);
+}.register-model .input-group-text{
+  border-radius: 0;
+}.register-model .form-control{
+  border-radius: 0px;
+}
+// .register-model .form-control .has-feedback-left {
+//   padding-left: 45px;
+// }
+
+// .register-model .has-feedback .form-control {
+//   padding-right: 42.5px;
+// }
+// .register-model .form-control-feedback.left {
+//   border-right: 1px solid #ccc;
+//   left: 13px;
+// }
+// .register-model .form-control-feedback {
+//   margin-top: 8px;
+//   height: 23px;
+//   color: #bbb;
+//   line-height: 24px;
+//   font-size: 15px;
+// }

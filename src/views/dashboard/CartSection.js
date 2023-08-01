@@ -37,20 +37,12 @@ const CartSection = () => {
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-
-  // Function to calculate the total amount for each item based on quantity and rate
-  // const getTotalAmountForItem = (item) => {
-  //   const rate = item.prod_rate; // Assuming the rate is available in the product object
-  //   return rate;
-  // };
   const getTotalAmountForItem = (item) => {
     const rate = item.prod_rate; // Assuming the rate is available in the product object
-    const toppingsTotalPrice = item.selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
-  return rate + toppingsTotalPrice;
+    const toppingsTotalPrice = selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
+    console.log(toppingsTotalPrice);
+    return rate + toppingsTotalPrice;
   };
-  // console.log('total + toppping' + selectedToppingsTotalPrice)
-
-
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -63,9 +55,8 @@ const CartSection = () => {
 
   // Constant variable for SGST rate
   const SGST_RATE = 0.025;
-  // Function to calculate the SGST amount for each item
   const getSGSTAmountForItem = (item) => {
-    const rate = item.prod_rate; // Assuming the rate is available in the product object
+    const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate * SGST_RATE;
   };
   // Function to get the total SGST amount for all products in the cart
@@ -80,9 +71,8 @@ const CartSection = () => {
 
   // Constant variable for CGST rate
   const CGST_RATE = 0.025;
-  // Function to calculate the CGST amount for each item
   const getCGSTAmountForItem = (item) => {
-    const rate = item.prod_rate; // Assuming the rate is available in the product object
+    const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate * CGST_RATE;
   };
   // Function to get the total CGST amount for all products in the cart
@@ -117,28 +107,11 @@ const CartSection = () => {
   }, [quantity]);
   const qtyRef = useRef();
 
-  //  const handleKeyUp = (event, item) => {
-  //   if (event.key === "Enter") {
-  //     event.preventDefault();
-  //     event.target.blur();
-  //     qtyRef.current.blur();
-
-  //     const newQuantity = parseInt(event.target.value, 10);
-  //     if (newQuantity === 0) {
-  //       // Dispatch the removeFromCart action to remove the product from the cart
-  //       dispatch(removeFromCart(cartItems, item.prod_id));
-  //     } else {
-  //       // Dispatch the setCartQty action to update the product quantity
-  //       dispatch(setCartQty(cartItems, item.prod_id, newQuantity));
-  //     }
-  //   }
-  // };
   const handleKeyUp = (event, item) => {
     if (event.key === "Enter") {
       event.preventDefault();
       event.target.blur();
       qtyRef.current.blur();
-
       const newQuantity = parseInt(event.target.value, 10);
       if (newQuantity === 0) {
         // Dispatch the removeFromCart action to remove the product from the cart
@@ -147,9 +120,11 @@ const CartSection = () => {
         // Dispatch the setCartQty action to update the product quantity
         dispatch(setCartQty(cartItems, item.prod_id, newQuantity));
       }
+      // Clear the selectedToppings state when adding a new product
+      setSelectedToppings([]);
     }
   };
-
+  
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
@@ -189,7 +164,6 @@ const CartSection = () => {
       setSelectedToppings([...selectedToppings, topping.prod_id]);
     }
   };
-
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
     setToppingModel(false); // Close the toppings model after submitting
@@ -208,9 +182,9 @@ const CartSection = () => {
   }, [selectedToppings, toppingsData]);
 
   return (
-    <div className="cartlist pt-2">
+    <div className="cartlist">
       {cartItems.length > 0 ? (
-        <table className="table cart-table mt-3">
+        <table className="table cart-table">
           <thead>
             <tr style={{ background: "#efefef" }}>
               <th>Product Name</th>
@@ -257,12 +231,12 @@ const CartSection = () => {
                   </div>
                 </td>
                 {/* {setQuantity(item.prod_qty)} */}
-                {console.log(item.prod_qty)}
                 <td className="incree-decreement">
                   <input
                     type="text"
-                    className="w-25 text"
-                    defaultValue={item.prod_qty}
+                    className="w-25 text"                    
+                    defaultValue={item.prod_qty >= 1000 ? "1000 " : item.prod_qty}
+                    // defaultValue={item.prod_qty}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         dispatch(setCartQty(cartItems, item.prod_id, quantity));
@@ -272,6 +246,7 @@ const CartSection = () => {
                     onKeyUp={(e) => handleKeyUp(e, item)} // Pass 'item' here
                     ref={qtyRef}
                     maxLength={"4"}
+                   
                   />
                   <br />
                   <button> Parcel</button>
@@ -280,8 +255,7 @@ const CartSection = () => {
                   <b className="rate-font">
                     <i className="fa fa-inr"></i>
                     {/* {item.prod_rate.toFixed(2)}{" "} */}
-                    {getTotalAmountForItem(item).toFixed(2)}{" "}
-                    <br />
+                    {getTotalAmountForItem(item).toFixed(2)} <br />
                     {/* {submittedToppings && (
                       <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
                     )} */}

@@ -66,7 +66,7 @@ const addCartItem = (cartItemsArray, cartItem) => {
 // };
 
 const setQuantity = (cartItemsArray, productId, quantity) => {
-  if (quantity === 0 || quantity === "") {
+  if (quantity == 0 || quantity === "") {
     // If quantity is 0 or empty, remove the product from the cart
     const filteredItems = cartItemsArray.filter(
       (item) => item.prod_id !== productId
@@ -107,6 +107,10 @@ const setQuantity = (cartItemsArray, productId, quantity) => {
     return updatedItems;
   }
 };
+
+
+
+
 const removeCartItem = (cartItemsArray, productId) => {
   return cartItemsArray.filter((item) => item.prod_id !== productId);
 };

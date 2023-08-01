@@ -2,9 +2,9 @@ import { CFormInput, CFormSelect, CRow, CCol, CContainer } from "@coreui/react";
 import { FaShoppingCart } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import { fetch } from "../../utils";
-import CustomerSearchBox from "./CustomerSearchBox";
 import CartSection from "./CartSection";
 import { useSelector } from "react-redux";
+import CustomersSearch from "./customer/CustomersSearch";
 
 
 const CustomerSearch = () => {
@@ -14,7 +14,8 @@ const CustomerSearch = () => {
     <>
       <div className="custormer-search p-1" style={{ background: "white" }}>
         {/* customer search box */}
-        <CustomerSearchBox />
+        {/* <CustomerSearchBox /> */}
+        <CustomersSearch />
         {/* cart list */}
         <CartSection cartItems={cartItems} /> 
     
