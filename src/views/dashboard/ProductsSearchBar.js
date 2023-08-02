@@ -218,7 +218,7 @@ const isInputValid = (inputValue) => {
           <CFormInput
               id="product-search-input" // Add an id to the input element for referencing
             type="text"
-            autocomplete="off"
+            // autocomplete="off"
             placeholder="Search Product Code OR Name... [Shift + P]"
             value={query}
             // onChange={(e) => setQuery(e.target.value)}

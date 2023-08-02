@@ -11,14 +11,10 @@ import UpcomingBooking from "./invoices/UpcomingBooking";
 import TotalPunchedInvoice from "./invoices/TotalPunchedInvoice";
 import PendingBooking from "./invoices/PendingBooking";
 
-
 const InvoicesListBox = () => {
   return (
     <>
       <div className="product-search-section">
-        {/* Seach box */}
-        {/* <ProductsSearchBar data={ data } /> */}
-        {/* <ProductsSearchBar /> */}
         <CContainer className="category-list-box">
           <CRow>
             {/* Recent Invice section */}

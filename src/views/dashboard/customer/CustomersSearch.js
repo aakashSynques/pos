@@ -93,6 +93,14 @@ const CustomersSearch = () => {
     setSelectedCustomer(selectedCustomer);
   };
 
+
+ // Function to handle when the "Edit" button is clicked for a selected customer
+ const handleEditCustomer = () => {
+  if (selectedCustomer) {
+    setEditCustomer(true);
+  }
+};
+
   const MAX_RESULTS = 50; // Limit the number of search results displayed
   const displayedItems = useMemo(() => {
     if (query === "") return customerSearchResults.slice(0, MAX_RESULTS);
@@ -174,7 +182,8 @@ const CustomersSearch = () => {
                     <i class="fa fa-money"></i>
                   </button>
                   <button
-                    onClick={() => setEditCustomer(!editCustomer)}
+                    // onClick={() => setEditCustomer(!editCustomer)}
+                    onClick={handleEditCustomer}
                     class="btn btn-xs btn-primary "
                     title=""
                     data-toggle="tooltip"
@@ -253,10 +262,13 @@ const CustomersSearch = () => {
       />
 
       {/* Edit customer model */}
-      <EditCustomerProfile
-        visible={editCustomer}
-        onClose={() => setEditCustomer(false)}
-      />
+      {selectedCustomer && (
+        <EditCustomerProfile
+          visible={editCustomer}
+          onClose={() => setEditCustomer(false)}
+          customerData={selectedCustomer.json} // Pass the selected customer data to the EditCustomerProfile component
+        />
+      )}
     </div>
   );
 };

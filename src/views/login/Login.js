@@ -127,7 +127,7 @@ const Login = () => {
   return (
     <div
       className="align-items-center login-bg"
-      style={{ "margin-top": "10%" }}
+      style={{ "marginTop": "10%" }}
     >
       <ToastContainer /> {/* Keep only one ToastContainer at the root */}
       <div className="container-fluid">

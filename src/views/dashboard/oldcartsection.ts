@@ -229,6 +229,104 @@ const CartSection = () => {
                 item={item}
                 getTotalAmountForItem={getTotalAmountForItem}
               />
+
+              // <tr key={item.prod_id}>
+              //   <td>
+              //     <b>{item.prod_name}</b> <br />
+              //     <small>
+              //       {item.category_name} | @ {item.prod_rate} <br />
+              //       {/* selected topping list */}
+              //       {submittedToppings &&
+              //         selectedToppings.map((toppingId) => {
+              //           const topping = toppingsData.find(
+              //             (t) => t.prod_id === toppingId
+              //           );
+              //           return (
+              //             <div key={toppingId}>
+              //               {topping ? (
+              //                 <span>
+              //                   {topping.prod_name} | @{" "}
+              //                   <i className="fa fa-inr"></i>
+              //                   {topping.prod_rate.toFixed(2)}
+              //                 </span>
+              //               ) : null}
+              //             </div>
+              //           );
+              //         })}
+              //     </small>
+              //     <div className="toppings-btn">
+              //       <CButton>
+              //         <u class="text-danger">N</u>ote
+              //       </CButton>
+              //       <CButton>
+              //         <u class="text-danger">C</u>omplementary
+              //       </CButton>
+              //       <CButton onClick={() => setToppingModel(!toppingModel)}>
+              //         <u class="text-danger">T</u>oppings
+              //       </CButton>
+              //     </div>
+              //   </td>
+              //   {/* {setQuantity(item.prod_qty)} */}
+              //   {/* {console.log(item.prod_qty)} */}
+              //   <td className="incree-decreement">
+              //     <input
+              //       type="text"
+              //       className="w-25 text"
+              //       value={item.prod_qty}
+              //       // onKeyDown={(e) => {
+              //       //   if (e.key === "Enter") {
+              //       //     dispatch(setCartQty(cartItems, item.prod_id, quantity));
+              //       //   }
+              //       // }}
+
+              //       // setHandlerQuantity = (value, prod_id) => {
+              //       //   // handleQuantityChange(e.target.value);
+              //       //   dispatch(setCartQty(cartItems, item.prod_id, quantity));
+              //       // }
+
+              //       // onBlur={(e) =>
+              //       //   dispatch(
+              //       //     setCartQty(
+              //       //       cartItems,
+              //       //       item.prod_id,
+              //       //       quantity.item.prod_id
+              //       //     )
+              //       //   )
+              //       // }
+              //       // onChange={(e) =>
+              //       //   setQuantity((prev) => ({
+              //       //     ...prev,
+              //       //     [item.prod_id]: e.target.value,
+              //       //   }))
+              //       // }
+              //       // onKeyUp={(e) => handleKeyUp(e, item)} // Pass 'item' here
+              //       // ref={qtyRef}
+              //       // maxLength={"4"}
+              //     />
+              //     <br />
+              //     <button> Parcel</button>
+              //   </td>
+              //   <td className="pt-3">
+              //     <b className="rate-font">
+              //       <i className="fa fa-inr"></i>
+              //       {/* {item.prod_rate.toFixed(2)}{" "} */}
+              //       {getTotalAmountForItem(item).toFixed(2)} <br />
+              //       {/* {submittedToppings && (
+              //         <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
+              //       )} */}
+              //     </b>
+
+              //     {/* item remove button */}
+              //     <span
+              //       className="btn btn-danger btn-remove"
+              //       onClick={() =>
+              //         dispatch(removeFromCart(cartItems, item.prod_id))
+              //       }
+              //     >
+              //       <i className="fa fa-times"></i>
+              //     </span>
+              //   </td>
+              // </tr>
             ))}
           </tbody>
         </table>
@@ -322,9 +420,6 @@ const CartSection = () => {
       </div>
 
       {/* toppings model */}
-
-
-      
       <CModal
         size="lg"
         visible={toppingModel}
