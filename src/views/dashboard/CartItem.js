@@ -5,23 +5,10 @@ import { useDispatch } from "react-redux";
 import { removeFromCart, setCartQty } from "../../action/actions";
 
 import {
-  CFormInput,
-  CFormSelect,
-  CRow,
-  CCol,
-  CContainer,
   CButton,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
-  CLink,
-  CInputGroup,
-  CInputGroupText,
 } from "@coreui/react";
 
-const CartItem = ({ item, cartItems, getTotalAmountForItem }) => {
+const CartItem = ({ item, cartItems, getTotalAmountForItem, openToppingModel, submittedToppings, selectedToppings }) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(item.prod_qty);
 
@@ -39,7 +26,7 @@ const CartItem = ({ item, cartItems, getTotalAmountForItem }) => {
         <small>
           {item.category_name} | @ {item.prod_rate} <br />
           {/* selected topping list */}
-          {/* {submittedToppings &&
+          {submittedToppings &&
             selectedToppings.map((toppingId) => {
               const topping = toppingsData.find((t) => t.prod_id === toppingId);
               return (
@@ -52,7 +39,9 @@ const CartItem = ({ item, cartItems, getTotalAmountForItem }) => {
                   ) : null}
                 </div>
               );
-            })} */}
+            })}
+          
+
         </small>
         <div className="toppings-btn">
           <CButton>
@@ -61,9 +50,9 @@ const CartItem = ({ item, cartItems, getTotalAmountForItem }) => {
           <CButton>
             <u class="text-danger">C</u>omplementary
           </CButton>
-          {/* <CButton onClick={() => setToppingModel(!toppingModel)}>
+          <CButton onClick={openToppingModel}>
             <u class="text-danger">T</u>oppings
-          </CButton> */}
+          </CButton>
         </div>
       </td>
       {/* {setQuantity(item.prod_qty)} */}

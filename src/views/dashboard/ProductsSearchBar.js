@@ -78,25 +78,6 @@ const ProductsSearchBar = () => {
     const selectedProductForCart = filteredItems.filter(
       (item) => item.prod_id === productId
     );
-
-    // const calculateOfferedDiscount = () => {
-
-    // console.log(selectedProductForCart);
-    //   let rc_offered_discount = selectedProductForCart.rate_chart[outletId][0];
-    //   // [0]
-    //   // [rateChart_PaymodeID][
-    //   //   "prod_offered_discount"
-    //   // ]
-
-    //   if (rc_offered_discount > 0) {
-    //     rc_offered_discount =
-    //       Math.round(((rc_prod_rate * rc_offered_discount * -1) / 100) * 1000) /
-    //       1000;
-    //   }
-    //   return rc_offered_discount;
-    // };
-    // console.log(calculateOfferedDiscount());
-
     const cartItemData = selectedProductForCart.map((item) => ({
       prod_id: item.prod_id,
       prod_code: item.prod_code,
@@ -182,41 +163,37 @@ const ProductsSearchBar = () => {
     };
   }, [onClickOutside]);
 
-
-// -------------------------product search sortcut key Shit+P-------------------------------
-// useEffect to handle the shortcut key (Shift + P) for focusing on the input element
-useEffect(() => {
-  const handleShortcutKeyPress = (event) => {
-    if (event.shiftKey && event.key === "P") {
-      // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
-      event.preventDefault();
-      // Focus on the search bar input element
-      const searchInput = document.getElementById("product-search-input");
-      if (searchInput) {
-        searchInput.focus();
+  // -------------------------product search sortcut key Shit+P-------------------------------
+  // useEffect to handle the shortcut key (Shift + P) for focusing on the input element
+  useEffect(() => {
+    const handleShortcutKeyPress = (event) => {
+      if (event.shiftKey && event.key === "P") {
+        // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
+        event.preventDefault();
+        // Focus on the search bar input element
+        const searchInput = document.getElementById("product-search-input");
+        if (searchInput) {
+          searchInput.focus();
+        }
       }
-    }
+    };
+    document.addEventListener("keydown", handleShortcutKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleShortcutKeyPress);
+    };
+  }, []);
+
+  // Function to check for special characters in the input
+  const isInputValid = (inputValue) => {
+    const specialCharactersRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    return !specialCharactersRegex.test(inputValue);
   };
-  document.addEventListener("keydown", handleShortcutKeyPress);
-  return () => {
-    document.removeEventListener("keydown", handleShortcutKeyPress);
-  };
-}, []);
-
-// Function to check for special characters in the input
-const isInputValid = (inputValue) => {
-  const specialCharactersRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-  return !specialCharactersRegex.test(inputValue);
-};
-
-
 
   return (
     <div>
-      <div>
-      <CInputGroup className="change-focus">
+        <CInputGroup className="change-focus">
           <CFormInput
-              id="product-search-input" // Add an id to the input element for referencing
+            id="product-search-input" // Add an id to the input element for referencing
             type="text"
             // autocomplete="off"
             placeholder="Search Product Code OR Name... [Shift + P]"
@@ -235,7 +212,7 @@ const isInputValid = (inputValue) => {
         </CInputGroup>
         <div className="product-list-abslute" ref={ref}>
           {query !== "" &&
-          //  clickedOut == false &&
+            //  clickedOut == false &&
             filteredItems.map((product) => (
               <div key={product.prod_id} className="product-list">
                 <button
@@ -244,7 +221,7 @@ const isInputValid = (inputValue) => {
                     setQuery("");
                   }}
                 >
-                    <div className="pull-left fa-stack fa-xs prod-sign">
+                  <div className="pull-left fa-stack fa-xs prod-sign">
                     <span
                       className={`fa-stack fa-xs ${getTextColorClass(
                         product.prod_sign
@@ -266,13 +243,11 @@ const isInputValid = (inputValue) => {
                   <div className="product-price">
                     <i className="fa fa-inr"></i>
                     {getPriceForOutlet(product)}
-                  </div>                 
+                  </div>
                   <br />
                 </button>
               </div>
-            )
-            )
-          }
+            ))}
 
           {/* Render a message if no items match the search query */}
           {query !== "" && filteredItems.length === 0 && (
@@ -282,7 +257,6 @@ const isInputValid = (inputValue) => {
           )}
         </div>
       </div>
-    </div>
   );
 };
 
@@ -296,16 +270,3 @@ const mapStateToProps = (state) => ({
 });
 // export default connect(mapStateToProps)(ProductsSearchBar);
 export default connect(mapStateToProps)(ProductsSearchBar);
-
-
-
-
-
-
-
-
-
-
-
-
-

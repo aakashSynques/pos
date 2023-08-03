@@ -59,6 +59,10 @@ const CartSection = () => {
     return subTotal;
   };
 
+  const openToppingModel = () => {
+    setToppingModel(true);
+  };
+
   // Constant variable for SGST rate
   const SGST_RATE = 0.025;
   const getSGSTAmountForItem = (item) => {
@@ -228,6 +232,9 @@ const CartSection = () => {
                 cartItems={cartItems}
                 item={item}
                 getTotalAmountForItem={getTotalAmountForItem}
+                openToppingModel={openToppingModel} // Pass the function as a prop
+                selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
+
               />
             ))}
           </tbody>

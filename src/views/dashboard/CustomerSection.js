@@ -9,10 +9,10 @@ const CustomerSearch = () => {
 
   return (
     <>
-      <div className="custormer-search p-1" style={{ background: "white" }}>
+      <div className="custormer-search" style={{ background: "white" }}>
         <CustomersSearch />
         {/* cart list */}
-        <CartSection cartItems={cartItems} /> s
+        <CartSection cartItems={cartItems} /> 
       </div>
     </>
   );

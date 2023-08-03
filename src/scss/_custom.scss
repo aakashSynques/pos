@@ -64,7 +64,7 @@ a {
   padding: 3px;
   .category-list-box {
     .card-header {
-      padding: 3px 11px;
+      padding: 6px 11px;
       background: rgb(204, 233, 251);
       color: $color_2;
       margin-bottom: 0px;
@@ -163,10 +163,9 @@ a {
   button {
     margin-bottom: 8px;
     width: 100%;
+    border-radius: 3px;
     font-size: 11px;
-    border: 1px solid #157d15;
-    background-color: $background-color_2;
-    color: $color_6;
+    border: none;
     &:hover {
       background-color: $background-color_3;
       color: $color_3 !important;
@@ -246,10 +245,12 @@ tr {
 }
 .cart-table {
   th {
-    background-color: $background-color_7 !important;
     font-size: 12px !important;
     margin: 0;
+    color: white!important;
+    font-weight: 12px!important;
     padding: 5px !important;
+    background: #adadad!important;
   }
   b {
     font-size: 12px;
@@ -355,7 +356,8 @@ tr {
   background: #ffffff !important;
 }
 .bg-light-1 {
-  background-color: $background-color_10 !important;
+  // background-color: $background-color_10 !important;
+  background: #898989!important;
   padding: 30px 8px;
 }
 .incree-decreement input {
@@ -573,13 +575,13 @@ tr {
   background-color: #777;
 }
 .cust-name b{
-  font-size: 15px;
+  font-size: 17px;
   color: black;
   font-weight: 800;
 }
 .customer-sarch-sec{
-  padding: 7px 12px;
-  background: #efefef!important;
+  padding: 5px 4px;
+  background: #efefef !important;
   margin-bottom: 0px;
 }.customer-sarch-sec button{
   padding: 1px 5px;
@@ -640,4 +642,19 @@ tr {
 //   color: #bbb;
 //   line-height: 24px;
 //   font-size: 15px;
+// }
+
+
+
+// body::-webkit-scrollbar {
+//   width: 1em;
+// }
+ 
+// body::-webkit-scrollbar-track {
+//   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+// }
+ 
+// body::-webkit-scrollbar-thumb {
+//   background-color: darkgrey;
+//   outline: 1px solid slategrey;
 // }

@@ -381,6 +381,7 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
     <>
       {/* oulet model */}
       <CButton
+        color="light"
         className="gray-outlet"
         onClick={toggleOutletModal}
       >
@@ -440,6 +441,7 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
       {/* Delivery model */}
       <CButton
         className="gray-outlet"
+        color="light"
         onClick={() => setDeliverymodel(!deliverymodel)}
       >
         <b>DELIVERY - [F2]</b> <br />

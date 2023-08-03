@@ -1,14 +1,3 @@
-// import React from 'react'
-
-// const CustomersSearch = () => {
-//   return (
-//     <div>CustomersSearch</div>
-//   )
-// }
-
-// export default CustomersSearch
-
-
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -16,16 +5,13 @@ import {
   CFormInput,
   CRow,
   CCol,
-  CModal,
-  CModalHeader,
-  CModalTitle,
-  CModalBody,
-  CModalFooter,
   CButton,
+  CTooltip,
 } from "@coreui/react";
 import { fetch } from "../../../utils";
 import RegisterCustomerModal from "./RegisterCustomerModal";
 import EditCustomerProfile from "./EditCustomerProfile";
+import CustAccountsModel from "./CustAccountsModel";
 
 const CustomersSearch = () => {
   const [query, setQuery] = useState("");
@@ -35,7 +21,12 @@ const CustomersSearch = () => {
   const [cache, setCache] = useState({});
   const [selectedCustomer, setSelectedCustomer] = useState(null); // New state to track the selected customer
   const [addNewCustomer, setAddNewCustomer] = useState(false);
-  const [editCustomer, setEditCustomer] = useState(false);
+  const [editCustomerModel, setEditCustomerModel] = useState(false);
+  const [accountModel, setAccountModel] = useState(false);
+
+  const customTooltipStyle = {
+    "--cui-tooltip-bg": "var(--cui-primary)",
+  };
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -68,7 +59,6 @@ const CustomersSearch = () => {
         body,
         headers
       );
-
       setCustomerSearchResults(response.data.suggestions);
       // Cache the results for the current query
       console.log(response.data.suggestions);
@@ -83,23 +73,38 @@ const CustomersSearch = () => {
     }
   };
 
+  // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
     setQuery(customerName);
-
-    // Set the selected customer when the customer is clicked
     const selectedCustomer = customerSearchResults.find(
       (customer) => customer.value === customerName
     );
     setSelectedCustomer(selectedCustomer);
   };
 
+  // // Function to handle the update of the selected customer data
+  // const handleUpdateCustomerData = (updatedData) => {
+  //   // Update the selected customer's data in the state
+  //   setSelectedCustomer((prevCustomer) => ({
+  //     ...prevCustomer,
+  //     json: updatedData,
+  //   }));
+  // };
 
- // Function to handle when the "Edit" button is clicked for a selected customer
- const handleEditCustomer = () => {
-  if (selectedCustomer) {
-    setEditCustomer(true);
-  }
-};
+  // Function to handle when the "Edit" button is clicked for a selected customer
+  const handleEditCustomer = () => {
+    if (selectedCustomer) {
+      setEditCustomerModel(true);
+    }
+  };
+   // Function to handle when the "Edit" button is clicked for a selected customer
+   const handleAccountModel = () => {
+    if (selectedCustomer) {
+      setAccountModel(true);
+    }
+  };
+ 
+
 
   const MAX_RESULTS = 50; // Limit the number of search results displayed
   const displayedItems = useMemo(() => {
@@ -154,54 +159,88 @@ const CustomersSearch = () => {
   }, []);
 
   return (
-    <div>
+    <div className="customer-sarch-sec">
       {selectedCustomer ? ( // Render the selected customer data if a customer is selected
-        <div className="customer-sarch-sec">
+        <div>
           <CRow>
+            {/* selected customer display data */}
             <CCol sm={6}>
               <div className="cust-name">
-                <b>{selectedCustomer.json.customer_name}</b>
+                <b>
+                  {selectedCustomer.json.customer_name}
+                  <i
+                    class="fa fa-info-circle text-primary pl-2"
+                    title="EXTRA NOTE"
+                  ></i>
+                </b>
               </div>
               <div>
                 <label className="cust-label">
-                  {selectedCustomer.json.cust_type_name}
+                  {selectedCustomer.json.cust_type_name} Account
                 </label>{" "}
                 - {selectedCustomer.json.mobile}
               </div>
             </CCol>
+
+            {/* customer Edit and update */}
+
             <CCol sm={6}>
               <div class="text-right" style={{ float: "right" }}>
                 <div class="btn-group">
-                  <button
-                    class="btn btn-xs btn-warning"
-                    title=""
-                    data-toggle="tooltip"
-                    data-html="true"
-                    data-original-title="Accounts<br>[ Shift + A ]"
+                  {/* customer account view button */}
+                
+                  <CTooltip
+                    content="Account [Shift + A]"
+                    placement="top"
+                    style={customTooltipStyle}
                   >
-                    <i class="fa fa-money"></i>
-                  </button>
-                  <button
-                    // onClick={() => setEditCustomer(!editCustomer)}
-                    onClick={handleEditCustomer}
-                    class="btn btn-xs btn-primary "
-                    title=""
-                    data-toggle="tooltip"
-                    data-html="true"
-                    data-original-title="Profile Edit<br>[ Shift + E ]"
+                    <button
+                      onClick={handleAccountModel}
+                      style={{ "border-radius": "2px" }}
+                      class="btn btn-xs btn-warning rounded-left"
+                      title=""
+                      data-toggle="tooltip"
+                      data-html="true"
+                      data-original-title="Accounts<br>[ Shift + A ]"
+                    >
+                      <i class="fa fa-money"></i>
+                    </button>
+                  </CTooltip>
+                  {/* customer Edit button */}
+                  <CTooltip
+                    content="Profile Edit [Shift + E]"
+                    placement="top"
+                    style={customTooltipStyle}
                   >
-                    <i class="fa fa-edit"></i>
-                  </button>
-                  <button
-                    class="btn btn-xs btn-danger"
-                    title=""
-                    data-toggle="tooltip"
-                    data-html="true"
-                    data-original-title="Clear Selected Accounts<br>[ Shift + C ]"
-                    onClick={() => setSelectedCustomer(null)}
+                    <button
+                      onClick={handleEditCustomer}
+                      class="btn btn-xs btn-primary "
+                      title=""
+                      data-toggle="tooltip"
+                      data-html="true"
+                      data-original-title="Profile Edit<br>[ Shift + E ]"
+                    >
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </CTooltip>
+
+                  {/* customer clear button */}
+                  <CTooltip
+                    content="Clear Selected Accounts  [Shift + C]"
+                    placement="top"
                   >
-                    <i class="fa fa-times"></i>
-                  </button>
+                    <button
+                      style={{ "border-radius": "2px" }}
+                      class="btn btn-xs btn-danger"
+                      title=""
+                      data-toggle="tooltip"
+                      data-html="true"
+                      data-original-title="Clear Selected Accounts<br>[ Shift + C ]"
+                      onClick={() => setSelectedCustomer(null)}
+                    >
+                      <i class="fa fa-times"></i>
+                    </button>
+                  </CTooltip>
                 </div>
               </div>
             </CCol>
@@ -221,6 +260,17 @@ const CustomersSearch = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </CInputGroup>
+          <CButton
+            color="info"
+            className="text-white mt-1 rounded-1"
+            style={{ backgroundColor: "#5bc0de" }}
+          >
+            Walk-IN{" "}
+            <span class="badge" color="info">
+              0
+            </span>
+          </CButton>
+
           <div className="product-list-abslute" ref={ref}>
             {loading && <div style={{ background: "white" }}>Loading...</div>}
             {!loading &&
@@ -255,6 +305,13 @@ const CustomersSearch = () => {
         </>
       )}
 
+      {/* Customer account Mode */}
+      {/* register new customer model */}
+      <CustAccountsModel 
+        visible={accountModel}
+        onClose={() => setAccountModel(false)}
+      />
+
       {/* register new customer model */}
       <RegisterCustomerModal
         visible={addNewCustomer}
@@ -264,9 +321,10 @@ const CustomersSearch = () => {
       {/* Edit customer model */}
       {selectedCustomer && (
         <EditCustomerProfile
-          visible={editCustomer}
-          onClose={() => setEditCustomer(false)}
+          visible={editCustomerModel}
+          onClose={() => setEditCustomerModel(false)}
           customerData={selectedCustomer.json} // Pass the selected customer data to the EditCustomerProfile component
+          // onUpdate={handleUpdateCustomerData} // Pass the update function to the EditCustomerProfile component
         />
       )}
     </div>

@@ -30,11 +30,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-     // Check if the email and password fields are not empty
-  if (!email || !password) {
-    setError("Please fill in all the required fields.");
-    return;
-  }
+    // Check if the email and password fields are not empty
+    if (!email || !password) {
+      setError("Please fill in all the required fields.");
+      return;
+    }
     setLoading(true); // Set loading to true while the login request is being processed
     setError(null); // Clear any previous error messages
 
@@ -69,7 +69,7 @@ const Login = () => {
         setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       setError("An error occurred. Please try again later.");
       toast.error("Login Failed!", {
         position: "top-right",
@@ -125,10 +125,7 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="align-items-center login-bg"
-      style={{ "marginTop": "10%" }}
-    >
+    <div className="align-items-center login-bg" style={{ marginTop: "10%" }}>
       <ToastContainer /> {/* Keep only one ToastContainer at the root */}
       <div className="container-fluid">
         <CRow className="justify-content-center">
@@ -144,7 +141,7 @@ const Login = () => {
                     <p className="text-medium-emphasis pt-2">
                       Sign In to your account
                     </p>
-                    <CInputGroup >
+                    <CInputGroup>
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
@@ -156,9 +153,10 @@ const Login = () => {
                         required // Add the required attribute here
                       />
                     </CInputGroup>
-                    {error && error === "Please fill in all the required fields." && ( // Display error message for empty fields
-    <p className="text-danger">Enter valid email</p>
-  )}
+                    {error &&
+                      error === "Please fill in all the required fields." && ( // Display error message for empty fields
+                        <p className="text-danger">Enter valid email</p>
+                      )}
 
                     <CInputGroup className="mt-3">
                       <CInputGroupText>
@@ -172,9 +170,10 @@ const Login = () => {
                         required // Add the required attribute here
                       />
                     </CInputGroup>
-                    {error && error === "Please fill in all the required fields." && ( // Display error message for empty fields
-    <p className="text-danger">enter valid Password</p>
-  )}
+                    {error &&
+                      error === "Please fill in all the required fields." && ( // Display error message for empty fields
+                        <p className="text-danger">enter valid Password</p>
+                      )}
                     <CRow className="mt-4">
                       <CCol xs={6}>
                         <CButton
