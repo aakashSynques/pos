@@ -52,7 +52,8 @@ const CustomersSearch = () => {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
-      const body = { query };
+      const body = { rand: 0.44369813330371355, // LIMIT PAIRAMETER
+        query: query};
       const response = await fetch(
         "/api/customers/search/POS",
         "post",

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useDispatch } from "react-redux";
 
-import { removeFromCart, setCartQty } from "../../action/actions";
+import { removeFromCart, setCartQty } from "../../../action/actions";
 
 import {
   CButton,
