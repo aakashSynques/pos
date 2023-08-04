@@ -2,15 +2,47 @@ import React, { useState } from "react";
 
 import { useDispatch } from "react-redux";
 
-import { removeFromCart, setCartQty } from "../../action/actions";
-
+import { removeFromCart, setCartQty } from "../../../action/actions";
 import {
+  CFormInput,
+  CFormSelect,
+  CRow,
+  CCol,
+  CContainer,
+  CCollapse,
   CButton,
+  CForm,
+  CFormTextarea,
+  CModal,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CModalFooter,
+  CCard,
+  CCardBody,
+  CLink,
+  CInputGroup,
+  CInputGroupText,
 } from "@coreui/react";
 
-const CartItem = ({ item, cartItems, getTotalAmountForItem, openToppingModel, submittedToppings, selectedToppings }) => {
+const CartItem = ({
+  item,
+  cartItems,
+  getTotalAmountForItem,
+  openToppingModel,
+  submittedToppings,
+  selectedToppings,
+  toppingsData,
+}) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(item.prod_qty);
+  // const [selectedToppings, setSelectedToppings] = useState([]); // State for selected toppings in this item
+  const [visibleNote, setVisibleNote] = useState(false);
+  const [visibleComplentary, setVisibleComplentary] = useState(false);
+
+  const [productNote, setProductNote] = useState("");
+  const [complentaryNote, setComplentaryNote] = useState("");
+  // console.log(productNote, complentaryNote);
 
   const setCartQtyHandler = () => {
     dispatch(setCartQty(cartItems, item.prod_id, quantity));
@@ -19,7 +51,21 @@ const CartItem = ({ item, cartItems, getTotalAmountForItem, openToppingModel, su
     }
   };
 
+  const handleToppingClick = (topping) => {
+    const isSelected = selectedToppings.includes(topping.prod_id);
+    if (isSelected) {
+      setSelectedToppings(
+        selectedToppings.filter((id) => id !== topping.prod_id)
+      );
+    } else {
+      setSelectedToppings([...selectedToppings, topping.prod_id]);
+    }
+  };
+
+  // Function to calculate the total price of the selected toppings
+
   return (
+    <>
     <tr key={item.prod_id}>
       <td>
         <b>{item.prod_name}</b> <br />
@@ -40,14 +86,12 @@ const CartItem = ({ item, cartItems, getTotalAmountForItem, openToppingModel, su
                 </div>
               );
             })}
-          
-
         </small>
         <div className="toppings-btn">
-          <CButton>
+        <CButton onClick={() => setVisibleNote(!visibleNote)}>
             <u class="text-danger">N</u>ote
           </CButton>
-          <CButton>
+          <CButton onClick={() => setVisibleComplentary(!visibleComplentary)}>
             <u class="text-danger">C</u>omplementary
           </CButton>
           <CButton onClick={openToppingModel}>
@@ -85,8 +129,35 @@ const CartItem = ({ item, cartItems, getTotalAmountForItem, openToppingModel, su
         >
           <i className="fa fa-times"></i>
         </span>
-      </td>
+      </td>     
     </tr>
+    <tr>
+        <td colspan="3">
+          <CCollapse visible={visibleNote}>
+            <CFormTextarea
+              placeholder="Product Note"
+              className="cart-note"
+              rows={1}
+              value={productNote}
+              onChange={(e) => {
+                setProductNote(e.target.value);
+              }}
+            ></CFormTextarea>
+          </CCollapse>
+          <CCollapse visible={visibleComplentary}>
+            <CFormTextarea
+              placeholder="Complementary Note"
+              className="cart-note"
+              rows={1}
+              value={complentaryNote}
+              onChange={(e) => {
+                setComplentaryNote(e.target.value);
+              }}
+            ></CFormTextarea>
+          </CCollapse>
+        </td>
+      </tr>
+   </>
   );
 };
 

@@ -123,7 +123,8 @@ const ProductsSearchBar = () => {
       KOT_dispatch: item.KOT_dispatch,
       urno: item.urno,
       associated_prod_urno: item.associated_prod_urno,
-      toppings: item.toppings,
+      // toppings: item.toppings,
+      toppings: [],
       customized: item.customized,
     }));
     // console.log(cartItemData);

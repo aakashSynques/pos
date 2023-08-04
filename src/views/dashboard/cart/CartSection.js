@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart, setCartQty } from "../../action/actions"; // Import the removeFromCart action
-import { fetch } from "../../utils";
+import { removeFromCart, setCartQty } from "../../../action/actions"; // Import the removeFromCart action
+import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
 
 import {
@@ -23,13 +23,11 @@ import {
 
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
-
   console.log(cartItems, "cart");
 
   const dispatch = useDispatch();
   // console.log(cartItems);
   const [toppingModel, setToppingModel] = useState(false);
-
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
@@ -37,11 +35,6 @@ const CartSection = () => {
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-  // Function to calculate the total amount for each item based on quantity and rate
-  // const getTotalAmountForItem = (item) => {
-  //   const rate = item.prod_rate; // Assuming the rate is available in the product object
-  //   return rate;
-  // };
   const getTotalAmountForItem = (item) => {
     const rate = item.prod_rate; // Assuming the rate is available in the product object
     const toppingsTotalPrice = selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
@@ -139,8 +132,7 @@ const CartSection = () => {
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
-  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
-    useState(0);
+  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] = useState(0);
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [toppingsData, setToppingsData] = useState([]);
@@ -234,6 +226,8 @@ const CartSection = () => {
                 getTotalAmountForItem={getTotalAmountForItem}
                 openToppingModel={openToppingModel} // Pass the function as a prop
                 selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
+                submittedToppings={submittedToppings} // Pass the submittedToppings as a prop
+                toppingsData={toppingsData} // Pass the toppingsData as a prop
 
               />
             ))}

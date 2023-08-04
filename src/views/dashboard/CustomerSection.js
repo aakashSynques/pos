@@ -1,5 +1,5 @@
 import { CFormInput, CFormSelect, CRow, CCol, CContainer } from "@coreui/react";
-import CartSection from "./CartSection";
+import CartSection from "./cart/CartSection";
 import { useSelector } from "react-redux";
 import CustomersSearch from "./customer/CustomersSearch";
 
