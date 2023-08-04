@@ -3,10 +3,6 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { removeFromCart, setCartQty } from "../../../action/actions";
-<<<<<<< HEAD
-=======
-
->>>>>>> 8186c373fc2e5af51b86e3fded1d26b5a6fc2ccc
 import {
   CFormInput,
   CFormSelect,
