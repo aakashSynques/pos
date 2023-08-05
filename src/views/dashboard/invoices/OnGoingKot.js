@@ -1,12 +1,35 @@
-import { CCardHeader, CLink, CCardBody, CCard } from "@coreui/react";
-import React from "react";
+import {
+  CCardHeader,
+  CLink,
+  CCardBody,
+  CModalHeader,
+  CModalTitle,
+  CModalBody,
+  CNav,
+  CModal,
+  CNavItem,
+  CNavLink,
+  CCard,
+  CTabContent,
+  CTabPane,
+  CModalFooter,
+  CButton,
+} from "@coreui/react";
+import React, { useState } from "react";
+import OnGoingKotModel from "./OnGoingKotModel/OnGoingKotModel";
 const OnGoingKot = () => {
+  const [returns, setReturns] = useState(false);
+  const [activeKey, setActiveKey] = useState(1);
+
   return (
     <>
       <CCard>
         <CCardHeader>
           OnGoing KOT(s)
-          <CLink className="text-primary pull-right">
+          <CLink
+            className="text-primary pull-right"
+            onClick={() => setReturns(!returns)}
+          >
             <i className="fa fa-external-link fa-xs"></i>
           </CLink>
         </CCardHeader>
@@ -51,6 +74,32 @@ const OnGoingKot = () => {
           </table>
         </div>
       </CCard>
+      {/* ==============================Model start here================================== */}
+      <CModal size="lg" visible={returns} onClose={() => setReturns(false)}>
+        <CModalHeader onClose={() => setReturns(false)}>
+          <CModalTitle>
+            Pending KOTs To Bill <span className="badge"> 0</span>
+          </CModalTitle>
+        </CModalHeader>
+
+        <CModalBody>
+          <CTabContent>
+            <CTabPane
+              role="tabpanel"
+              aria-labelledby="home-tab"
+              visible={activeKey === 1}
+            >
+              <OnGoingKotModel />
+            </CTabPane>
+          </CTabContent>
+        </CModalBody>
+
+        <CModalFooter>
+          <CButton color="secondary" onClose={() => setReturns(false)}>
+            Close
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </>
   );
 };

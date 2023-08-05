@@ -13,6 +13,7 @@ const CustomerSearch = () => {
         <CustomersSearch />
         {/* cart list */}
         <CartSection cartItems={cartItems} /> 
+        {/* <PayBillsModels /> */}
       </div>
     </>
   );

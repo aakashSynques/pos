@@ -25,7 +25,7 @@ $border-color_2: #d9534f;
 
 body {
   // font-family: $font-family_1 !important;
-  font-size: 12px !important;
+  font-size: 14px !important;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif !important;
 }
 a {
@@ -98,7 +98,7 @@ a {
   }
 }
 .font-size {
-  font-size: 12px;
+  font-size: 15px;
 }
 .bil-table {
   .row {
@@ -132,17 +132,17 @@ a {
   }
 }
 .pay-btn {
-  background-color: $background-color_1 !important;
-  padding: 4px 15px !important;
+  padding: 8px 15px !important;
   border-radius: 2px !important;
-  color: $color_3 !important;
+  color: white !important;
+  width: 100%;
+  margin: 0;
 }
 .total-price {
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 700;
-  color: $color_4 !important;
+  color: #127246 !important;
   margin: 0px;
-  color: $color_3;
 }
 .gray-outlet {
   background: #ffffff;
@@ -625,40 +625,56 @@ tr {
 }.register-model .form-control{
   border-radius: 0px;
 }
-// .register-model .form-control .has-feedback-left {
-//   padding-left: 45px;
-// }
-
-// .register-model .has-feedback .form-control {
-//   padding-right: 42.5px;
-// }
-// .register-model .form-control-feedback.left {
-//   border-right: 1px solid #ccc;
-//   left: 13px;
-// }
-// .register-model .form-control-feedback {
-//   margin-top: 8px;
-//   height: 23px;
-//   color: #bbb;
-//   line-height: 24px;
-//   font-size: 15px;
-// }
-
-
-
-// body::-webkit-scrollbar {
-//   width: 1em;
-// }
- 
-// body::-webkit-scrollbar-track {
-//   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-// }
- 
-// body::-webkit-scrollbar-thumb {
-//   background-color: darkgrey;
-//   outline: 1px solid slategrey;
-// }
 .cart-note{
   border-radius: 1px!important;
   font-size: 12px!important;
 }
+.empty-cart{
+  text-align: center;
+  padding-top: 54px;
+color: #80808069;
+}
+.empty-cart i{
+  text-align: center;
+  background: #e4e4e46b;
+  font-size: 73px;
+  color: white;
+  padding: 17px;
+  border-radius: 50%;
+}.table-height{
+  height: 300px;
+    overflow: scroll;
+}.label-default {
+  background-color: #777;
+}.text-right{text-align: right;}.borders{
+  padding: 3px 0px;
+  margin: 1px 0;
+  height: 3px;
+}.bill-head-bg{
+  background-color: #efefef;
+  font-weight: 800;
+  font-size: 13px;
+  padding: 5px 0;
+}.billing-note{
+  background-color: #efefef;
+}.pay-mode-btn button{    margin-bottom: 5px;
+  margin-bottom: 5px;
+  margin-right: 3px;
+  display: inline-block;
+  padding: 1px 8px;
+  color: #565656;
+  font-size: 11px;
+  font-family: sans-serif;
+  border-radius: 3px;
+  border: 1px solid rgba(128, 128, 128, 0.6901960784);
+  background: none;
+}
+.btn-invisible{
+    background: none!important;
+    color: red!important;
+    border: none!important;
+    font-size: 14px!important; 
+}
+@media (min-width: 576px){
+.bills-model-width .modal-dialog {
+    max-width: 600px;}}

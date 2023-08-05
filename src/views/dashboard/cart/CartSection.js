@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { removeFromCart, setCartQty } from "../../../action/actions"; // Import the removeFromCart action
 import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
+import PayBillsModels from "./billing/PayBillsModels";
 
 import {
   CFormInput,
@@ -24,17 +25,27 @@ import {
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   console.log(cartItems, "cart");
-
   const dispatch = useDispatch();
   // console.log(cartItems);
   const [toppingModel, setToppingModel] = useState(false);
+  // const [addNewCustomer, setAddNewCustomer] = useState(false);
+  const [paybillsModel, setPayBillsModel] = useState(false);
+
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
-  const [totalAmount, setTotalAmount] = useState(0);
+  // const [totalAmount, setTotalAmount] = useState(0);
+  // const selectedOutletId = useSelector(
+  //   (state) => state.selectedOutletId.selectedOutletId
+  // );
 
-  const selectedOutletId = useSelector(
-    (state) => state.selectedOutletId.selectedOutletId
-  );
+  // New state variable to track cart emptiness
+  const [isCartEmpty, setCartEmpty] = useState(true);
+
+  // Update the cart emptiness state whenever the cart items change  for pay and Booking button
+  useEffect(() => {
+    setCartEmpty(cartItems.length === 0);
+  }, [cartItems]);
+
   const getTotalAmountForItem = (item) => {
     const rate = item.prod_rate; // Assuming the rate is available in the product object
     const toppingsTotalPrice = selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
@@ -110,29 +121,31 @@ const CartSection = () => {
   }, [quantity]);
   const qtyRef = useRef();
 
-  const handleKeyUp = (event, item) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      event.target.blur();
-      qtyRef.current.blur();
+  // const handleKeyUp = (event, item) => {
+  //   if (event.key === "Enter") {
+  //     event.preventDefault();
+  //     event.target.blur();
+  //     qtyRef.current.blur();
 
-      const newQuantity = parseInt(event.target.value, 10);
-      const quantityToSet =
-        isNaN(newQuantity) || newQuantity < 1000 ? newQuantity : 1000;
+  //     const newQuantity = parseInt(event.target.value, 10);
+  //     const quantityToSet =
+  //       isNaN(newQuantity) || newQuantity < 1000 ? newQuantity : 1000;
 
-      if (quantityToSet === 0) {
-        // Dispatch the removeFromCart action to remove the product from the cart
-        dispatch(removeFromCart(cartItems, item.prod_id));
-      } else {
-        // Dispatch the setCartQty action to update the product quantity
-        dispatch(setCartQty(cartItems, item.prod_id, quantityToSet));
-      }
-    }
-  };
+  //     if (quantityToSet === 0) {
+  //       // Dispatch the removeFromCart action to remove the product from the cart
+  //       dispatch(removeFromCart(cartItems, item.prod_id));
+  //     } else {
+  //       // Dispatch the setCartQty action to update the product quantity
+  //       dispatch(setCartQty(cartItems, item.prod_id, quantityToSet));
+  //     }
+  //   }
+  // };
+
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
-  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] = useState(0);
+  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
+    useState(0);
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [toppingsData, setToppingsData] = useState([]);
@@ -185,62 +198,41 @@ const CartSection = () => {
     setSelectedToppingsTotalPrice(totalToppingPrice);
   }, [selectedToppings, toppingsData]);
 
-  const handleQuantityChange = (value) => {
-    // Parse the input value to an integer
-    const newQuantity = parseInt(value, 10);
-
-    // Determine the value to display in the input box
-    let displayValue = "";
-    // if (isNaN(newQuantity) || newQuantity < 1) {
-    //   displayValue = "1"; // Minimum allowed value is 1
-    // } else if (newQuantity > 1000) {
-    //   displayValue = "1000"; // Display "1000+" for values greater than 1000
-    // }
-    if (newQuantity >= 1000) {
-      displayValue = "1000";
-      displayValue = newQuantity.toString(); // For values between 1 and 1000
-    }
-
-    // Set the quantity state and the value to display
-    setQuantity(newQuantity);
-    qtyRef.current.value = displayValue;
-  };
 
   return (
     <div className="cartlist">
-      {cartItems.length > 0 ? (
-        <table className="table cart-table">
-          <thead>
-            <tr style={{ background: "#efefef" }}>
-              <th>Product Name</th>
-              <th>Qty</th>
-              <th>Amt</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cartItems.map((item) => (
-              <CartItem
-                key={item.prod_id}
-                cartItems={cartItems}
-                item={item}
-                getTotalAmountForItem={getTotalAmountForItem}
-                openToppingModel={openToppingModel} // Pass the function as a prop
-                selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
-                submittedToppings={submittedToppings} // Pass the submittedToppings as a prop
-                toppingsData={toppingsData} // Pass the toppingsData as a prop
-
-              />
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        <div
-          className="product-list"
-          style={{ margin: "110px 0", textAlign: "center", border: "none" }}
-        >
-          No items in the cart.
-        </div>
-      )}
+      <div className="table-height">
+        {cartItems.length > 0 ? (
+          <table className="table cart-table">
+            <thead>
+              <tr style={{ background: "#efefef" }}>
+                <th>Product Name</th>
+                <th>Qty</th>
+                <th>Amt</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.map((item) => (
+                <CartItem
+                  key={item.prod_id}
+                  cartItems={cartItems}
+                  item={item}
+                  getTotalAmountForItem={getTotalAmountForItem}
+                  openToppingModel={openToppingModel} // Pass the function as a prop
+                  selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
+                  submittedToppings={submittedToppings} // Pass the submittedToppings as a prop
+                  toppingsData={toppingsData} // Pass the toppingsData as a prop
+                />
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <div className="empty-cart">
+            <h6 style={{ fontSize: "20px" }}>No, Product Found in cart</h6>
+            <i className="fa fa-shopping-cart"></i>
+          </div>
+        )}
+      </div>
 
       {/* price Table   */}
       <hr />
@@ -258,7 +250,8 @@ const CartSection = () => {
           </CRow>
           <CRow>
             <CCol sm={6} className="font-size">
-              Discount
+              Discount <i className="fa fa-plus-circle"></i>
+              <small> [Shift + D] </small>
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i> 0.00
@@ -286,12 +279,27 @@ const CartSection = () => {
           </CRow>
 
           <CRow>
-            <CCol sm={6} className="font-size">
-              <button className="btn pay-btn" type="button">
+            <CCol sm={4} className="font-size">
+              <button
+                className="btn pay-btn btn-success"
+                type="button"
+                onClick={() => setPayBillsModel(!paybillsModel)}
+                disabled={isCartEmpty}
+              >
                 PAY <font size="1">[ Shift + Enter ]</font>
               </button>
             </CCol>
-            <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
+            <CCol sm={4} className="font-size pl-0" disabled={isCartEmpty}>
+              <button
+                className="btn pay-btn btn-warning"
+                type="button" 
+                disabled={isCartEmpty}
+              >
+                BOOKING <font size="1"></font>
+              </button>
+            </CCol>
+
+            <CCol sm={4} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
                 {getFinalPayAmount().toFixed(2)}{" "}
@@ -322,10 +330,24 @@ const CartSection = () => {
         </CContainer>
       </div>
 
+
+
+
+
+      {/* pay bills model */}
+      <PayBillsModels
+        visible={paybillsModel}
+        onClose={() => setPayBillsModel(false)}
+      />
+
+
+
+
+
+
+
       {/* toppings model */}
 
-
-      
       <CModal
         size="lg"
         visible={toppingModel}

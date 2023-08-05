@@ -16,30 +16,30 @@ const OutletOptions = ({ outletName }) => {
     <>
       <div className="outlet-btn">
         <AssignOutLet />
-        <br /> <br />
+        <br /> 
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>New Sale</b>
-          <p></p>
+          <p>[Shift + N]</p>
         </CButton>
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>Save Sale</b>
-          <p></p>
+          <p>[Shift + S]</p>
         </CButton>
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>Panding Sale(s)</b>
-          <p></p>
+          <p>[Shift + L]</p>
         </CButton>
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>Pending KOT(s)</b>
-          <p></p>
+          <p>[Shift + K]</p>
         </CButton>
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>Recent Sale(s)</b>
-          <p></p>
+          <p>[Shift + R]</p>
         </CButton>
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>Booking Sale</b>
-          <p></p>
+          <p>[Shift + B]</p>
         </CButton>
         <CButton
           className="light-outlet"
@@ -55,9 +55,11 @@ const OutletOptions = ({ outletName }) => {
         </CButton>
         <CButton className="light-outlet" style={{ background: "#d9534f" }}>
           <b>Clear Sale</b>
+          <p>[Shift + Delete]</p>
         </CButton>
         <CButton className="light-outlet" style={{ background: "#d9534f" }}>
           <b>Discard Sale</b>
+          <p>[Shift + Ctrl + Delete]</p>
         </CButton>
       </div>
     </>
