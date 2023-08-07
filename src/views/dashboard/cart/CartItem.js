@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-
 import { useDispatch } from "react-redux";
 
-import { removeFromCart, setCartQty } from "../../../action/actions";
+import {
+  removeFromCart,
+  setCartQty,
+  setProductNoteInCart,
+  setComplementaryNoteInCart,
+} from "../../../action/actions";
+
 import {
   CFormInput,
   CFormSelect,
@@ -51,87 +56,106 @@ const CartItem = ({
     }
   };
 
-  const handleToppingClick = (topping) => {
-    const isSelected = selectedToppings.includes(topping.prod_id);
-    if (isSelected) {
-      setSelectedToppings(
-        selectedToppings.filter((id) => id !== topping.prod_id)
-      );
-    } else {
-      setSelectedToppings([...selectedToppings, topping.prod_id]);
-    }
-  };
+  // const handleToppingClick = (topping) => {
+  //   const isSelected = selectedToppings.includes(topping.prod_id);
+  //   if (isSelected) {
+  //     setSelectedToppings(
+  //       selectedToppings.filter((id) => id !== topping.prod_id)
+  //     );
+  //   } else {
+  //     setSelectedToppings([...selectedToppings, topping.prod_id]);
+  //   }
+  // };
 
   // Function to calculate the total price of the selected toppings
 
+  const setProdNoteOnBlur = () => {
+    dispatch(setProductNoteInCart(cartItems, item.prod_id, productNote));
+  };
+
+  const setCompNoteOnBlur = () => {
+    dispatch(
+      setComplementaryNoteInCart(cartItems, item.prod_id, complentaryNote)
+    );
+  };
+
   return (
     <>
-    <tr key={item.prod_id}>
-      <td>
-        <b>{item.prod_name}</b> <br />
-        <small>
-          {item.category_name} | @ {item.prod_rate} <br />
-          {/* selected topping list */}
-          {submittedToppings &&
-            selectedToppings.map((toppingId) => {
-              const topping = toppingsData.find((t) => t.prod_id === toppingId);
-              return (
-                <div key={toppingId}>
-                  {topping ? (
-                    <span>
-                      {topping.prod_name} | @ <i className="fa fa-inr"></i>
-                      {topping.prod_rate.toFixed(2)}
-                    </span>
-                  ) : null}
-                </div>
-              );
-            })}
-        </small>
-        <div className="toppings-btn">
-        <CButton onClick={() => setVisibleNote(!visibleNote)}>
-            <u class="text-danger">N</u>ote
-          </CButton>
-          <CButton onClick={() => setVisibleComplentary(!visibleComplentary)}>
-            <u class="text-danger">C</u>omplementary
-          </CButton>
-          <CButton onClick={openToppingModel}>
-            <u class="text-danger">T</u>oppings
-          </CButton>
-        </div>
-      </td>
-      {/* {setQuantity(item.prod_qty)} */}
-      {/* {console.log(item.prod_qty)} */}
-      <td className="incree-decreement">
-        <input
-          type="text"
-          className="w-25 text"
-          value={quantity}
-          onBlur={setCartQtyHandler}
-          onChange={(e) => setQuantity(e.target.value)}
-        />
-        <br />
-        <button> Parcel</button>
-      </td>
-      <td className="pt-3">
-        <b className="rate-font">
-          <i className="fa fa-inr"></i>
-          {/* {item.prod_rate.toFixed(2)}{" "} */}
-          {getTotalAmountForItem(item).toFixed(2)} <br />
-          {/* {submittedToppings && (
+      <tr key={item.prod_id}>
+        <td>
+          <b>{item.prod_name}</b> <br />
+          <small>
+            {item.category_name} | @ {item.prod_rate} <br />
+            {/* selected topping list */}
+            {item.toppings &&
+              item.toppings.map((toppingId) => {
+                const topping = toppingsData.find(
+                  (t) => t.prod_id === toppingId
+                );
+                return (
+                  <div key={toppingId}>
+                    {topping ? (
+                      <span>
+                        {topping.prod_name} | @ <i className="fa fa-inr"></i>
+                        {topping.prod_rate.toFixed(2)}
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })}
+          </small>
+          <div className="toppings-btn">
+            <CButton onClick={() => setVisibleNote(!visibleNote)}>
+              <u class="text-danger">N</u>ote
+            </CButton>
+            <CButton onClick={() => setVisibleComplentary(!visibleComplentary)}>
+              <u class="text-danger">C</u>omplementary
+            </CButton>
+
+            {item.prod_Toppings_status == 1 ? (
+              <CButton
+                onClick={() =>
+                  openToppingModel(item.prod_id, item.category_heads)
+                }
+              >
+                <u class="text-danger">T</u>oppings
+              </CButton>
+            ) : null}
+          </div>
+        </td>
+        {/* {setQuantity(item.prod_qty)} */}
+        {/* {console.log(item.prod_qty)} */}
+        <td className="incree-decreement">
+          <input
+            type="text"
+            className="w-25 text"
+            value={quantity}
+            onBlur={setCartQtyHandler}
+            onChange={(e) => setQuantity(e.target.value)}
+          />
+          <br />
+          <button> Parcel</button>
+        </td>
+        <td className="pt-3">
+          <b className="rate-font">
+            <i className="fa fa-inr"></i>
+            {/* {item.prod_rate.toFixed(2)}{" "} */}
+            {getTotalAmountForItem(item).toFixed(2)} <br />
+            {/* {submittedToppings && (
           <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
         )} */}
-        </b>
+          </b>
 
-        {/* item remove button */}
-        <span
-          className="btn btn-danger btn-remove"
-          onClick={() => dispatch(removeFromCart(cartItems, item.prod_id))}
-        >
-          <i className="fa fa-times"></i>
-        </span>
-      </td>     
-    </tr>
-    <tr>
+          {/* item remove button */}
+          <span
+            className="btn btn-danger btn-remove"
+            onClick={() => dispatch(removeFromCart(cartItems, item.prod_id))}
+          >
+            <i className="fa fa-times"></i>
+          </span>
+        </td>
+      </tr>
+      <tr>
         <td colspan="3">
           <CCollapse visible={visibleNote}>
             <CFormTextarea
@@ -142,6 +166,7 @@ const CartItem = ({
               onChange={(e) => {
                 setProductNote(e.target.value);
               }}
+              onBlur={setProdNoteOnBlur}
             ></CFormTextarea>
           </CCollapse>
           <CCollapse visible={visibleComplentary}>
@@ -153,11 +178,12 @@ const CartItem = ({
               onChange={(e) => {
                 setComplentaryNote(e.target.value);
               }}
+              onBlur={setCompNoteOnBlur}
             ></CFormTextarea>
           </CCollapse>
         </td>
       </tr>
-   </>
+    </>
   );
 };
 

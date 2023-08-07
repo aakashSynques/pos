@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart, setCartQty } from "../../../action/actions"; // Import the removeFromCart action
+import { setToppings } from "../../../action/actions"; // Import the removeFromCart action
 import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
 import PayBillsModels from "./billing/PayBillsModels";
@@ -30,14 +30,11 @@ const CartSection = () => {
   const [toppingModel, setToppingModel] = useState(false);
   // const [addNewCustomer, setAddNewCustomer] = useState(false);
   const [paybillsModel, setPayBillsModel] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState();
+  const [categoryHead, setCategoryHead] = useState("");
 
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
-  // const [totalAmount, setTotalAmount] = useState(0);
-  // const selectedOutletId = useSelector(
-  //   (state) => state.selectedOutletId.selectedOutletId
-  // );
-
   // New state variable to track cart emptiness
   const [isCartEmpty, setCartEmpty] = useState(true);
 
@@ -49,7 +46,6 @@ const CartSection = () => {
   const getTotalAmountForItem = (item) => {
     const rate = item.prod_rate; // Assuming the rate is available in the product object
     const toppingsTotalPrice = selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
-    console.log(toppingsTotalPrice);
     return rate + toppingsTotalPrice;
   };
 
@@ -61,10 +57,6 @@ const CartSection = () => {
       subTotal += totalAmount;
     });
     return subTotal;
-  };
-
-  const openToppingModel = () => {
-    setToppingModel(true);
   };
 
   // Constant variable for SGST rate
@@ -121,26 +113,6 @@ const CartSection = () => {
   }, [quantity]);
   const qtyRef = useRef();
 
-  // const handleKeyUp = (event, item) => {
-  //   if (event.key === "Enter") {
-  //     event.preventDefault();
-  //     event.target.blur();
-  //     qtyRef.current.blur();
-
-  //     const newQuantity = parseInt(event.target.value, 10);
-  //     const quantityToSet =
-  //       isNaN(newQuantity) || newQuantity < 1000 ? newQuantity : 1000;
-
-  //     if (quantityToSet === 0) {
-  //       // Dispatch the removeFromCart action to remove the product from the cart
-  //       dispatch(removeFromCart(cartItems, item.prod_id));
-  //     } else {
-  //       // Dispatch the setCartQty action to update the product quantity
-  //       dispatch(setCartQty(cartItems, item.prod_id, quantityToSet));
-  //     }
-  //   }
-  // };
-
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
@@ -164,40 +136,107 @@ const CartSection = () => {
     } finally {
     }
   };
+  console.log(toppingsData, "toppingsData");
   useEffect(() => {
     getToppingsData();
   }, []);
   const filteredToppings = toppingsData.filter((topping) =>
     topping.prod_name.toLowerCase().includes(searchToppingQuery.toLowerCase())
   );
+  console.log(filteredToppings, "filteredToppings");
+
+  // const handleToppingClick = (topping) => {
+  //   const isSelected = selectedToppings.includes(topping.prod_id);
+  //   if (isSelected) {
+  //     setSelectedToppings(
+  //       selectedToppings.filter((id) => id !== topping.prod_id)
+  //     );
+  //   } else {
+  //     setSelectedToppings([...selectedToppings, topping.prod_id]);
+  //   }
+  // };
+
   const handleToppingClick = (topping) => {
-    const isSelected = selectedToppings.includes(topping.prod_id);
-    if (isSelected) {
-      setSelectedToppings(
-        selectedToppings.filter((id) => id !== topping.prod_id)
+    setSelectedToppings((prevSelectedToppings) => {
+      const isSelected = prevSelectedToppings[selectedProductId]?.includes(
+        topping.prod_id
       );
-    } else {
-      setSelectedToppings([...selectedToppings, topping.prod_id]);
-    }
+
+      if (isSelected) {
+        const updatedToppings = prevSelectedToppings[selectedProductId].filter(
+          (id) => id !== topping.prod_id
+        );
+
+        return {
+          ...prevSelectedToppings,
+          [selectedProductId]: updatedToppings,
+        };
+      } else {
+        const updatedToppings = [
+          ...(prevSelectedToppings[selectedProductId] || []),
+          topping.prod_id,
+        ];
+
+        return {
+          ...prevSelectedToppings,
+          [selectedProductId]: updatedToppings,
+        };
+      }
+    });
   };
+  console.log(selectedToppings);
+
+  const openToppingModel = (prod_id, category_heads) => {
+    setToppingModel(true);
+    setSelectedProductId(prod_id);
+    setCategoryHead(category_heads);
+  };
+
+  const toppingsWithCategoryHead = filteredToppings
+    .map((topping) => {
+      if (topping.category_name === categoryHead) {
+        return topping;
+      } else {
+        return null; // If you want to skip non-matching elements, return null.
+      }
+    })
+    .filter(Boolean);
+
+  console.log(toppingsWithCategoryHead, "filteredToppingsWithCategoryHead");
+
+  console.log(selectedToppings, "selectedToppings");
 
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
+    dispatch(setToppings(cartItems, selectedProductId, selectedToppings));
     setToppingModel(false); // Close the toppings model after submitting
   };
 
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
-    const totalToppingPrice = selectedToppings.reduce(
-      (toppingTotal, toppingId) => {
-        const topping = toppingsData.find((t) => t.prod_id === toppingId);
-        return toppingTotal + (topping ? topping.prod_rate : 0);
+    // const totalToppingPrice = selectedToppings.reduce(
+    //   (toppingTotal, toppingId) => {
+    //     const topping = toppingsData.find((t) => t.prod_id === toppingId);
+    //     return toppingTotal + (topping ? topping.prod_rate : 0);
+    //   },
+    //   0
+    // );
+    const totalToppingPrice = Object.values(selectedToppings).reduce(
+      (toppingTotal, selectedToppingsArray) => {
+        const productToppingTotal = selectedToppingsArray.reduce(
+          (acc, toppingId) => {
+            const topping = toppingsData.find((t) => t.prod_id === toppingId);
+            return acc + (topping ? topping.prod_rate : 0);
+          },
+          0
+        );
+
+        return toppingTotal + productToppingTotal;
       },
       0
     );
     setSelectedToppingsTotalPrice(totalToppingPrice);
   }, [selectedToppings, toppingsData]);
-
 
   return (
     <div className="cartlist">
@@ -281,7 +320,8 @@ const CartSection = () => {
           <CRow>
             <CCol sm={4} className="font-size">
               <button
-                className="btn pay-btn btn-success"
+                className="btn pay-btn"
+                style={{ backgroundColor: "#26B99A" }}
                 type="button"
                 onClick={() => setPayBillsModel(!paybillsModel)}
                 disabled={isCartEmpty}
@@ -292,7 +332,7 @@ const CartSection = () => {
             <CCol sm={4} className="font-size pl-0" disabled={isCartEmpty}>
               <button
                 className="btn pay-btn btn-warning"
-                type="button" 
+                type="button"
                 disabled={isCartEmpty}
               >
                 BOOKING <font size="1"></font>
@@ -330,21 +370,11 @@ const CartSection = () => {
         </CContainer>
       </div>
 
-
-
-
-
       {/* pay bills model */}
       <PayBillsModels
         visible={paybillsModel}
         onClose={() => setPayBillsModel(false)}
       />
-
-
-
-
-
-
 
       {/* toppings model */}
 
@@ -378,19 +408,19 @@ const CartSection = () => {
                 style={{ backgroundColor: "#ffc210" }}
               >
                 <i className="fa fa-search"></i>
-                {filteredToppings.length} Found
+                {toppingsWithCategoryHead.length} Found
               </span>
             </CInputGroup>
           </CCol>
         </CModalHeader>
         <CModalBody style={{ padding: "5px!important" }}>
           <div className="toppings-btn-style">
-            {filteredToppings.map((topping) => (
+            {toppingsWithCategoryHead.map((topping) => (
               <label key={topping.prod_id}>
                 <span className="toppingstyle">{topping.prod_name}</span>
                 <button
                   className={`btn btn-sm pull-right ${
-                    selectedToppings.includes(topping.prod_id)
+                    selectedToppings[topping.prod_id]?.includes(topping.prod_id)
                       ? "btn-success-bg"
                       : ""
                   }`}

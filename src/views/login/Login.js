@@ -110,18 +110,6 @@ const Login = () => {
     } catch (err) {
       console.log(err);
     }
-    // Display error notification if present
-    // if (error) {
-    //   toast.error(error, {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //   });
-    // }
   };
 
   return (
@@ -185,8 +173,8 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="forgot-btn">
-                          Forgot password?
+                        <CButton color="link" className="forgot-btn text-secondary ">
+                        Lost your password?
                         </CButton>
                       </CCol>
                     </CRow>

@@ -253,7 +253,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getSubTotalAmount().toFixed(2)}{" "}
+              {getSubTotalAmount().toFixed(3)}{" "}
               {/* Display the calculated subtotal */}
             </CCol>
           </CRow>
@@ -271,7 +271,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalSGSTAmount().toFixed(2)}{" "}
+              {getTotalSGSTAmount().toFixed(3)}{" "}
               {/* Display the calculated SGST amount */}
             </CCol>
           </CRow>
@@ -281,7 +281,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalCGSTAmount().toFixed(2)}{" "}
+              {getTotalCGSTAmount().toFixed(3)}{" "}
               {/* Display the calculated CGST amount */}
             </CCol>
           </CRow>
@@ -295,7 +295,7 @@ const CartSection = () => {
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
-                {getFinalPayAmount().toFixed(2)}{" "}
+                {getFinalPayAmount().toFixed(3)}{" "}
                 {/* Display the final pay amount */}
               </h4>
               <small>{getTotalItmes()} Item(s) </small>
@@ -491,7 +491,7 @@ const CartItem = ({
                     {topping ? (
                       <span>
                         {topping.prod_name} | @ <i className="fa fa-inr"></i>
-                        {topping.prod_rate.toFixed(2)}
+                        {topping.prod_rate.toFixed(3)}
                       </span>
                     ) : null}
                   </div>
@@ -533,10 +533,10 @@ const CartItem = ({
         <td className="pt-3">
           <b className="rate-font">
             <i className="fa fa-inr"></i>
-            {/* {item.prod_rate.toFixed(2)}{" "} */}
-            {getTotalAmountForItem(item).toFixed(2)} <br />
+            {/* {item.prod_rate.toFixed(3)}{" "} */}
+            {getTotalAmountForItem(item).toFixed(3)} <br />
             {/* {submittedToppings && (
-          <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
+          <b>Toppings : {selectedToppingsTotalPrice.toFixed(3)}</b>
         )} */}
           </b>
 

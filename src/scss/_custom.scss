@@ -253,7 +253,7 @@ tr {
     background: #adadad!important;
   }
   b {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 .label-danger {
@@ -326,6 +326,7 @@ tr {
   cursor: pointer;
   b {
     font-family: $font-family_2 !important;
+    font-size: 14px;
   }
   &:hover {
     background: #fff5b1e3 !important;
@@ -341,6 +342,10 @@ tr {
   padding: 0px 3px !important;
   border-radius: 4px !important;
   float: right;
+}
+.cust-list-custmize{
+  position: relative;
+  top: -24px;
 }
 .cartlist {
   z-index: 9;
@@ -484,7 +489,6 @@ tr {
   color: #ffffff !important; /* Set the text color for better contrast */
 }
 .change-focus input {
-  font-size: 12px !important;
   border-radius: 0 !important;
   outline: none !important;
   box-shadow: none !important;

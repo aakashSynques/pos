@@ -213,7 +213,7 @@ const RecentInvoice = () => {
                                   width: "2%",
                                 }}
                               >
-                                PKP
+                                PU
                               </strong>
                             ) : parsedSalesJson.cartSumUp.deliveryMode ==
                               "4" ? (

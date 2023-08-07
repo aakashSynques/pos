@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from "react-toastify"; // Import toast and ToastContainer
 import React, { useState, useEffect } from "react";
 import {
   CModal,
@@ -19,6 +20,10 @@ const EditCustomerProfile = ({
   customerData: initialData,
 }) => {
   const [customerData, setCustomerData] = useState(initialData);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null); // Add state for success message
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add state for submitting status
+
 
   useEffect(() => {
     setCustomerData(initialData);
@@ -34,6 +39,7 @@ const EditCustomerProfile = ({
 
   const handleUpdateCustomer = async () => {
     try {
+      setIsSubmitting(true); // Set submitting status
       const token = localStorage.getItem("pos_token");
       const headers = {
         Authorization: `Bearer ${token}`,
@@ -67,16 +73,23 @@ const EditCustomerProfile = ({
 
       if (response.ok) {
         const responseData = await response.json();
-        alert("Customer details updated successfully!");
         console.log("Response data:", responseData);
         onClose();
+        setErrorMessage(null); // Clear any previous error message
+        setSuccessMessage("Wait Saving Details.."); // Set success message     
+        toast.success("Customer Details Updated Successfully!");
+
       } else {
         const responseData = await response.json();
-        alert("Failed to update customer details: " + responseData.message);
+        setErrorMessage("An error occurred while updating customer details.");
+        setSuccessMessage(null); // Clear success message if there was an error
       }
     } catch (error) {
       console.error("Error occurred while updating customer details:", error);
-      alert("Failed to update customer details. Please try again later.");
+      setErrorMessage("An error occurred while updating customer details.");
+      setSuccessMessage(null); // Clear success message if there was an error
+    }finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -104,7 +117,7 @@ const EditCustomerProfile = ({
               onChange={handleInputChange}
               value={customerData.cust_type_id}
             >
-              <option>-----</option>
+              <option disabled>-- select --</option>
               <option value="1">Customer</option>
               <option value="4">Employee (BNS)</option>
             </CFormSelect>
@@ -230,10 +243,22 @@ const EditCustomerProfile = ({
           </CInputGroup>
         </CModalBody>
       <CModalFooter>
-        <CButton color="success" onClick={handleUpdateCustomer}>
-          Update Details
-        </CButton>
+      {errorMessage && (
+          <span className="pull-left text-left text-danger" style={{ fontSize: "13px" }}>
+            {errorMessage}
+          </span>
+        )}
+        {isSubmitting ? (
+          <span className="pull-left text-center text-success" >
+            Wait Saving Details...
+          </span>
+        ) : (
+          <CButton color="success" onClick={handleUpdateCustomer}>
+            Update Details
+          </CButton>
+        )}
       </CModalFooter>
+      <ToastContainer position="bottom-right" />
     </CModal>
   );
 };

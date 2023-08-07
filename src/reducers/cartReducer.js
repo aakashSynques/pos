@@ -2,7 +2,9 @@ import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   SET_CART_QTY,
-  PDATE_CART_ITEMS,
+  SET_PRODUCT_NOTE,
+  SET_COMPLEMENTARY_NOTE,
+  SET_TOPPING_URNO,
 } from "../action/actionTypes";
 
 const initialState = {
@@ -24,6 +26,21 @@ const cartReducer = (state = initialState, action) => {
         cartItems: action.payload,
       };
     case REMOVE_FROM_CART:
+      return {
+        ...state,
+        cartItems: action.payload,
+      };
+    case SET_PRODUCT_NOTE:
+      return {
+        ...state,
+        cartItems: action.payload,
+      };
+    case SET_COMPLEMENTARY_NOTE:
+      return {
+        ...state,
+        cartItems: action.payload,
+      };
+    case SET_TOPPING_URNO:
       return {
         ...state,
         cartItems: action.payload,

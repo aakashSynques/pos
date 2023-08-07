@@ -52,8 +52,10 @@ const CustomersSearch = () => {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
-      const body = { rand: 0.44369813330371355, // LIMIT PAIRAMETER
-        query: query};
+      const body = {
+        rand: 0.44369813330371355, // LIMIT PAIRAMETER
+        query: query,
+      };
       const response = await fetch(
         "/api/customers/search/POS",
         "post",
@@ -83,31 +85,20 @@ const CustomersSearch = () => {
     setSelectedCustomer(selectedCustomer);
   };
 
-  // // Function to handle the update of the selected customer data
-  // const handleUpdateCustomerData = (updatedData) => {
-  //   // Update the selected customer's data in the state
-  //   setSelectedCustomer((prevCustomer) => ({
-  //     ...prevCustomer,
-  //     json: updatedData,
-  //   }));
-  // };
-
   // Function to handle when the "Edit" button is clicked for a selected customer
   const handleEditCustomer = () => {
     if (selectedCustomer) {
       setEditCustomerModel(true);
     }
   };
-   // Function to handle when the "Edit" button is clicked for a selected customer
-   const handleAccountModel = () => {
+  // Function to handle when the "Edit" button is clicked for a selected customer
+  const handleAccountModel = () => {
     if (selectedCustomer) {
       setAccountModel(true);
     }
   };
- 
 
-
-  const MAX_RESULTS = 50; // Limit the number of search results displayed
+  const MAX_RESULTS = 1000; // Limit the number of search results displayed
   const displayedItems = useMemo(() => {
     if (query === "") return customerSearchResults.slice(0, MAX_RESULTS);
 
@@ -159,6 +150,25 @@ const CustomersSearch = () => {
     };
   }, []);
 
+   // Update selectedCustomer when it changes
+   useEffect(() => {
+    setSelectedCustomer(selectedCustomer);
+  }, [selectedCustomer]);
+
+  // Function to group customers by cust_type_name
+  const groupCustomersByType = () => {
+    const groupedCustomers = {};
+    displayedItems.forEach((customer) => {
+      const custType = customer.json.cust_type_name;
+      if (!groupedCustomers[custType]) {
+        groupedCustomers[custType] = [];
+      }
+      groupedCustomers[custType].push(customer);
+    });
+    return groupedCustomers;
+  };
+  const groupedCustomers = groupCustomersByType();
+
   return (
     <div className="customer-sarch-sec">
       {selectedCustomer ? ( // Render the selected customer data if a customer is selected
@@ -189,7 +199,6 @@ const CustomersSearch = () => {
               <div class="text-right" style={{ float: "right" }}>
                 <div class="btn-group">
                   {/* customer account view button */}
-                
                   <CTooltip
                     content="Account [Shift + A]"
                     placement="top"
@@ -272,8 +281,9 @@ const CustomersSearch = () => {
             </span>
           </CButton>
 
-          <div className="product-list-abslute" ref={ref}>
-            {loading && <div style={{ background: "white" }}>Loading...</div>}
+          <div className="product-list-abslute cust-list-custmize" ref={ref}>
+            {/* {loading && <div style={{ background: "white" }}>Loading...</div>}
+
             {!loading &&
               query !== "" &&
               displayedItems.map((customer) => (
@@ -282,11 +292,45 @@ const CustomersSearch = () => {
                   className="product-list"
                   onClick={() => handleSelectCustomer(customer.value)}
                 >
+                  <div
+                    className="bg-success text-white"
+                    style={{ padding: "2px 10px" }}
+                  >
+                    <i className="fa fa-arrow-circle-right"></i>
+                    {customer.json.cust_type_name}
+                  </div>
                   <div>
                     <b>{customer.value}</b>
                   </div>
                 </div>
+              ))} */}
+
+            {loading && <div style={{ background: "white" }}>Loading...</div>}
+            {!loading &&
+              query !== "" &&
+              Object.entries(groupedCustomers).map(([custType, customers]) => (
+                <div key={custType}>
+                  <div
+                    className="bg-success text-white"
+                    style={{ padding: "2px 10px" }}
+                  >
+                    <i className="fa fa-arrow-circle-right"></i>&nbsp;
+                    {custType} List
+                  </div>
+                  {customers.map((customer) => (
+                    <div
+                      key={customer.json.cust_id}
+                      className="product-list"
+                      onClick={() => handleSelectCustomer(customer.value)}
+                    >
+                      <div>
+                        <b>{customer.value}</b>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               ))}
+
             {!loading && query !== "" && displayedItems.length === 0 && (
               <div className="product-list not-found-add-cust">
                 <span className="text-danger">
@@ -308,7 +352,7 @@ const CustomersSearch = () => {
 
       {/* Customer account Mode */}
       {/* register new customer model */}
-      <CustAccountsModel 
+      <CustAccountsModel
         visible={accountModel}
         onClose={() => setAccountModel(false)}
       />

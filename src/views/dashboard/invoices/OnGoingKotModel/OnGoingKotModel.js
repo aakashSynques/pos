@@ -171,11 +171,15 @@ const OnGoingKotModel = () => {
                     <td style={{ background: "#efefef" }}></td>
                   </tr>
                 </tbody>
-                <td colspan="4" align="center" className="font-size">
+                <td colspan="5">
                   <button
                     className="btn pay-btn"
                     type="button"
-                    style={{ margin: "2%" }}
+                    style={{
+                      margin: "5% 0% 0% 35%",
+                      width: "30%",
+                      background: "#26b99a",
+                    }}
                   >
                     <i
                       class="fa fa-file-text-o"

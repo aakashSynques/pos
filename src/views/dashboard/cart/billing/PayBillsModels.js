@@ -156,7 +156,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                       <i className="fa fa-trash fa-xs"></i>
                     </CButton>
                   </CCol>
-                  <CCol sm={2}><b>Cash</b></CCol>
+                  <CCol sm={2 }><b>Cash</b></CCol>
                   <CCol sm={5}>
                   <input
                       type="text"
