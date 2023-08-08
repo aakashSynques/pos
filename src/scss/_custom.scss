@@ -681,4 +681,14 @@ color: #80808069;
 }
 @media (min-width: 576px){
 .bills-model-width .modal-dialog {
-    max-width: 600px;}}
+    max-width: 600px;}
+  }
+
+  /* Add this to your CSS file */
+.btn-success-bg {
+  background-color: green; /* Change this to your desired color */
+  color: white; /* Change text color to make it readable */
+}
+.product-list.focused {
+  background: #fff5b1e3 !important;
+}

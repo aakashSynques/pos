@@ -25,7 +25,8 @@ import {
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   console.log(cartItems, "cart");
-  const dispatch = useDispatch();
+
+    const dispatch = useDispatch();
   // console.log(cartItems);
   const [toppingModel, setToppingModel] = useState(false);
   // const [addNewCustomer, setAddNewCustomer] = useState(false);

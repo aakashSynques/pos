@@ -34,38 +34,12 @@ const RecentInvoice = () => {
   const [recentBooking, setRecentBooking] = useState([]);
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
-
   console.log(recentBooking, "32");
-
   const [activeKey, setActiveKey] = useState(1);
-
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
   console.log(outlet_id, "49");
-  // useEffect(() => {
-  //   const pos_token = localStorage.getItem("pos_token");
-  //   // console.log(pos_token, "35");
-
-  //   fetch("http://localhost:1000/api/school/pos", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       authorization: `Bearer ${pos_token}`,
-  //     },
-  //     body: JSON.stringify({ outlet_id }),
-  //   })
-  //     .then((response) => {
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       // console.log(data.get_recent_data, "45");
-  //       setRecentBooking(data.get_recent_data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("something wrong:", error);
-  //     });
-  // }, [outlet_id]);
 
   const getAllRecentInvoices = async () => {
     try {
@@ -81,7 +55,6 @@ const RecentInvoice = () => {
         { headers }
       );
       setRecentBooking(response.data.recentOrders);
-
       // console.log(response);
       setLoading(false);
       setNetworkError(false);

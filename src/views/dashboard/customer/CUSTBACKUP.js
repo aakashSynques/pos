@@ -29,17 +29,15 @@ const CustomersSearch = () => {
     "--cui-tooltip-bg": "var(--cui-primary)",
   };
 
-  // useEffect(() => {
-  //   const delayDebounceFn = setTimeout(() => {
-  //     getProductSearch();
-  //   }, 100); // Debounce API call by 100ms
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      getProductSearch();
+    }, 100); // Debounce API call by 100ms
 
-  //   return () => clearTimeout(delayDebounceFn);
-  // }, [query]);
-  
-  
-  
-    const getProductSearch = async () => {
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
+
+  const getProductSearch = async () => {
     if (query.trim() === "") {
       setCustomerSearchResults([]);
       return;
@@ -77,25 +75,7 @@ const CustomersSearch = () => {
     } finally {
       setLoading(false);
     }
-    };
-  
-  
-  //   const debounce = (func, delay) => {
-  //     let timeoutId;
-  //     return (...args) => {
-  //       clearTimeout(timeoutId);
-  //       timeoutId = setTimeout(() => {
-  //         func(...args);
-  //       }, delay);
-  //     };
-  //   };
-  //   const delayedGetProductSearch = debounce(getProductSearch, 500); 
-  // useEffect(() => {
-  //   delayedGetProductSearch(); 
-  //   console.log("debounce " + delayedGetProductSearch());
-  //     return () => delayedGetProductSearch.cancel(); 
-  //    }, [query]);
-    
+  };
 
   // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
@@ -159,56 +139,17 @@ const CustomersSearch = () => {
   };
 
   useEffect(() => {
-    // const handleShortcutKeyPressCustomer = (event) => {
-    //   if (event.shiftKey && event.key === "C") {
-    //     // Prevent the default behavior of the "c" key (prevents it from appearing in the input box)
-    //     event.preventDefault();
-    //     const searchInput = document.getElementById("customer-search-input");
-    //     if (searchInput) {
-    //       searchInput.focus();
-    //     }
-    //   } else if (event.shiftKey && event.key === "E") {
-    //     event.preventDefault();
-    //     if (selectedCustomer) {
-    //       // setEditCustomerModel(true);
-    //       handleEditCustomer();
-    //     }
-    //   } else if (event.shiftKey && event.key === "A") {
-    //     event.preventDefault();
-    //     if (selectedCustomer) {
-    //       setAccountModel(true);
-    //     }
-    //   }
-    // };
-
     const handleShortcutKeyPressCustomer = (event) => {
-      if (event.shiftKey) {
-        switch (event.key) {
-          case "C":
-            event.preventDefault();
-            const searchInput = document.getElementById("customer-search-input");
-            if (searchInput) {
-              searchInput.focus();
-            }
-            break;
-          case "E":
-            event.preventDefault();
-            if (selectedCustomer) {
-              handleEditCustomer();
-            }
-            break;
-          case "A":
-            event.preventDefault();
-            if (selectedCustomer) {
-              setAccountModel(true);
-            }
-            break;
-          default:
-            break;
+      if (event.shiftKey && event.key === "C") {
+        // Prevent the default behavior of the "c" key (prevents it from appearing in the input box)
+        event.preventDefault();
+        // Focus on the search bar input element
+        const searchInput = document.getElementById("customer-search-input");
+        if (searchInput) {
+          searchInput.focus();
         }
       }
     };
-
     const handleShortcutKeyPressClear = (event) => {
       if (event.shiftKey && event.key === "C") {
         event.preventDefault();
@@ -227,7 +168,7 @@ const CustomersSearch = () => {
       document.removeEventListener("keydown", handleShortcutKeyPressCustomer);
       document.removeEventListener("keydown", handleShortcutKeyPressClear);
     };
-  }, [selectedCustomer]);
+  }, []);
 
   // Update selectedCustomer when it changes
   useEffect(() => {
@@ -251,10 +192,12 @@ const CustomersSearch = () => {
   const handleArrowKeyPress = (event) => {
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      setFocusedIndex((prevIndex) => (prevIndex === -1 ? displayedItems.length - 1 : Math.max(prevIndex - 1, 0)));
+      setFocusedIndex((prevIndex) => Math.max(prevIndex - 1, -1));
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
-      setFocusedIndex((prevIndex) => (prevIndex === displayedItems.length - 1 ? 0 : Math.min(prevIndex + 1, displayedItems.length - 1)));
+      setFocusedIndex((prevIndex) =>
+        Math.min(prevIndex + 1, displayedItems.length - 1)
+      );
     } else if (event.key === "Enter") {
       event.preventDefault();
       if (focusedIndex !== -1) {
@@ -367,8 +310,41 @@ const CustomersSearch = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </CInputGroup>
+          <CButton
+            color="info"
+            className="text-white mt-1 rounded-1"
+            style={{ backgroundColor: "#5bc0de" }}
+          >
+            Walk-IN{" "}
+            <span class="badge" color="info">
+              0
+            </span>
+          </CButton>
 
-          <div className="product-list-abslute" ref={ref}>
+          <div className="product-list-abslute cust-list-custmize" ref={ref}>
+            {/* {loading && <div style={{ background: "white" }}>Loading...</div>}
+
+            {!loading &&
+              query !== "" &&
+              displayedItems.map((customer) => (
+                <div
+                  key={customer.json.cust_id}
+                  className="product-list"
+                  onClick={() => handleSelectCustomer(customer.value)}
+                >
+                  <div
+                    className="bg-success text-white"
+                    style={{ padding: "2px 10px" }}
+                  >
+                    <i className="fa fa-arrow-circle-right"></i>
+                    {customer.json.cust_type_name}
+                  </div>
+                  <div>
+                    <b>{customer.value}</b>
+                  </div>
+                </div>
+              ))} */}
+
             {loading && <div style={{ background: "white" }}>Loading...</div>}
             {!loading &&
               query !== "" &&
@@ -427,16 +403,6 @@ const CustomersSearch = () => {
               </div>
             )}
           </div>
-          <CButton
-            color="info"
-            className="text-white mt-1 rounded-1"
-            style={{ backgroundColor: "#5bc0de" }}
-          >
-            Walk-IN{" "}
-            <span class="badge" color="info">
-              0
-            </span>
-          </CButton>
         </>
       )}
 
@@ -460,7 +426,6 @@ const CustomersSearch = () => {
           onClose={() => setEditCustomerModel(false)}
           customerData={selectedCustomer.json} // Pass the selected customer data to the EditCustomerProfile component
           // onUpdate={handleUpdateCustomerData} // Pass the update function to the EditCustomerProfile component
-         
         />
       )}
     </div>
@@ -468,4 +433,3 @@ const CustomersSearch = () => {
 };
 
 export default CustomersSearch;
-
