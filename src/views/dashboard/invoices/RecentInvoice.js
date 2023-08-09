@@ -34,12 +34,38 @@ const RecentInvoice = () => {
   const [recentBooking, setRecentBooking] = useState([]);
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
-  console.log(recentBooking, "32");
+
+  // console.log(recentBooking, "32");
+
   const [activeKey, setActiveKey] = useState(1);
+
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-  console.log(outlet_id, "49");
+  // console.log(outlet_id, "49");
+  // useEffect(() => {
+  //   const pos_token = localStorage.getItem("pos_token");
+  //   // console.log(pos_token, "35");
+
+  //   fetch("http://localhost:1000/api/school/pos", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       authorization: `Bearer ${pos_token}`,
+  //     },
+  //     body: JSON.stringify({ outlet_id }),
+  //   })
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       // console.log(data.get_recent_data, "45");
+  //       setRecentBooking(data.get_recent_data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("something wrong:", error);
+  //     });
+  // }, [outlet_id]);
 
   const getAllRecentInvoices = async () => {
     try {
@@ -47,7 +73,7 @@ const RecentInvoice = () => {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      console.log(outlet_id);
+      // console.log(outlet_id);
       setLoading(true);
       const response = await axios.post(
         "http://posapi.q4hosting.com/api/order/recent",
@@ -55,6 +81,7 @@ const RecentInvoice = () => {
         { headers }
       );
       setRecentBooking(response.data.recentOrders);
+
       // console.log(response);
       setLoading(false);
       setNetworkError(false);
@@ -139,8 +166,8 @@ const RecentInvoice = () => {
                       const total = Number(
                         parsedSalesJson.cartSumUp.grandTotal
                       );
-                      console.log(parsedSalesJson);
-                      console.log(parsedSalesJson.cartSumUp.grandTotal, "135");
+                      // console.log(parsedSalesJson);
+                      // console.log(parsedSalesJson.cartSumUp.grandTotal, "135");
                       return (
                         <tr>
                           <td>

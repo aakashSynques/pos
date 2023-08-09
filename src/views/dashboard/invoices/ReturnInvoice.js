@@ -37,7 +37,7 @@ const ReturnInvoice = () => {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      console.log(outlet_id);
+      // console.log(outlet_id);
       setLoading(true);
       const response = await axios.post(
         "http://posapi.q4hosting.com/api/order/return",
@@ -45,13 +45,13 @@ const ReturnInvoice = () => {
         { headers }
       );
       setReturnedOrders(response.data.returnedOrders);
-      console.log(response);
+      // console.log(response);
       setLoading(false);
       setNetworkError(false);
     } catch (err) {
       console.log(err);
       if (err.response.data.message == "No Returned Orders Found.") {
-        console.log("No Returned Orders Found.");
+        // console.log("No Returned Orders Found.");
         setNetworkError(true);
         setLoading(false);
       } else if (err.response.data.message == "Outlet Id Required.") {

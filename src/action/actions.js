@@ -11,6 +11,7 @@ import {
 // helper functions start
 
 const addCartItem = (cartItemsArray, cartItem) => {
+  console.log(cartItem);
   const existingCartItem =
     cartItemsArray.length > 0 &&
     cartItemsArray.find((item) => item.prod_id === cartItem.prod_id);
@@ -75,22 +76,84 @@ const setCompNote = (cartItemsArray, productId, complentaryNote) => {
   return updatedItems;
 };
 
-const setToppingOnProd = (cartItemsArray, productId, selectedToppings) => {
-  const updatedItems = cartItemsArray.map((item) =>
-    item.prod_id === productId
+// const setToppingOnProd = (cartItemsArray, productId, selectedToppings) => {
+//   const updatedItems = cartItemsArray.map((item) =>
+//     item.prod_id === productId
+//       ? {
+//           ...item,
+//           // toppings: [...selectedToppings],
+//           toppings: selectedToppings[productId] || [],
+//         }
+//       : item
+//   );
+//   return updatedItems;
+// };
+
+const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
+  let updatedCart = cartItemsArray.filter(
+    (item) => item.associated_prod_urno != productUrno
+  );
+  updatedCart = cartItemsArray.map((item) =>
+    item.urno == productUrno
       ? {
           ...item,
-          // toppings: [...selectedToppings],
-          toppings: selectedToppings[productId] || [],
+          toppings: [],
         }
       : item
   );
-  return updatedItems;
+
+  let cartWithNewToppings = updatedCart.map((cartItem) => {
+    return {
+      ...cartItem,
+    };
+  });
+
+  let toppingsWithInfo = selectedToppings.map((toppingObj) => ({
+    ...toppingObj,
+    prod_qty: 1,
+    associated_prod_urno: productUrno,
+  }));
+
+  cartWithNewToppings.push(...toppingsWithInfo);
+  cartWithNewToppings = cartWithNewToppings.map((item) =>
+    item.urno === productUrno
+      ? {
+          ...item,
+          toppings: item.toppings.concat(
+            selectedToppings.map((topping) => topping.urno)
+          ),
+        }
+      : item
+  );
+  console.log(cartWithNewToppings);
+  return cartWithNewToppings;
+  // cartWithNewToppings = cartWithNewToppings.map((item) =>
+  //   item.urno === productUrno
+  //     ?
+  //       selectedToppings.map((topping)=>{
+
+  //         ...item,
+  //         toppings: item.toppings.concat(item.urno),
+  //       }
+
+  //       )
+  //       : item
+
+  // );
 };
+
+// cartWithNewToppings = cartWithNewToppings.map((item) =>
+// item.urno === productUrno
+//   ? {
+//       ...item,
+//       toppings: item.toppings.concat(item.urno),
+//     }
+//   : item
+// );
 
 // helper functions end
 
-export const addToCart = (cartItemsArray, [cartItem]) => ({
+export const addToCart = (cartItemsArray, cartItem) => ({
   type: ADD_TO_CART,
   payload: addCartItem(cartItemsArray, cartItem),
 });
@@ -123,9 +186,9 @@ export const setComplementaryNoteInCart = (
   payload: setCompNote(cartItemsArray, productId, complentaryNote),
 });
 
-export const setToppings = (cartItemsArray, productId, selectedToppings) => ({
+export const setToppings = (cartItemsArray, productUrno, selectedToppings) => ({
   type: SET_TOPPING_URNO,
-  payload: setToppingOnProd(cartItemsArray, productId, selectedToppings),
+  payload: setToppingOnProd(cartItemsArray, productUrno, selectedToppings),
 });
 
 export const setOutletList = (outletList) => ({

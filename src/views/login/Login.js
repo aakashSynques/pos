@@ -125,12 +125,10 @@ const Login = () => {
               >
                 <CCardBody>
                   <CForm onSubmit={handleSubmit}>
-                    <div className="text-center">
                     <img src={logo} alt="logo" />
                     <p className="text-medium-emphasis pt-2">
                       Sign In to your account
                     </p>
-                   </div>
                     <CInputGroup>
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
@@ -181,12 +179,11 @@ const Login = () => {
                       </CCol>
                     </CRow>
                   </CForm>
-
                   {error && ( // Show error message if present
                     <p className="text-danger">{error}</p>
                   )}
                   <p
-                    className="text-medium-emphasis text-center"
+                    className="text-medium-emphasis"
                     style={{ fontSize: "13px", paddingTop: "20px" }}
                   >
                     All rights reserved © Q4 Retail by SynQues.

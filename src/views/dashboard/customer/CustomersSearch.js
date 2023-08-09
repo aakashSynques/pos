@@ -29,17 +29,15 @@ const CustomersSearch = () => {
     "--cui-tooltip-bg": "var(--cui-primary)",
   };
 
-  // useEffect(() => {
-  //   const delayDebounceFn = setTimeout(() => {
-  //     getProductSearch();
-  //   }, 100); // Debounce API call by 100ms
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      getProductSearch();
+    }, 100); // Debounce API call by 100ms
 
-  //   return () => clearTimeout(delayDebounceFn);
-  // }, [query]);
-  
-  
-  
-    const getProductSearch = async () => {
+    return () => clearTimeout(delayDebounceFn);
+  }, [query]);
+
+  const getProductSearch = async () => {
     if (query.trim() === "") {
       setCustomerSearchResults([]);
       return;
@@ -77,25 +75,14 @@ const CustomersSearch = () => {
     } finally {
       setLoading(false);
     }
-    };
-  
-  
-  //   const debounce = (func, delay) => {
-  //     let timeoutId;
-  //     return (...args) => {
-  //       clearTimeout(timeoutId);
-  //       timeoutId = setTimeout(() => {
-  //         func(...args);
-  //       }, delay);
-  //     };
-  //   };
-  //   const delayedGetProductSearch = debounce(getProductSearch, 500); 
-  // useEffect(() => {
-  //   delayedGetProductSearch(); 
-  //   console.log("debounce " + delayedGetProductSearch());
-  //     return () => delayedGetProductSearch.cancel(); 
-  //    }, [query]);
-    
+  };
+
+  const handleUpdateCustomerData = (updatedData) => {
+    setSelectedCustomer((prevCustomer) => ({
+      ...prevCustomer,
+      json: { ...prevCustomer.json, ...updatedData },
+    }));
+  };
 
   // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
@@ -186,7 +173,9 @@ const CustomersSearch = () => {
         switch (event.key) {
           case "C":
             event.preventDefault();
-            const searchInput = document.getElementById("customer-search-input");
+            const searchInput = document.getElementById(
+              "customer-search-input"
+            );
             if (searchInput) {
               searchInput.focus();
             }
@@ -229,11 +218,6 @@ const CustomersSearch = () => {
     };
   }, [selectedCustomer]);
 
-  // Update selectedCustomer when it changes
-  useEffect(() => {
-    setSelectedCustomer(selectedCustomer);
-  }, [selectedCustomer]);
-
   // Function to group customers by cust_type_name
   const groupCustomersByType = () => {
     const groupedCustomers = {};
@@ -251,10 +235,18 @@ const CustomersSearch = () => {
   const handleArrowKeyPress = (event) => {
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      setFocusedIndex((prevIndex) => (prevIndex === -1 ? displayedItems.length - 1 : Math.max(prevIndex - 1, 0)));
+      setFocusedIndex((prevIndex) =>
+        prevIndex === -1
+          ? displayedItems.length - 1
+          : Math.max(prevIndex - 1, 0)
+      );
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
-      setFocusedIndex((prevIndex) => (prevIndex === displayedItems.length - 1 ? 0 : Math.min(prevIndex + 1, displayedItems.length - 1)));
+      setFocusedIndex((prevIndex) =>
+        prevIndex === displayedItems.length - 1
+          ? 0
+          : Math.min(prevIndex + 1, displayedItems.length - 1)
+      );
     } else if (event.key === "Enter") {
       event.preventDefault();
       if (focusedIndex !== -1) {
@@ -276,7 +268,7 @@ const CustomersSearch = () => {
                 <b>
                   {selectedCustomer.json.customer_name}
                   <i
-                    class="fa fa-info-circle text-primary pl-2"
+                    className="fa fa-info-circle text-primary pl-2"
                     title="EXTRA NOTE"
                   ></i>
                 </b>
@@ -342,7 +334,6 @@ const CustomersSearch = () => {
                       data-toggle="tooltip"
                       data-html="true"
                       data-original-title="Clear Selected Accounts<br>[ Shift + C ]"
-                      // onClick={() => setSelectedCustomer(null)}
                       onClick={handleClearSelectedCustomer} // Update the click handler
                     >
                       <i class="fa fa-times"></i>
@@ -458,9 +449,9 @@ const CustomersSearch = () => {
         <EditCustomerProfile
           visible={editCustomerModel}
           onClose={() => setEditCustomerModel(false)}
-          customerData={selectedCustomer.json} // Pass the selected customer data to the EditCustomerProfile component
-          // onUpdate={handleUpdateCustomerData} // Pass the update function to the EditCustomerProfile component
-         
+          customerData={selectedCustomer.json}
+          onUpdate={handleUpdateCustomerData}
+          setSelectedCustomer={setSelectedCustomer} // Pass setSelectedCustomer here
         />
       )}
     </div>
@@ -468,4 +459,3 @@ const CustomersSearch = () => {
 };
 
 export default CustomersSearch;
-

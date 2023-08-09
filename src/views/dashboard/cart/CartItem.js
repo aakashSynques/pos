@@ -68,7 +68,7 @@ const CartItem = ({
   // };
 
   // Function to calculate the total price of the selected toppings
-
+  // console.log(item);
   const setProdNoteOnBlur = () => {
     dispatch(setProductNoteInCart(cartItems, item.prod_id, productNote));
   };
@@ -88,16 +88,15 @@ const CartItem = ({
             {item.category_name} | @ {item.prod_rate} <br />
             {/* selected topping list */}
             {item.toppings &&
-              item.toppings.map((toppingId) => {
-                const topping = toppingsData.find(
-                  (t) => t.prod_id === toppingId
-                );
+              item.toppings.map((toppingUrno) => {
+                const topping = cartItems.find((t) => t.urno === toppingUrno);
                 return (
-                  <div key={toppingId}>
+                  <div key={toppingUrno}>
+                    {console.log(topping)}
                     {topping ? (
                       <span>
                         {topping.prod_name} | @ <i className="fa fa-inr"></i>
-                        {topping.prod_rate.toFixed(2)}
+                        {topping.prod_rate}
                       </span>
                     ) : null}
                   </div>
@@ -111,12 +110,9 @@ const CartItem = ({
             <CButton onClick={() => setVisibleComplentary(!visibleComplentary)}>
               <u class="text-danger">C</u>omplementary
             </CButton>
-
             {item.prod_Toppings_status == 1 ? (
               <CButton
-                onClick={() =>
-                  openToppingModel(item.prod_id, item.category_heads)
-                }
+                onClick={() => openToppingModel(item.urno, item.category_heads)}
               >
                 <u class="text-danger">T</u>oppings
               </CButton>
@@ -140,7 +136,7 @@ const CartItem = ({
           <b className="rate-font">
             <i className="fa fa-inr"></i>
             {/* {item.prod_rate.toFixed(2)}{" "} */}
-            {getTotalAmountForItem(item).toFixed(2)} <br />
+            {getTotalAmountForItem(item)} <br />
             {/* {submittedToppings && (
           <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
         )} */}

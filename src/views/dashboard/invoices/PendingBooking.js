@@ -15,14 +15,64 @@ import {
   CTabContent,
   CTabPane,
 } from "@coreui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Pendding from "./bookingtables/Delivered";
 import Pending from "./bookingtables/Pending";
 import Delivered from "./bookingtables/Delivered";
 import Future from "./bookingtables/Future";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { BeatLoader } from "react-spinners";
+
 const PendingBooking = () => {
   const [booking, setBooking] = useState(false);
   const [activeKey, setActiveKey] = useState(1);
+  const [pendingBooking, setPendingBooking] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [networkError, setNetworkError] = useState(false);
+
+  const outlet_id = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+
+  const getAllPendingBookings = async () => {
+    try {
+      const token = localStorage.getItem("pos_token");
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      // console.log(outlet_id, "39");
+      setLoading(true);
+      const response = await axios.post(
+        "http://posapi.q4hosting.com/api/order/pending",
+        { outlet_id },
+        { headers }
+      );
+      setPendingBooking(response.data.get_pending_booking);
+      setLoading(false);
+      setNetworkError(false);
+    } catch (err) {
+      console.log(err);
+      if (err.response.data.message == "No pending Booking Orders Found.") {
+        console.log("No pending Booking Orders Found.");
+        setNetworkError(true);
+        setLoading(false);
+      } else if (err.response.data.message == "Outlet Id Required.") {
+        setLoading(true);
+        console.log(err);
+      } else {
+        console.log(err);
+        setNetworkError(true);
+        setLoading(false);
+      }
+    }
+  };
+  useEffect(() => {
+    getAllPendingBookings();
+  }, [outlet_id]);
+
   return (
     <>
       <CCard>
@@ -35,58 +85,138 @@ const PendingBooking = () => {
             <i className="fa fa-external-link fa-xs"></i>
           </CLink>
         </CCardHeader>
-        {/* <div>
-            <small className="text-danger">No, Invoices Punched..</small>
-          </div> */}
-        <div className="pending-booking">
-          <table width="100%" className="table table-bordered ongoing">
-            <tbody>
-              <tr>
-                <td>
-                  <a href="" className="text-primary text-link">
-                    BNS/B2/2324/1351
-                  </a>
-                  <br />
-                  MANISH BAGGA<small> (9425600163)</small>
-                </td>
-                <td>
-                  <label
-                    className="status-btn text-white"
-                    style={{ backgroundColor: "#1A82C3" }}
-                  >
-                    PickUp
-                  </label>
-                  <br />
-                  2023-06-07
-                  <br />
-                  11:00 AM
-                </td>
-              </tr>
+        {networkError === true && (
+          <CCardBody style={{ display: "flex" }}>
+            <div>
+              <medium className="text-danger">No Pending Invoices..</medium>
+            </div>
+          </CCardBody>
+        )}
+        {loading === true && (
+          <CCardBody style={{ display: "flex" }}>
+            <BeatLoader
+              color="red"
+              loading={true}
+              size={8}
+              style={{ marginTop: "1%", marginRight: "2%" }}
+            />
 
-              <tr>
-                <td>
-                  <a href="" className="text-primary text-link">
-                    BNS/B2/2324/1351
-                  </a>
-                  <br />
-                  ANGC GRP INDIA PRIVATE LIMITED<small> (9425600163)</small>
-                </td>
-                <td>
-                  <label
-                    className="status-btn text-white"
-                    style={{ backgroundColor: "red" }}
-                  >
-                    Delivery
-                  </label>
-                  <br />
-                  2023-06-07
-                  <br />
-                  11:00 AM
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div>
+              <medium className="text-danger">
+                Loading Pending Invoices..
+              </medium>
+            </div>
+          </CCardBody>
+        )}
+        {loading === false && networkError === false && (
+          <div className="pending-booking">
+            <table width="100%" className="table table-bordered ongoing">
+              <tbody>
+                {pendingBooking
+                  .slice(0, 10)
+                  .map(({ booking_json, booking_no }) => {
+                    let parsedbooking_json = null;
+                    try {
+                      parsedbooking_json = JSON.parse(booking_json);
+                      console.log(parsedbooking_json, "98");
+                    } catch (error) {
+                      // return false;
+                      console.error("Error parsing sales_json:", error);
+                    }
+                    // const total = Number(parsedbooking_json.cartSumUp.grandTotal);
+                    return (
+                      <tr>
+                        <td style={{ width: "60%" }}>
+                          <Link to="" className="text-primary text-link">
+                            {booking_no}
+                            <br />
+                          </Link>
+                          <small className="text-sm" style={{ fontSize: "px" }}>
+                            {
+                              parsedbooking_json.selectedCustomerJson
+                                .customer_name
+                            }
+                            <br />(
+                            {parsedbooking_json.selectedCustomerJson.mobile})
+                          </small>
+                        </td>
+                        <td>
+                          {parsedbooking_json.cartSumUp.deliveryMode == "1" ? (
+                            <strong
+                              className="status-btn"
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: "1em",
+                                color: "white",
+                                backgroundColor: "#f0ad4e",
+                                height: "2%",
+                                width: "2%",
+                              }}
+                            >
+                              Cs
+                            </strong>
+                          ) : parsedbooking_json.cartSumUp.deliveryMode ==
+                            "2" ? (
+                            <strong
+                              className="status-btn"
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: "1em",
+                                color: "white",
+                                backgroundColor: "#28819e",
+                                height: "2%",
+                                width: "2%",
+                              }}
+                            >
+                              OT
+                            </strong>
+                          ) : parsedbooking_json.cartSumUp.deliveryMode ==
+                            "3" ? (
+                            <strong
+                              className="status-btn"
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: "1em",
+                                color: "white",
+                                backgroundColor: "#1a82c3",
+                                height: "2%",
+                                width: "2%",
+                              }}
+                            >
+                              PickUp
+                            </strong>
+                          ) : parsedbooking_json.cartSumUp.deliveryMode ==
+                            "4" ? (
+                            <strong
+                              className="status-btn"
+                              style={{
+                                fontWeight: "bold",
+                                fontSize: "1em",
+                                color: "white",
+                                backgroundColor: "#d9534f",
+                                height: "2%",
+                                width: "2%",
+                              }}
+                            >
+                              <small>Home Delivery</small>
+                            </strong>
+                          ) : null}
+                          <br />
+                          <font>
+                            {parsedbooking_json.cartSumUp.deliveryDate}
+                          </font>
+                          <br />
+                          <font>
+                            {parsedbooking_json.cartSumUp.deliveryTime}
+                          </font>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </CCard>
 
       {/* booking order model */}

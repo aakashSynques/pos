@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setToppings } from "../../../action/actions"; // Import the removeFromCart action
+import { setToppings } from "../../../action/actions";
 import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
 import PayBillsModels from "./billing/PayBillsModels";
 
 import {
   CFormInput,
-  CFormSelect,
   CRow,
   CCol,
   CContainer,
@@ -17,22 +16,23 @@ import {
   CModalTitle,
   CModalBody,
   CModalFooter,
-  CLink,
   CInputGroup,
-  CInputGroupText,
 } from "@coreui/react";
+import ToppingsModal from "./ToppingsModal";
 
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   console.log(cartItems, "cart");
-
-    const dispatch = useDispatch();
-  // console.log(cartItems);
+  const selectedOutletId = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+  const dispatch = useDispatch();
   const [toppingModel, setToppingModel] = useState(false);
-  // const [addNewCustomer, setAddNewCustomer] = useState(false);
   const [paybillsModel, setPayBillsModel] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState();
+  const [selectedUrno, setSelectedUrno] = useState();
   const [categoryHead, setCategoryHead] = useState("");
+  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
+    useState(0);
 
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
@@ -47,9 +47,9 @@ const CartSection = () => {
   const getTotalAmountForItem = (item) => {
     const rate = item.prod_rate; // Assuming the rate is available in the product object
     const toppingsTotalPrice = selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
+
     return rate + toppingsTotalPrice;
   };
-
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -117,10 +117,10 @@ const CartSection = () => {
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
-  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
-    useState(0);
+
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
+  const [selectedTopId, setSelectedTopId] = useState();
   const [toppingsData, setToppingsData] = useState([]);
   const getToppingsData = async () => {
     try {
@@ -131,111 +131,180 @@ const CartSection = () => {
         (item) => item.category_heads === "Toppings"
       );
       setToppingsData(filteredToppings);
-      console.log(filteredToppings);
+      // console.log(filteredToppings);
     } catch (err) {
       console.log(err);
     } finally {
     }
   };
-  console.log(toppingsData, "toppingsData");
   useEffect(() => {
     getToppingsData();
   }, []);
   const filteredToppings = toppingsData.filter((topping) =>
     topping.prod_name.toLowerCase().includes(searchToppingQuery.toLowerCase())
   );
-  console.log(filteredToppings, "filteredToppings");
 
-  // const handleToppingClick = (topping) => {
-  //   const isSelected = selectedToppings.includes(topping.prod_id);
-  //   if (isSelected) {
-  //     setSelectedToppings(
-  //       selectedToppings.filter((id) => id !== topping.prod_id)
-  //     );
-  //   } else {
-  //     setSelectedToppings([...selectedToppings, topping.prod_id]);
-  //   }
-  // };
-
-  const handleToppingClick = (topping) => {
-    setSelectedToppings((prevSelectedToppings) => {
-      const isSelected = prevSelectedToppings[selectedProductId]?.includes(
-        topping.prod_id
-      );
-
-      if (isSelected) {
-        const updatedToppings = prevSelectedToppings[selectedProductId].filter(
-          (id) => id !== topping.prod_id
-        );
-
-        return {
-          ...prevSelectedToppings,
-          [selectedProductId]: updatedToppings,
-        };
-      } else {
-        const updatedToppings = [
-          ...(prevSelectedToppings[selectedProductId] || []),
-          topping.prod_id,
-        ];
-
-        return {
-          ...prevSelectedToppings,
-          [selectedProductId]: updatedToppings,
-        };
-      }
-    });
-  };
-  console.log(selectedToppings);
-
-  const openToppingModel = (prod_id, category_heads) => {
-    setToppingModel(true);
-    setSelectedProductId(prod_id);
+  // TOPPING MODAL
+  const openToppingModel = (urno, category_heads) => {
+    setSelectedUrno(urno);
     setCategoryHead(category_heads);
+
+    const displayToppings = cartItems.filter(
+      (toppings) => toppings.associated_prod_urno === urno
+    );
+
+    console.log(displayToppings);
+
+    setSelectedToppings([...displayToppings]);
+
+    setToppingModel(true);
   };
 
+  // CHECK IF TOPPING EXISTS AND ADD OR REMOVE ACCORDINGLY ON ONCLICK
+  const handleToppingClick = (topping) => {
+    const isSelected = selectedToppings.some(
+      (st) => st.prod_id === topping.prod_id
+    );
+    // console.log(isSelected);
+
+    if (isSelected) {
+      setSelectedToppings(
+        selectedToppings.filter((top) => top.prod_id !== topping.prod_id)
+      );
+    } else {
+      setSelectedToppings([...selectedToppings, topping]);
+    }
+    // console.log(selectedToppings);
+  };
+
+  // FILTER TOPPINGS ACCORDING TO CATEGORY
   const toppingsWithCategoryHead = filteredToppings
     .map((topping) => {
       if (topping.category_name === categoryHead) {
         return topping;
       } else {
-        return null; // If you want to skip non-matching elements, return null.
+        return null;
       }
     })
     .filter(Boolean);
 
-  console.log(toppingsWithCategoryHead, "filteredToppingsWithCategoryHead");
+  // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
+  function generateUniqueNumber() {
+    //   const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    //   return random4Digit.toString(); // Convert to string
+    const timestamp = new Date().getTime();
+    const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
+    return `${timestamp.toString() + randomString}`;
+  }
 
-  console.log(selectedToppings, "selectedToppings");
+  // GENERATE PROD_RATE FOR PROD IN CART
+  const getPriceForOutlet = (product) => {
+    const outletId = selectedOutletId.toString();
+    console.log(product);
+    if (product.rate_chart && product.rate_chart[outletId]) {
+      console.log("condition satisfied");
+      const rateForOutlet = product.rate_chart[outletId][0];
+      console.log(rateForOutlet);
+      if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
+        return rateForOutlet.prod_rate;
+      }
+    }
+    return "0";
+  };
 
+  // HANDLE SUBMIT FOR TOPPINGS
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
-    dispatch(setToppings(cartItems, selectedProductId, selectedToppings));
+
+    const cartItemData = selectedToppings.map((item) => {
+      return {
+        prod_id: item.prod_id,
+        prod_code: item.prod_code,
+        prod_sign: item.prod_sign,
+        prod_name: item.prod_name,
+        prod_description: item.prod_description,
+        prod_rate: getPriceForOutlet(item),
+        category_id: item.category_id,
+        prod_KOT_status: item.prod_KOT_status,
+        prod_Parcel_status: item.prod_Parcel_status,
+        prod_Discount_status: item.prod_Discount_status,
+        prod_Complementary_status: item.prod_Complementary_status,
+        prod_Toppings_status: item.prod_Toppings_status,
+        prod_Customized_status: item.prod_Customized_status,
+        prod_Delivery_heads: item.prod_Delivery_heads,
+        prod_image: item.prod_image,
+        prod_Recommended: item.prod_Recommended,
+        prod_OnlineListing: item.prod_OnlineListing,
+        prod_TagsGroups: item.prod_TagsGroups,
+        prod_DeActive: item.prod_DeActive,
+        status: item.status,
+        eby: item.eby,
+        eat: item.eat,
+        recipe_outcome_value: item.recipe_outcome_value,
+        recipe_outcome_unit: item.recipe_outcome_unit,
+        stock_status: item.stock_status,
+        stock_current_value: item.stock_current_value,
+        LHB_prod_id: item.LHB_prod_id,
+        category_name: item.category_name,
+        category_heads: item.category_heads,
+        recipeCount: item.recipeCount,
+        is_parcel: item.is_parcel,
+        is_complementary: item.is_complementary,
+        is_complementary_note: "",
+        is_note: item.is_note,
+        is_prod_note: "",
+        prod_qty: item.prod_qty,
+        prod_discount: item.prod_discount,
+        prod_discount_offered: item.prod_discount_offered,
+        total_amount: item.prod_rate,
+        KOT_pick: item.KOT_pick,
+        KOT_ready: item.KOT_ready,
+        KOT_dispatch: item.KOT_dispatch,
+        urno: generateUniqueNumber(),
+        associated_prod_urno: 0,
+        toppings: [],
+        customized: item.customized,
+      };
+    });
+    console.log(cartItemData, selectedUrno, "cartItemData");
+    dispatch(setToppings(cartItems, selectedUrno, cartItemData));
     setToppingModel(false); // Close the toppings model after submitting
+    setSelectedToppings([]);
   };
 
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
-    // const totalToppingPrice = selectedToppings.reduce(
-    //   (toppingTotal, toppingId) => {
-    //     const topping = toppingsData.find((t) => t.prod_id === toppingId);
-    //     return toppingTotal + (topping ? topping.prod_rate : 0);
+    // const totalToppingPrice = Object.values(selectedToppings).reduce(
+    //   (toppingTotal, selectedToppingsArray) => {
+    //     const productToppingTotal = selectedToppingsArray.reduce(
+    //       (acc, toppingId) => {
+    //         const topping = toppingsData.find((t) => t.prod_id === toppingId);
+    //         return acc + (topping ? topping.prod_rate : 0);
+    //       },
+    //       0
+    //     );
+    //     return toppingTotal + productToppingTotal;
     //   },
     //   0
     // );
-    const totalToppingPrice = Object.values(selectedToppings).reduce(
-      (toppingTotal, selectedToppingsArray) => {
-        const productToppingTotal = selectedToppingsArray.reduce(
-          (acc, toppingId) => {
-            const topping = toppingsData.find((t) => t.prod_id === toppingId);
-            return acc + (topping ? topping.prod_rate : 0);
+    const totalToppingPrice = cartItems
+      .filter((topp) => topp.associated_prod_urno === 0)
+      .reduce((toppingTotal, productToppings) => {
+        // console.log(productToppings, "productToppings");
+        // console.log(productToppings.toppings);
+        const productToppingTotal = productToppings.toppings.reduce(
+          (acc, topping) => {
+            const toppingInfo = cartItems.find(
+              //was earlier using toppingsData but there is outlet based price in cart
+              (t) => t.urno === topping
+            );
+            console.log(toppingInfo, "toppingInfo");
+            return acc + (toppingInfo ? toppingInfo.prod_rate : 0);
           },
           0
         );
-
         return toppingTotal + productToppingTotal;
-      },
-      0
-    );
+      }, 0);
     setSelectedToppingsTotalPrice(totalToppingPrice);
   }, [selectedToppings, toppingsData]);
 
@@ -252,18 +321,21 @@ const CartSection = () => {
               </tr>
             </thead>
             <tbody>
-              {cartItems.map((item) => (
-                <CartItem
-                  key={item.prod_id}
-                  cartItems={cartItems}
-                  item={item}
-                  getTotalAmountForItem={getTotalAmountForItem}
-                  openToppingModel={openToppingModel} // Pass the function as a prop
-                  selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
-                  submittedToppings={submittedToppings} // Pass the submittedToppings as a prop
-                  toppingsData={toppingsData} // Pass the toppingsData as a prop
-                />
-              ))}
+              {cartItems.map(
+                (item) =>
+                  item.associated_prod_urno == 0 && (
+                    <CartItem
+                      key={item.prod_id}
+                      cartItems={cartItems}
+                      item={item}
+                      getTotalAmountForItem={getTotalAmountForItem}
+                      openToppingModel={openToppingModel} // Pass the function as a prop
+                      selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
+                      submittedToppings={submittedToppings} // Pass the submittedToppings as a prop
+                      toppingsData={toppingsData} // Pass the toppingsData as a prop
+                    />
+                  )
+              )}
             </tbody>
           </table>
         ) : (
@@ -284,7 +356,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getSubTotalAmount().toFixed(2)}{" "}
+              {getSubTotalAmount()}
               {/* Display the calculated subtotal */}
             </CCol>
           </CRow>
@@ -343,7 +415,7 @@ const CartSection = () => {
             <CCol sm={4} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
-                {getFinalPayAmount().toFixed(2)}{" "}
+                {/* {getFinalPayAmount().toFixed(2)}{" "} */}
                 {/* Display the final pay amount */}
               </h4>
               <small>{getTotalItmes()} Item(s) </small>
@@ -378,6 +450,18 @@ const CartSection = () => {
       />
 
       {/* toppings model */}
+
+      {/* <ToppingsModal
+        toppingModel={toppingModel}
+        setToppingModel={setToppingModel}
+        selectedToppings={selectedToppings}
+        searchToppingQuery={searchToppingQuery}
+        setSearchToppingQuery={setSearchToppingQuery}
+        toppingsWithCategoryHead={toppingsWithCategoryHead}
+        handleToppingClick={handleToppingClick}
+        handleToppingsSubmit={handleToppingsSubmit}
+        setCategoryHead={setCategoryHead}
+      /> */}
 
       <CModal
         size="lg"
@@ -421,7 +505,10 @@ const CartSection = () => {
                 <span className="toppingstyle">{topping.prod_name}</span>
                 <button
                   className={`btn btn-sm pull-right ${
-                    selectedToppings[topping.prod_id]?.includes(topping.prod_id)
+                    // selectedToppings[topping.prod_id]?.includes(topping.prod_id)
+                    selectedToppings.find(
+                      (object) => object.prod_id === topping.prod_id
+                    )
                       ? "btn-success-bg"
                       : ""
                   }`}
@@ -433,9 +520,6 @@ const CartSection = () => {
                   &nbsp;
                   <i className="fa fa-inr"></i>
                   <span className="show_price">
-                    {/* {selectedToppings.includes(topping.prod_id)
-                      ? topping.prod_rate
-                      : "0"} */}
                     {topping.prod_rate.toFixed(3)}
                   </span>
                 </button>
