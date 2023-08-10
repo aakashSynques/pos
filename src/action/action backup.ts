@@ -52,14 +52,6 @@ const removeCartItem = (cartItemsArray, productId) => {
   return cartItemsArray.filter((item) => item.prod_id !== productId);
 };
 
-
-// const removeCartItem = (cartItemsArray, productUrno) => {
-//   const newFilteredArray = cartItemsArray.filter(
-//     (item) => item.associated_prod_urno !== productUrno
-//   );
-//   return newFilteredArray.filter((item) => item.urno !== productUrno);
-// };
-
 const setProdNote = (cartItemsArray, productId, productNote) => {
   const updatedItems = cartItemsArray.map((item) =>
     item.prod_id === productId
@@ -96,12 +88,14 @@ const setCompNote = (cartItemsArray, productId, complentaryNote) => {
 //   );
 //   return updatedItems;
 // };
+// ma
 
 const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
   let updatedCart = cartItemsArray.filter(
     (item) => item.associated_prod_urno != productUrno
   );
-  let newUpdatedCart = updatedCart.map((item) =>
+
+  updatedCart = cartItemsArray.map((item) =>
     item.urno == productUrno
       ? {
           ...item,
@@ -110,7 +104,7 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
       : item
   );
 
-  let cartWithNewToppings = newUpdatedCart.map((cartItem) => {
+  let cartWithNewToppings = updatedCart.map((cartItem) => {
     return {
       ...cartItem,
     };
@@ -121,6 +115,9 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
     prod_qty: 1,
     associated_prod_urno: productUrno,
   }));
+
+
+
 
   cartWithNewToppings.push(...toppingsWithInfo);
   cartWithNewToppings = cartWithNewToppings.map((item) =>
@@ -133,11 +130,39 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
         }
       : item
   );
+  console.log(cartWithNewToppings);
   return cartWithNewToppings;
+  // cartWithNewToppings = cartWithNewToppings.map((item) =>
+  //   item.urno === productUrno
+  //     ?
+  //       selectedToppings.map((topping)=>{
+
+  //         ...item,
+  //         toppings: item.toppings.concat(item.urno),
+  //       }
+
+  //       )
+  //       : item
+
+  // );
 };
 
 
 
+
+
+
+
+// cartWithNewToppings = cartWithNewToppings.map((item) =>
+// item.urno === productUrno
+//   ? {
+//       ...item,
+//       toppings: item.toppings.concat(item.urno),
+//     }
+//   : item
+// );
+
+// helper functions end
 
 export const addToCart = (cartItemsArray, cartItem) => ({
   type: ADD_TO_CART,

@@ -45,10 +45,9 @@ const CartSection = () => {
   }, [cartItems]);
 
   const getTotalAmountForItem = (item) => {
-    const rate = item.prod_rate; // Assuming the rate is available in the product object
-    const toppingsTotalPrice = selectedToppingsTotalPrice || 0; // Get the total price of selected toppings (default to 0 if no toppings selected)
+    const rate = item.prod_rate;
 
-    return rate + toppingsTotalPrice;
+    return rate ;
   };
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
@@ -63,7 +62,7 @@ const CartSection = () => {
   // Constant variable for SGST rate
   const SGST_RATE = 0.025;
   const getSGSTAmountForItem = (item) => {
-    const rate = item.prod_rate + selectedToppingsTotalPrice;
+    const rate = item.prod_rate;
     return rate * SGST_RATE;
   };
   // Function to get the total SGST amount for all products in the cart
@@ -79,7 +78,7 @@ const CartSection = () => {
   // Constant variable for CGST rate
   const CGST_RATE = 0.025;
   const getCGSTAmountForItem = (item) => {
-    const rate = item.prod_rate + selectedToppingsTotalPrice;
+    const rate = item.prod_rate;
     return rate * CGST_RATE;
   };
   // Function to get the total CGST amount for all products in the cart
@@ -117,7 +116,6 @@ const CartSection = () => {
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
-
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedTopId, setSelectedTopId] = useState();
@@ -177,6 +175,8 @@ const CartSection = () => {
     // console.log(selectedToppings);
   };
 
+
+  
   // FILTER TOPPINGS ACCORDING TO CATEGORY
   const toppingsWithCategoryHead = filteredToppings
     .map((topping) => {
@@ -415,7 +415,7 @@ const CartSection = () => {
             <CCol sm={4} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
-                {/* {getFinalPayAmount().toFixed(2)}{" "} */}
+                {getFinalPayAmount()}
                 {/* Display the final pay amount */}
               </h4>
               <small>{getTotalItmes()} Item(s) </small>

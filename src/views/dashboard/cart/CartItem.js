@@ -29,6 +29,7 @@ import {
   CInputGroup,
   CInputGroupText,
 } from "@coreui/react";
+import { ToastContainer, toast } from "react-toastify";
 
 const CartItem = ({
   item,
@@ -48,7 +49,6 @@ const CartItem = ({
   const [productNote, setProductNote] = useState("");
   const [complentaryNote, setComplentaryNote] = useState("");
   // console.log(productNote, complentaryNote);
-
   const setCartQtyHandler = () => {
     dispatch(setCartQty(cartItems, item.prod_id, quantity));
     if (quantity >= 1000) {
@@ -77,6 +77,22 @@ const CartItem = ({
     dispatch(
       setComplementaryNoteInCart(cartItems, item.prod_id, complentaryNote)
     );
+  };
+  
+  const handleQuantityKeyPress = (e) => {
+    if (e.key === "Enter") {
+      setCartQtyHandler();
+       // Show success notification using react-toastify
+       toast.success("Quantity Update", {
+        position: "top-right",
+        autoClose: 1000, // Auto close the notification after 1 seconds
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
   };
 
   return (
@@ -128,6 +144,7 @@ const CartItem = ({
             value={quantity}
             onBlur={setCartQtyHandler}
             onChange={(e) => setQuantity(e.target.value)}
+            onKeyPress={handleQuantityKeyPress} // Add this line
           />
           <br />
           <button> Parcel</button>
@@ -184,3 +201,5 @@ const CartItem = ({
 };
 
 export default CartItem;
+
+

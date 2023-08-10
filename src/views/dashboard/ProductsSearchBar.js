@@ -91,7 +91,7 @@ const ProductsSearchBar = () => {
     // return random4Digit.toString(); // Convert to string
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
-    return `${timestamp.toString() + randomString}`;
+     return `${timestamp.toString() + randomString}`;
   }
   console.log(generateUniqueNumber());
 
