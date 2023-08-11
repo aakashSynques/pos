@@ -6,6 +6,7 @@ import {
   SET_COMPLEMENTARY_NOTE,
   SET_PRODUCT_NOTE,
   SET_TOPPING_URNO,
+  SET_IS_PARCEL,
 } from "./actionTypes";
 
 // helper functions start
@@ -28,7 +29,7 @@ const addCartItem = (cartItemsArray, cartItem) => {
 };
 
 const setQuantity = (cartItemsArray, productId, quantity) => {
-  if (quantity == 0 || quantity == "") {
+  if (quantity === "0" || quantity == "") {
     // If quantity is 0 or empty, remove the product from the cart
     const filteredItems = cartItemsArray.filter(
       (item) => item.prod_id !== productId
@@ -48,17 +49,12 @@ const setQuantity = (cartItemsArray, productId, quantity) => {
     return updatedItems;
   }
 };
-const removeCartItem = (cartItemsArray, productId) => {
-  return cartItemsArray.filter((item) => item.prod_id !== productId);
+const removeCartItem = (cartItemsArray, productUrno) => {
+  const newFilteredArray = cartItemsArray.filter(
+    (item) => item.associated_prod_urno !== productUrno
+  );
+  return newFilteredArray.filter((item) => item.urno !== productUrno);
 };
-
-
-// const removeCartItem = (cartItemsArray, productUrno) => {
-//   const newFilteredArray = cartItemsArray.filter(
-//     (item) => item.associated_prod_urno !== productUrno
-//   );
-//   return newFilteredArray.filter((item) => item.urno !== productUrno);
-// };
 
 const setProdNote = (cartItemsArray, productId, productNote) => {
   const updatedItems = cartItemsArray.map((item) =>
@@ -83,19 +79,17 @@ const setCompNote = (cartItemsArray, productId, complentaryNote) => {
   );
   return updatedItems;
 };
-
-// const setToppingOnProd = (cartItemsArray, productId, selectedToppings) => {
-//   const updatedItems = cartItemsArray.map((item) =>
-//     item.prod_id === productId
-//       ? {
-//           ...item,
-//           // toppings: [...selectedToppings],
-//           toppings: selectedToppings[productId] || [],
-//         }
-//       : item
-//   );
-//   return updatedItems;
-// };
+const setParcel = (cartItemsArray, productId, parcelBtn) => {
+  const updatedItems = cartItemsArray.map((item) =>
+    item.prod_id === productId
+      ? {
+          ...item,
+          is_parcel: parcelBtn,
+        }
+      : item
+  );
+  return updatedItems;
+};
 
 const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
   let updatedCart = cartItemsArray.filter(
@@ -136,7 +130,23 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
   return cartWithNewToppings;
 };
 
+const clearProdToppings = (cartItemsArray, productUrno) => {
+  let updatedCart = cartItemsArray.filter(
+    (item) => item.associated_prod_urno !== productUrno
+  );
 
+  let cartWithoutToppings = updatedCart.map((item) =>
+    item.urno === productUrno
+      ? {
+          ...item,
+          toppings: [],
+        }
+      : item
+  );
+  return cartWithoutToppings;
+};
+
+// helper functions end
 
 
 export const addToCart = (cartItemsArray, cartItem) => ({
@@ -149,9 +159,9 @@ export const setCartQty = (cartItemsArray, productId, quantity) => ({
   payload: setQuantity(cartItemsArray, productId, quantity),
 });
 
-export const removeFromCart = (cartItemsArray, productId) => ({
+export const removeFromCart = (cartItemsArray, productUrno) => ({
   type: REMOVE_FROM_CART,
-  payload: removeCartItem(cartItemsArray, productId),
+  payload: removeCartItem(cartItemsArray, productUrno),
 });
 
 export const setProductNoteInCart = (
@@ -172,9 +182,23 @@ export const setComplementaryNoteInCart = (
   payload: setCompNote(cartItemsArray, productId, complentaryNote),
 });
 
+export const setParcelBtnInCart = (
+  cartItemsArray,
+  productId,
+  parcelBtn
+) => ({
+  type: SET_IS_PARCEL,
+  payload: setParcel(cartItemsArray, productId, parcelBtn),
+});
+
 export const setToppings = (cartItemsArray, productUrno, selectedToppings) => ({
   type: SET_TOPPING_URNO,
   payload: setToppingOnProd(cartItemsArray, productUrno, selectedToppings),
+});
+
+export const clearAllToppings = (cartItemsArray, productUrno) => ({
+  type: SET_TOPPING_URNO,
+  payload: clearProdToppings(cartItemsArray, productUrno),
 });
 
 export const setOutletList = (outletList) => ({

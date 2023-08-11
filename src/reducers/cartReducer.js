@@ -5,6 +5,7 @@ import {
   SET_PRODUCT_NOTE,
   SET_COMPLEMENTARY_NOTE,
   SET_TOPPING_URNO,
+  SET_IS_PARCEL,
 } from "../action/actionTypes";
 
 const initialState = {
@@ -45,6 +46,11 @@ const cartReducer = (state = initialState, action) => {
         ...state,
         cartItems: action.payload,
       };
+      case SET_IS_PARCEL:
+        return {
+          ...state,
+          cartItems: action.payload,
+        };
 
     default:
       return state;

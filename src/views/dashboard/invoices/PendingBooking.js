@@ -1,4 +1,4 @@
-import {
+  import {
   CCardHeader,
   CLink,
   CCardBody,
@@ -118,7 +118,7 @@ const PendingBooking = () => {
                     let parsedbooking_json = null;
                     try {
                       parsedbooking_json = JSON.parse(booking_json);
-                      console.log(parsedbooking_json, "98");
+                      // console.log(parsedbooking_json, "98");
                     } catch (error) {
                       // return false;
                       console.error("Error parsing sales_json:", error);

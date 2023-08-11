@@ -40,6 +40,26 @@ a {
 .modal-header {
   padding: 5px 17px;
 }
+.cust-radio{
+  padding: 4px 26px 6px 11px!important;
+  margin-right: 6px;
+  height: 30px;
+}.input-dro-font{
+  font-size: 13px!important;
+}
+ @media (min-width: 992px){
+ .cust-model .modal-lg {
+    --bs-modal-width: 580px!important;
+}}
+.cust-model .form-label{
+  line-height: 10px;
+  font-weight: 900;
+}
+.cust-model .col-form-label{
+  line-height: 10px;
+  font-weight: 900;
+}
+
 .product-search-section {
   padding: 3px;
   .category-list-box {

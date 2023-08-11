@@ -190,7 +190,7 @@ const ToppingsModal = ({
       <CModalFooter>
         <CButton color="danger">Clear All [Alt + C]</CButton>
         <CButton color="success" onClick={handleToppingsSubmit}>
-          Submit [Alt + Enter] 
+          Submit [Alt + Enter]
         </CButton>
         <CButton color="light" onClick={() => setToppingModel(false)}>
           Cancel [Esc]

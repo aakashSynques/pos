@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setToppings } from "../../../action/actions";
+import { setToppings, clearAllToppings } from "../../../action/actions";
 import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
 import PayBillsModels from "./billing/PayBillsModels";
@@ -45,9 +45,14 @@ const CartSection = () => {
   }, [cartItems]);
 
   const getTotalAmountForItem = (item) => {
-    const rate = item.prod_rate;
+    // const rate = item.prod_rate;
+    // console.log('prod rate', rate);
+    // const toppingsTotalPrice = selectedToppingsTotalPrice;
+    // console.log(selectedToppingsTotalPrice)
 
-    return rate ;
+    // return rate + toppingsTotalPrice;
+    const rate = item.prod_rate + selectedToppingsTotalPrice;
+    return rate;
   };
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
@@ -62,7 +67,7 @@ const CartSection = () => {
   // Constant variable for SGST rate
   const SGST_RATE = 0.025;
   const getSGSTAmountForItem = (item) => {
-    const rate = item.prod_rate;
+    const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate * SGST_RATE;
   };
   // Function to get the total SGST amount for all products in the cart
@@ -78,7 +83,7 @@ const CartSection = () => {
   // Constant variable for CGST rate
   const CGST_RATE = 0.025;
   const getCGSTAmountForItem = (item) => {
-    const rate = item.prod_rate;
+    const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate * CGST_RATE;
   };
   // Function to get the total CGST amount for all products in the cart
@@ -90,21 +95,21 @@ const CartSection = () => {
     });
     return totalCGST;
   };
+
+  // Calculate total items in the cart
+  const getTotalItemsInCart = () => {
+    let totalItems = 0;
+    cartItems.forEach((item) => {
+      totalItems += item.prod_qty;
+    });
+    return totalItems;
+  };
   // Function to calculate the final pay amount
   const getFinalPayAmount = () => {
     const subtotal = getSubTotalAmount();
     const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
     const finalPayAmount = subtotal + totalTaxes;
     return finalPayAmount;
-  };
-
-  // Function to calculate the total quantity of all products in the cart
-  const getTotalItmes = () => {
-    const totalQuantity = cartItems.reduce(
-      (total, item) => total + item.prod_qty,
-      0
-    );
-    return parseInt(totalQuantity, 10);
   };
 
   // /////////////////// quantity update /////////////////////
@@ -116,6 +121,7 @@ const CartSection = () => {
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
+
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedTopId, setSelectedTopId] = useState();
@@ -175,8 +181,6 @@ const CartSection = () => {
     // console.log(selectedToppings);
   };
 
-
-  
   // FILTER TOPPINGS ACCORDING TO CATEGORY
   const toppingsWithCategoryHead = filteredToppings
     .map((topping) => {
@@ -190,19 +194,18 @@ const CartSection = () => {
 
   // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
   function generateUniqueNumber() {
-    //   const random4Digit = Math.floor(1000 + Math.random() * 9000);
-    //   return random4Digit.toString(); // Convert to string
+    // const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    // return random4Digit.toString(); // Convert to string
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
     return `${timestamp.toString() + randomString}`;
   }
+  console.log("generateUniqueNumber:", typeof generateUniqueNumber());
 
   // GENERATE PROD_RATE FOR PROD IN CART
   const getPriceForOutlet = (product) => {
     const outletId = selectedOutletId.toString();
-    console.log(product);
     if (product.rate_chart && product.rate_chart[outletId]) {
-      console.log("condition satisfied");
       const rateForOutlet = product.rate_chart[outletId][0];
       console.log(rateForOutlet);
       if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
@@ -211,6 +214,8 @@ const CartSection = () => {
     }
     return "0";
   };
+
+  console.log(selectedToppings);
 
   // HANDLE SUBMIT FOR TOPPINGS
   const handleToppingsSubmit = () => {
@@ -261,12 +266,11 @@ const CartSection = () => {
         KOT_ready: item.KOT_ready,
         KOT_dispatch: item.KOT_dispatch,
         urno: generateUniqueNumber(),
-        associated_prod_urno: 0,
+        associated_prod_urno: null,
         toppings: [],
         customized: item.customized,
       };
     });
-    console.log(cartItemData, selectedUrno, "cartItemData");
     dispatch(setToppings(cartItems, selectedUrno, cartItemData));
     setToppingModel(false); // Close the toppings model after submitting
     setSelectedToppings([]);
@@ -274,19 +278,6 @@ const CartSection = () => {
 
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
-    // const totalToppingPrice = Object.values(selectedToppings).reduce(
-    //   (toppingTotal, selectedToppingsArray) => {
-    //     const productToppingTotal = selectedToppingsArray.reduce(
-    //       (acc, toppingId) => {
-    //         const topping = toppingsData.find((t) => t.prod_id === toppingId);
-    //         return acc + (topping ? topping.prod_rate : 0);
-    //       },
-    //       0
-    //     );
-    //     return toppingTotal + productToppingTotal;
-    //   },
-    //   0
-    // );
     const totalToppingPrice = cartItems
       .filter((topp) => topp.associated_prod_urno === 0)
       .reduce((toppingTotal, productToppings) => {
@@ -308,6 +299,31 @@ const CartSection = () => {
     setSelectedToppingsTotalPrice(totalToppingPrice);
   }, [selectedToppings, toppingsData]);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.altKey && event.key === "c") {
+        dispatch(clearAllToppings(cartItems, selectedUrno));
+        setToppingModel(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [cartItems, selectedUrno]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.altKey && event.key === "Enter") {
+        handleToppingsSubmit();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedToppings]);
+
   return (
     <div className="cartlist">
       <div className="table-height">
@@ -323,7 +339,7 @@ const CartSection = () => {
             <tbody>
               {cartItems.map(
                 (item) =>
-                  item.associated_prod_urno == 0 && (
+                  item.associated_prod_urno === null && (
                     <CartItem
                       key={item.prod_id}
                       cartItems={cartItems}
@@ -356,7 +372,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getSubTotalAmount()}
+              {getSubTotalAmount().toFixed(2)}
               {/* Display the calculated subtotal */}
             </CCol>
           </CRow>
@@ -385,7 +401,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalCGSTAmount().toFixed(2)}{" "}
+              {getTotalCGSTAmount().toFixed(3)}{" "}
               {/* Display the calculated CGST amount */}
             </CCol>
           </CRow>
@@ -415,10 +431,13 @@ const CartSection = () => {
             <CCol sm={4} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
-                {getFinalPayAmount()}
+                {getFinalPayAmount().toFixed(2)}{" "}
                 {/* Display the final pay amount */}
               </h4>
-              <small>{getTotalItmes()} Item(s) </small>
+              <small>
+                {getTotalItemsInCart()} Item(s){" "}
+                {/* Display total items in cart */}
+              </small>
             </CCol>
           </CRow>
           <hr style={{ margin: "4px 0" }} />
@@ -448,20 +467,6 @@ const CartSection = () => {
         visible={paybillsModel}
         onClose={() => setPayBillsModel(false)}
       />
-
-      {/* toppings model */}
-
-      {/* <ToppingsModal
-        toppingModel={toppingModel}
-        setToppingModel={setToppingModel}
-        selectedToppings={selectedToppings}
-        searchToppingQuery={searchToppingQuery}
-        setSearchToppingQuery={setSearchToppingQuery}
-        toppingsWithCategoryHead={toppingsWithCategoryHead}
-        handleToppingClick={handleToppingClick}
-        handleToppingsSubmit={handleToppingsSubmit}
-        setCategoryHead={setCategoryHead}
-      /> */}
 
       <CModal
         size="lg"
@@ -528,7 +533,15 @@ const CartSection = () => {
           </div>
         </CModalBody>
         <CModalFooter>
-          <CButton color="danger">Clear All [Alt + C]</CButton>
+          <CButton
+            color="danger"
+            onClick={() => {
+              dispatch(clearAllToppings(cartItems, selectedUrno));
+              setToppingModel(false);
+            }}
+          >
+            Clear All [Alt + C]
+          </CButton>
           <CButton color="success" onClick={handleToppingsSubmit}>
             Submit [Alt + Enter]
           </CButton>

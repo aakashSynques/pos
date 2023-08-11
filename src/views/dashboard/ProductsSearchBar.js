@@ -60,8 +60,8 @@ const ProductsSearchBar = () => {
   }, [query, selectedOutletId, productSearch]);
 
   // console.log(filteredItems);
-   // groud by category heads
-   const groupedItems = useMemo(() => {
+  // groud by category heads
+  const groupedItems = useMemo(() => {
     const grouped = {};
     for (const product of filteredItems) {
       const categoryHeads = product.category_heads;
@@ -85,15 +85,16 @@ const ProductsSearchBar = () => {
     return "prod rate";
   };
 
+  // console.log(filteredItems);
+
   // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
   function generateUniqueNumber() {
     // const random4Digit = Math.floor(1000 + Math.random() * 9000);
     // return random4Digit.toString(); // Convert to string
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
-     return `${timestamp.toString() + randomString}`;
+    return `${timestamp.toString() + randomString}`;
   }
-  console.log(generateUniqueNumber());
 
   // Dispatch the addToCart action with the product and its prod_price
   const handleAddToCart = (productId) => {
@@ -134,6 +135,7 @@ const ProductsSearchBar = () => {
       category_heads: item.category_heads,
       recipeCount: item.recipeCount,
       is_parcel: item.is_parcel,
+      // is_parcel: "",
       is_complementary: item.is_complementary,
       is_complementary_note: "",
       is_note: item.is_note,
@@ -142,11 +144,11 @@ const ProductsSearchBar = () => {
       prod_discount: item.prod_discount,
       prod_discount_offered: item.prod_discount_offered,
       total_amount: item.prod_rate,
-      KOT_pick: item.KOT_pick,
-      KOT_ready: item.KOT_ready,
-      KOT_dispatch: item.KOT_dispatch,
+      KOT_pick: 0,
+      KOT_ready: 0,
+      KOT_dispatch: 0,
       urno: generateUniqueNumber(),
-      associated_prod_urno: 0,
+      associated_prod_urno: null,
       // toppings: item.toppings,
       toppings: [],
       customized: item.customized,
@@ -155,7 +157,6 @@ const ProductsSearchBar = () => {
     // console.log(cartItemsArray, "cartState");
 
     dispatch(addToCart(cartItemsArray, ...cartItemData));
-
   };
 
   // //////////////////// click outside ///////////////////////////
@@ -262,52 +263,55 @@ const ProductsSearchBar = () => {
               </button>
             </div>
           ))} */}
-          {query !== "" &&
+        {query !== "" &&
           Object.entries(groupedItems).map(([categoryHeads, products]) => (
             <div key={categoryHeads}>
-              <div className="bg-success text-white" style={{padding: "2px 10px"}}>
+              <div
+                className="bg-success text-white"
+                style={{ padding: "2px 10px" }}
+              >
                 <i className="fa fa-arrow-circle-right"></i>&nbsp;
                 {categoryHeads}
               </div>
               {products
                 .filter((product) => getPriceForOutlet(product) !== 0) // Exclude products with prod_rate equal to 0
                 .map((product) => (
-                <div className="product-list">
-                  <button
-                    key={product.prod_id}
-                    onClick={() => {
-                      handleAddToCart(product.prod_id);
-                      setQuery("");
-                    }}
-                  >
-                    <div className="pull-left fa-stack fa-xs prod-sign">
-                      <span
-                        className={`fa-stack fa-xs ${getTextColorClass(
-                          product.prod_sign
-                        )}`}
-                      >
-                        <i className="fa fa-square-o fa-stack-2x"></i>
-                        <i className="fa fa-circle fa-stack-1x"></i>
-                      </span>
-                    </div>
+                  <div className="product-list">
+                    <button
+                      key={product.prod_id}
+                      onClick={() => {
+                        handleAddToCart(product.prod_id);
+                        setQuery("");
+                      }}
+                    >
+                      <div className="pull-left fa-stack fa-xs prod-sign">
+                        <span
+                          className={`fa-stack fa-xs ${getTextColorClass(
+                            product.prod_sign
+                          )}`}
+                        >
+                          <i className="fa fa-square-o fa-stack-2x"></i>
+                          <i className="fa fa-circle fa-stack-1x"></i>
+                        </span>
+                      </div>
 
-                    <div className="pull-left">
-                      <b className="pull-left">{product.prod_name}</b>
-                      <br />
-                      <small className="pull-left">
-                        Code : {product.prod_code} {product.category_name}
-                      </small>
-                    </div>
+                      <div className="pull-left">
+                        <b className="pull-left">{product.prod_name}</b>
+                        <br />
+                        <small className="pull-left">
+                          Code : {product.prod_code} {product.category_name}
+                        </small>
+                      </div>
 
-                    <div className="product-price">
-                      <i className="fa fa-inr"></i>
+                      <div className="product-price">
+                        <i className="fa fa-inr"></i>
                         {getPriceForOutlet(product).toFixed(3)}
                         {/* {getTotalSGSTAmount().toFixed(3)} */}
-                    </div>
-                    <br />
-                  </button>
-                </div>
-              ))}
+                      </div>
+                      <br />
+                    </button>
+                  </div>
+                ))}
             </div>
           ))}
 
@@ -318,8 +322,6 @@ const ProductsSearchBar = () => {
           </div>
         )}
       </div>
-
-
     </div>
   );
 };

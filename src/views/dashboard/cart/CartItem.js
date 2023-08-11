@@ -6,6 +6,7 @@ import {
   setCartQty,
   setProductNoteInCart,
   setComplementaryNoteInCart,
+  setParcelBtnInCart,
 } from "../../../action/actions";
 
 import {
@@ -29,7 +30,7 @@ import {
   CInputGroup,
   CInputGroupText,
 } from "@coreui/react";
-import { ToastContainer, toast } from "react-toastify";
+import CustmizeModel from "./CustmizeModel";
 
 const CartItem = ({
   item,
@@ -42,33 +43,25 @@ const CartItem = ({
 }) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(item.prod_qty);
-  // const [selectedToppings, setSelectedToppings] = useState([]); // State for selected toppings in this item
   const [visibleNote, setVisibleNote] = useState(false);
   const [visibleComplentary, setVisibleComplentary] = useState(false);
 
   const [productNote, setProductNote] = useState("");
   const [complentaryNote, setComplentaryNote] = useState("");
-  // console.log(productNote, complentaryNote);
+  const [parcelBtn, setParcelBtn] = useState(item.is_parcel === 1);
+  const [customizeModelVisible, setCustomizeModelVisible] = useState(false); 
+
   const setCartQtyHandler = () => {
     dispatch(setCartQty(cartItems, item.prod_id, quantity));
     if (quantity >= 1000) {
       setQuantity(1000);
     }
   };
-
-  // const handleToppingClick = (topping) => {
-  //   const isSelected = selectedToppings.includes(topping.prod_id);
-  //   if (isSelected) {
-  //     setSelectedToppings(
-  //       selectedToppings.filter((id) => id !== topping.prod_id)
-  //     );
-  //   } else {
-  //     setSelectedToppings([...selectedToppings, topping.prod_id]);
-  //   }
-  // };
-
-  // Function to calculate the total price of the selected toppings
-  // console.log(item);
+  const handleQuantityKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setCartQtyHandler();
+    }
+  };
   const setProdNoteOnBlur = () => {
     dispatch(setProductNoteInCart(cartItems, item.prod_id, productNote));
   };
@@ -78,22 +71,19 @@ const CartItem = ({
       setComplementaryNoteInCart(cartItems, item.prod_id, complentaryNote)
     );
   };
-  
-  const handleQuantityKeyPress = (e) => {
-    if (e.key === "Enter") {
-      setCartQtyHandler();
-       // Show success notification using react-toastify
-       toast.success("Quantity Update", {
-        position: "top-right",
-        autoClose: 1000, // Auto close the notification after 1 seconds
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    }
+
+  const setParcelBtnBlur = () => {
+    const newParcelBtn = parcelBtn === "1" ? "0" : "1";
+    setParcelBtn(newParcelBtn);
+    dispatch(setParcelBtnInCart(cartItems, item.prod_id, newParcelBtn));
+    // dispatch(setParcelBtnInCart(cartItems, item.prod_id, parcelBtn));
   };
+
+  // const setParcelBtnBlur = () => {
+  //   const newParcelBtnValue = parcelBtn ? "0" : "1"; // Toggle the value
+  //   setParcelBtn(newParcelBtnValue);
+  //   dispatch(setParcelBtnInCart(cartItems, item.prod_id, newParcelBtnValue));
+  // };
 
   return (
     <>
@@ -108,7 +98,7 @@ const CartItem = ({
                 const topping = cartItems.find((t) => t.urno === toppingUrno);
                 return (
                   <div key={toppingUrno}>
-                    {console.log(topping)}
+                    {/* {console.log(topping)} */}
                     {topping ? (
                       <span>
                         {topping.prod_name} | @ <i className="fa fa-inr"></i>
@@ -126,6 +116,7 @@ const CartItem = ({
             <CButton onClick={() => setVisibleComplentary(!visibleComplentary)}>
               <u class="text-danger">C</u>omplementary
             </CButton>
+
             {item.prod_Toppings_status == 1 ? (
               <CButton
                 onClick={() => openToppingModel(item.urno, item.category_heads)}
@@ -133,8 +124,21 @@ const CartItem = ({
                 <u class="text-danger">T</u>oppings
               </CButton>
             ) : null}
+
+            {item.prod_Customized_status == 1 ? (
+              <CButton
+                // onClick={() => openToppingModel(item.urno, item.category_heads)}
+                onClick={() => setCustomizeModelVisible(!customizeModelVisible)}
+              >
+                  
+                <u class="text-danger">C</u>ustomize
+              </CButton>
+              
+            ) : null}
+          
           </div>
         </td>
+        
         {/* {setQuantity(item.prod_qty)} */}
         {/* {console.log(item.prod_qty)} */}
         <td className="incree-decreement">
@@ -144,25 +148,26 @@ const CartItem = ({
             value={quantity}
             onBlur={setCartQtyHandler}
             onChange={(e) => setQuantity(e.target.value)}
-            onKeyPress={handleQuantityKeyPress} // Add this line
+            onKeyDown={handleQuantityKeyDown} // Handle Enter key press
           />
           <br />
-          <button> Parcel</button>
+          <CButton
+            className={parcelBtn === "1" ? "parcel-btn-selected" : ""}
+            onClick={setParcelBtnBlur}
+          >
+            Parcel
+          </CButton>
         </td>
         <td className="pt-3">
           <b className="rate-font">
             <i className="fa fa-inr"></i>
-            {/* {item.prod_rate.toFixed(2)}{" "} */}
             {getTotalAmountForItem(item)} <br />
-            {/* {submittedToppings && (
-          <b>Toppings : {selectedToppingsTotalPrice.toFixed(2)}</b>
-        )} */}
           </b>
 
           {/* item remove button */}
           <span
             className="btn btn-danger btn-remove"
-            onClick={() => dispatch(removeFromCart(cartItems, item.prod_id))}
+            onClick={() => dispatch(removeFromCart(cartItems, item.urno))}
           >
             <i className="fa fa-times"></i>
           </span>
@@ -196,10 +201,13 @@ const CartItem = ({
           </CCollapse>
         </td>
       </tr>
+
+      <CustmizeModel
+        customizeModelVisible={customizeModelVisible}
+        onClose={() => setCustomizeModelVisible(false)} // Close the modal when onClose is called
+      />   
     </>
   );
 };
 
 export default CartItem;
-
-
