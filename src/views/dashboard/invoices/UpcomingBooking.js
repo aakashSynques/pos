@@ -3,8 +3,8 @@ import React from "react";
 const UpcomingBooking = () => {
   return (
     <>
-      <CCard>
-        <CCardHeader>
+      <CCard className="invoice-card">
+        <CCardHeader className="invoice-card">
           Upcoming Booking
           <CLink className="text-primary pull-right">
             <i className="fa fa-external-link fa-xs"></i>

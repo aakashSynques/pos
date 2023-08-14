@@ -17,14 +17,15 @@ import {
 } from "@coreui/react";
 import React, { useState } from "react";
 import OnGoingKotModel from "./OnGoingKotModel/OnGoingKotModel";
+// import "../../../scss/_new.scss";
 const OnGoingKot = () => {
   const [returns, setReturns] = useState(false);
   const [activeKey, setActiveKey] = useState(1);
 
   return (
     <>
-      <CCard>
-        <CCardHeader>
+      <CCard className="invoice-card">
+        <CCardHeader className="invoice-card" >
           OnGoing KOT(s)
           <CLink
             className="text-primary pull-right"

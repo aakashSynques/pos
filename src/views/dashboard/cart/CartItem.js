@@ -111,17 +111,17 @@ const CartItem = ({
           </small>
           <div className="toppings-btn">
             <CButton onClick={() => setVisibleNote(!visibleNote)}>
-              <u class="text-danger">N</u>ote
+              <u className="text-danger">N</u>ote
             </CButton>
             <CButton onClick={() => setVisibleComplentary(!visibleComplentary)}>
-              <u class="text-danger">C</u>omplementary
+              <u className="text-danger">C</u>omplementary
             </CButton>
 
             {item.prod_Toppings_status == 1 ? (
               <CButton
                 onClick={() => openToppingModel(item.urno, item.category_heads)}
               >
-                <u class="text-danger">T</u>oppings
+                <u className="text-danger">T</u>oppings
               </CButton>
             ) : null}
 
@@ -131,7 +131,7 @@ const CartItem = ({
                 onClick={() => setCustomizeModelVisible(!customizeModelVisible)}
               >
                   
-                <u class="text-danger">C</u>ustomize
+                <u className="text-danger">C</u>ustomize
               </CButton>
               
             ) : null}
@@ -152,7 +152,7 @@ const CartItem = ({
           />
           <br />
           <CButton
-            className={parcelBtn === "1" ? "parcel-btn-selected" : ""}
+            className={parcelBtn === "1" ? "btn btn-success text-white" : "btn btn-light"}
             onClick={setParcelBtnBlur}
           >
             Parcel
@@ -162,6 +162,7 @@ const CartItem = ({
           <b className="rate-font">
             <i className="fa fa-inr"></i>
             {getTotalAmountForItem(item)} <br />
+            {/* <input type="text" value={getTotalAmountForItem(item)} /> */}
           </b>
 
           {/* item remove button */}
@@ -174,7 +175,7 @@ const CartItem = ({
         </td>
       </tr>
       <tr>
-        <td colspan="3">
+      <td colspan="3" style={{ border: "0px" }}>
           <CCollapse visible={visibleNote}>
             <CFormTextarea
               placeholder="Product Note"

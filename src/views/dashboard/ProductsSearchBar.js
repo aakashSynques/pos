@@ -151,7 +151,9 @@ const ProductsSearchBar = () => {
       associated_prod_urno: null,
       // toppings: item.toppings,
       toppings: [],
-      customized: item.customized,
+      // customized: item.customized,
+      customized: [],
+
     }));
     // console.log(cartItemData);
     // console.log(cartItemsArray, "cartState");

@@ -1,4 +1,4 @@
-  import {
+import {
   CCardHeader,
   CLink,
   CCardBody,
@@ -75,8 +75,8 @@ const PendingBooking = () => {
 
   return (
     <>
-      <CCard>
-        <CCardHeader>
+      <CCard className="invoice-card">
+        <CCardHeader className="invoice-card">
           Pending Booking(s)
           <CLink
             className="text-primary pull-right"

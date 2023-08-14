@@ -16,11 +16,11 @@ const rootReducer = combineReducers({
   delivery: deliveryReducer,   // select deliver mode reducer
 });
 
-const mapStateToProps = (state) => ({
-  outletList: state.outlets || [], // Set default value as an empty array
-  deliveryList: state.deliveries || [], // Set default value as an empty array
-  selectedOutletId: state.selectedOutletId, // Map selectedOutletId to the appropriate state property
-});
+// const mapStateToProps = (state) => ({
+//   outletList: state.outlets || [], // Set default value as an empty array
+//   deliveryList: state.deliveries || [], // Set default value as an empty array
+//   selectedOutletId: state.selectedOutletId, // Map selectedOutletId to the appropriate state property
+// });
 
 const store = createStore(rootReducer);
 export default store;

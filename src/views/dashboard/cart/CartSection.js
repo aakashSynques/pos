@@ -326,7 +326,10 @@ const CartSection = () => {
 
   return (
     <div className="cartlist">
-      <div className="table-height">
+     <div
+        className="table-height"
+        style={{ overflowY: "auto", overflowX: "auto" }}
+      >
         {cartItems.length > 0 ? (
           <table className="table cart-table">
             <thead>
@@ -363,7 +366,7 @@ const CartSection = () => {
       </div>
 
       {/* price Table   */}
-      <hr />
+      <hr style={{ margin: "0px" }} />
       <div className="bil-table mt-3">
         <CContainer>
           <CRow>

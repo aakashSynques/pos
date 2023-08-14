@@ -182,7 +182,7 @@ const OnGoingKotModel = () => {
                     }}
                   >
                     <i
-                      class="fa fa-file-text-o"
+                      className="fa fa-file-text-o"
                       style={{
                         background: "#26b99a",
                         color: "white",

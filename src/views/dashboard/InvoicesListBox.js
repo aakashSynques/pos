@@ -1,8 +1,4 @@
-import {
-  CContainer,
-  CRow,
-  CCol
-} from "@coreui/react";
+import { CContainer, CRow, CCol } from "@coreui/react";
 import React from "react";
 import RecentInvoice from "./invoices/RecentInvoice";
 import OnGoingKot from "./invoices/OnGoingKot";
@@ -20,30 +16,30 @@ const InvoicesListBox = () => {
             {/* Recent Invice section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
               <RecentInvoice />
+              {/* </CCol> */}
+
+              {/* Recent Return Invoice(s) section */}
+              {/* <CCol md="6" sm="6" xs="12" className="p-10"> */}
+              <ReturnInvoice />
+              {/* </CCol> */}
+
+              {/* Total Punched Invoice(s) section */}
+              {/* <CCol md="6" sm="6" xs="12" className="p-10"> */}
+              <TotalPunchedInvoice />
             </CCol>
 
             {/* on going kot section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
               <OnGoingKot />
-            </CCol>
+              {/* </CCol> */}
 
-            {/* Recent Return Invoice(s) section */}
-            <CCol md="6" sm="6" xs="12" className="p-10">
-              <ReturnInvoice />
-            </CCol>
-
-            {/* Upcoming Booking */}
-            <CCol md="6" sm="6" xs="12" className="p-10">
+              {/* Upcoming Booking */}
+              {/* <CCol md="6" sm="6" xs="12" className="p-10"> */}
               <UpcomingBooking />
-            </CCol>
+              {/* </CCol> */}
 
-            {/* Total Punched Invoice(s) section */}
-            <CCol md="6" sm="6" xs="12" className="p-10">
-              <TotalPunchedInvoice />
-            </CCol>
-
-            {/* Pending Booking(s) section */}
-            <CCol md="6" sm="6" xs="12" className="p-10">
+              {/* Pending Booking(s) section */}
+              {/* <CCol md="6" sm="6" xs="12" className="p-10"> */}
               <PendingBooking />
             </CCol>
           </CRow>
@@ -53,6 +49,3 @@ const InvoicesListBox = () => {
   );
 };
 export default InvoicesListBox;
-
-
-

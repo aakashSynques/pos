@@ -44,6 +44,7 @@ const ReturnInvoice = () => {
         { outlet_id },
         { headers }
       );
+      // console.log(response.data.returnedOrders);
       setReturnedOrders(response.data.returnedOrders);
       // console.log(response);
       setLoading(false);
@@ -70,8 +71,8 @@ const ReturnInvoice = () => {
 
   return (
     <>
-      <CCard>
-        <CCardHeader>
+      <CCard className="invoice-card">
+        <CCardHeader className="invoice-card">
           Recent Return Invoice(s)
           <CLink
             className="text-primary pull-right"
@@ -113,15 +114,15 @@ const ReturnInvoice = () => {
               <tbody>
                 {returnedOrders
                   .slice(0, 11)
-                  .map(({ invoice_return_no, eat, return_json, outlet_id }) => {
-                    let returnInvoiceJson = null;
+                  .map(({ invoice_return_no, return_json }) => {
+                    // let returnInvoiceJson = null;
 
-                    try {
-                      returnInvoiceJson = JSON.parse(return_json);
-                    } catch (error) {
-                      // Handle the JSON parsing error, if needed
-                      console.error("Error parsing return_json:", error);
-                    }
+                    // try {
+                    //   returnInvoiceJson = JSON.parse(return_json);
+                    // } catch (error) {
+                    //   // Handle the JSON parsing error, if needed
+                    //   console.error("Error parsing return_json:", error);
+                    // }
                     return (
                       <tr>
                         <td>
@@ -130,11 +131,11 @@ const ReturnInvoice = () => {
                           </Link>
                           <br />
                           <small>
-                            {returnInvoiceJson.selectedCustomerJson
+                            {return_json.selectedCustomerJson
                               .customer_name &&
-                              returnInvoiceJson.selectedCustomerJson
+                              return_json.selectedCustomerJson
                                 .customer_name}{" "}
-                            ({returnInvoiceJson.selectedCustomerJson.mobile})
+                            ({return_json.selectedCustomerJson.mobile})
                           </small>
                         </td>
                         <td>
@@ -142,7 +143,7 @@ const ReturnInvoice = () => {
                             style={{ fontWeight: "bold", textAlign: "right" }}
                           >
                             {" "}
-                            &#8377; {returnInvoiceJson.cartSumUp.grandTotal}
+                            &#8377; {return_json.cartSumUp.grandTotal}
                           </label>
                         </td>
                       </tr>

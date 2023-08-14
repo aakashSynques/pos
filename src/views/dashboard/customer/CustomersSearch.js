@@ -284,8 +284,8 @@ const CustomersSearch = () => {
             {/* customer Edit and update */}
 
             <CCol sm={6}>
-              <div class="text-right" style={{ float: "right" }}>
-                <div class="btn-group">
+              <div className="text-right" style={{ float: "right" }}>
+                <div className="btn-group">
                   {/* customer account view button */}
                   <CTooltip
                     content="Account [Shift + A]"
@@ -295,13 +295,13 @@ const CustomersSearch = () => {
                     <button
                       onClick={handleAccountModel}
                       style={{ "border-radius": "2px" }}
-                      class="btn btn-xs btn-warning rounded-left"
+                      className="btn btn-xs btn-warning rounded-left"
                       title=""
                       data-toggle="tooltip"
                       data-html="true"
                       data-original-title="Accounts<br>[ Shift + A ]"
                     >
-                      <i class="fa fa-money"></i>
+                      <i className="fa fa-money"></i>
                     </button>
                   </CTooltip>
                   {/* customer Edit button */}
@@ -312,13 +312,13 @@ const CustomersSearch = () => {
                   >
                     <button
                       onClick={handleEditCustomer}
-                      class="btn btn-xs btn-primary "
+                      className="btn btn-xs btn-primary "
                       title=""
                       data-toggle="tooltip"
                       data-html="true"
                       data-original-title="Profile Edit<br>[ Shift + E ]"
                     >
-                      <i class="fa fa-edit"></i>
+                      <i className="fa fa-edit"></i>
                     </button>
                   </CTooltip>
 
@@ -329,14 +329,14 @@ const CustomersSearch = () => {
                   >
                     <button
                       style={{ "border-radius": "2px" }}
-                      class="btn btn-xs btn-danger"
+                      className="btn btn-xs btn-danger"
                       title=""
                       data-toggle="tooltip"
                       data-html="true"
                       data-original-title="Clear Selected Accounts<br>[ Shift + C ]"
                       onClick={handleClearSelectedCustomer} // Update the click handler
                     >
-                      <i class="fa fa-times"></i>
+                      <i className="fa fa-times"></i>
                     </button>
                   </CTooltip>
                 </div>
@@ -405,7 +405,7 @@ const CustomersSearch = () => {
             {!loading && query !== "" && displayedItems.length === 0 && (
               <div className="product-list not-found-add-cust">
                 <span className="text-danger">
-                  <i class="fa fa-exclamation-triangle"></i> Sorry, no matching
+                  <i className="fa fa-exclamation-triangle"></i> Sorry, no matching
                   results.
                 </span>{" "}
                 <br />
@@ -424,7 +424,7 @@ const CustomersSearch = () => {
             style={{ backgroundColor: "#5bc0de" }}
           >
             Walk-IN{" "}
-            <span class="badge" color="info">
+            <span className="badge" color="info">
               0
             </span>
           </CButton>

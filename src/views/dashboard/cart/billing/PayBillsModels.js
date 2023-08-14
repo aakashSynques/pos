@@ -27,7 +27,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                 <b>Customer Details:</b> <b>AAKASH</b>
                 <br />
                 <font size="2">
-                  <CFormLabel class="label-default cust-label">
+                  <CFormLabel className="label-default cust-label">
                     Customer Account
                   </CFormLabel>
                 </font>
@@ -52,7 +52,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
               <CRow className="pt-2 pb-2">
                 <CCol sm={6} xs={6}>
                   VEG CHEESE PIZZA 7
-                  {/* <font size="1" class="text-primary pull-right">
+                  {/* <font size="1" className="text-primary pull-right">
                   (Parcel)
                 </font> */}
                 </CCol>
@@ -60,10 +60,10 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   1
                 </CCol>
                 <CCol sm={2} xs={2} className="text-center">
-                  <i class="fa fa-inr"></i> 200.00
+                  <i className="fa fa-inr"></i> 200.00
                 </CCol>
                 <CCol sm={2} xs={2} className="text-right">
-                  <i class="fa fa-inr"></i> 200.00
+                  <i className="fa fa-inr"></i> 200.00
                 </CCol>
               </CRow>
             </span>
@@ -86,20 +86,20 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                     1 Item(s)
                   </CCol>
                   <CCol sm={4} className="text-right">
-                    <i class="fa fa-inr"></i> 200.00
+                    <i className="fa fa-inr"></i> 200.00
                   </CCol>
                 </CRow>
 
                 <CRow className="pt-1">
                   <CCol sm={7}>Tax GST (2.5% SGST) </CCol>
                   <CCol sm={5} className="text-right">
-                    <i class="fa fa-inr"></i> 5.00
+                    <i className="fa fa-inr"></i> 5.00
                   </CCol>
                 </CRow>
                 <CRow className="pt-1">
                   <CCol sm={7}>Tax GST (2.5% CGST)</CCol>
                   <CCol sm={5} className="text-right">
-                    <i class="fa fa-inr"></i> 5.00
+                    <i className="fa fa-inr"></i> 5.00
                   </CCol>
                 </CRow>
 
@@ -111,7 +111,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   <CCol sm={5} className="text-right">
                     <b>
                       {" "}
-                      <i class="fa fa-inr"></i> 210.00
+                      <i className="fa fa-inr"></i> 210.00
                     </b>
                   </CCol>
                 </CRow>
@@ -131,7 +131,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   <CCol sm={5}>
                     <input
                       type="text"
-                      class="form-control input-sm rounded-0"
+                      className="form-control input-sm rounded-0"
                       placeholder="Extra information"
                       autocomplete="off"
                       style={{
@@ -144,7 +144,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   <CCol sm={3}>
                     <input
                       type="number"
-                      class="form-control p-0 text-end rounded-0"
+                      className="form-control p-0 text-end rounded-0"
                       autocomplete="off"
                       value="0"
                     />
@@ -160,7 +160,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   <CCol sm={5}>
                   <input
                       type="text"
-                      class="form-control input-sm rounded-0"
+                      className="form-control input-sm rounded-0"
                       placeholder="Extra information"
                       autocomplete="off"
                       style={{
@@ -173,7 +173,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   <CCol sm={3}>
                   <input
                       type="number"
-                      class="form-control p-0 text-end rounded-0"
+                      className="form-control p-0 text-end rounded-0"
                       autocomplete="off"
                       value="0"
                     />
