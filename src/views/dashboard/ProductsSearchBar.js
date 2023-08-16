@@ -134,11 +134,11 @@ const ProductsSearchBar = () => {
       category_name: item.category_name,
       category_heads: item.category_heads,
       recipeCount: item.recipeCount,
-      is_parcel: item.is_parcel,
+      is_parcel: 0,
       // is_parcel: "",
-      is_complementary: item.is_complementary,
+      is_complementary: 0,
       is_complementary_note: "",
-      is_note: item.is_note,
+      is_note: 0,
       is_prod_note: "",
       prod_qty: item.prod_qty,
       prod_discount: item.prod_discount,
@@ -153,7 +153,6 @@ const ProductsSearchBar = () => {
       toppings: [],
       // customized: item.customized,
       customized: [],
-
     }));
     // console.log(cartItemData);
     // console.log(cartItemsArray, "cartState");

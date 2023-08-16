@@ -200,7 +200,6 @@ const CartSection = () => {
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
     return `${timestamp.toString() + randomString}`;
   }
-  console.log("generateUniqueNumber:", typeof generateUniqueNumber());
 
   // GENERATE PROD_RATE FOR PROD IN CART
   const getPriceForOutlet = (product) => {
@@ -214,8 +213,6 @@ const CartSection = () => {
     }
     return "0";
   };
-
-  console.log(selectedToppings);
 
   // HANDLE SUBMIT FOR TOPPINGS
   const handleToppingsSubmit = () => {
@@ -253,10 +250,10 @@ const CartSection = () => {
         category_name: item.category_name,
         category_heads: item.category_heads,
         recipeCount: item.recipeCount,
-        is_parcel: item.is_parcel,
-        is_complementary: item.is_complementary,
+        is_parcel: 0,
+        is_complementary: 0,
         is_complementary_note: "",
-        is_note: item.is_note,
+        is_note: 0,
         is_prod_note: "",
         prod_qty: item.prod_qty,
         prod_discount: item.prod_discount,
@@ -326,7 +323,7 @@ const CartSection = () => {
 
   return (
     <div className="cartlist">
-     <div
+      <div
         className="table-height"
         style={{ overflowY: "auto", overflowX: "auto" }}
       >
@@ -375,7 +372,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getSubTotalAmount().toFixed(2)}
+              {getSubTotalAmount()}
               {/* Display the calculated subtotal */}
             </CCol>
           </CRow>
@@ -394,8 +391,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalSGSTAmount().toFixed(2)}{" "}
-              {/* Display the calculated SGST amount */}
+              {getTotalSGSTAmount()} {/* Display the calculated SGST amount */}
             </CCol>
           </CRow>
           <CRow>
@@ -404,8 +400,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalCGSTAmount().toFixed(3)}{" "}
-              {/* Display the calculated CGST amount */}
+              {getTotalCGSTAmount()} {/* Display the calculated CGST amount */}
             </CCol>
           </CRow>
 
@@ -434,8 +429,7 @@ const CartSection = () => {
             <CCol sm={4} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
-                {getFinalPayAmount().toFixed(2)}{" "}
-                {/* Display the final pay amount */}
+                {getFinalPayAmount()} {/* Display the final pay amount */}
               </h4>
               <small>
                 {getTotalItemsInCart()} Item(s){" "}
@@ -527,9 +521,7 @@ const CartSection = () => {
                   </span>
                   &nbsp;
                   <i className="fa fa-inr"></i>
-                  <span className="show_price">
-                    {topping.prod_rate.toFixed(3)}
-                  </span>
+                  <span className="show_price">{topping.prod_rate}</span>
                 </button>
               </label>
             ))}

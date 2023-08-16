@@ -99,7 +99,7 @@ const CustomizeModel = ({ customizeModelVisible, onClose }) => {
           size_name: formData.size_name,
     };
 
-    console.log("customize data:", customjsonData);
+    console.log("customize product data:", customjsonData);
   };
 
   const handlePhotoModeChange = (mode) => {

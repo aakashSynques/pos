@@ -18,138 +18,23 @@ import {
 } from "@coreui/react";
 import React, { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
-import CounterSale from "./recentsale/CounterSale";
-import OnTable from "./recentsale/OnTable";
-import PickUp from "./recentsale/PickUp";
-import HomeDelivery from "./recentsale/HomeDelivery";
-import RazorPay from "./recentsale/RazorePay";
-import Zometo from "./recentsale/Zometo";
-import Swiggy from "./recentsale/Swiggy";
-import ReturnBIll from "./recentsale/ReturnBIll";
+
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import RecentPrintModal from "./RecentPrintModal";
+import RecentTabModal from "./RecentTabModal";
+// import { setPrototypeOf } from "core-js/core/object";
 
 const RecentInvoice = () => {
   const [booking, setBooking] = useState(false);
   const [recentBooking, setRecentBooking] = useState([]);
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
-
-  const [activeKey, setActiveKey] = useState(1);
+  const [printBooking, setPrintBooking] = useState(false);
 
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-
-  // const counterSaleCounts = {
-  //   true: 0, // Initialize counter for true (delivery mode 1)
-  // };
-  // // const counterOnTable = {
-  // //   true: 0,
-  // // };
-  // const counterOnTable = {
-  //   true: 0, // Represents delivery mode 2 and payMode not 24
-  // };
-  // const counterPickUp = {
-  //   true: 0,
-  // };
-  // const counterHomeDelivery = {
-  //   true: 0,
-  // };
-  // const counterZomato = {
-  //   true: 0,
-  // };
-  // const counterSwiggy = {
-  //   true: 0,
-  // };
-
-  // recentBooking.forEach(({ sales_json }) => {
-  //   try {
-  //     const parsedSalesJson = JSON.parse(sales_json);
-  //     // counter salesd Notification
-  //     if (parsedSalesJson.cartSumUp.deliveryMode) {
-  //       const deliveryMode = parsedSalesJson.cartSumUp.deliveryMode === "1"; // true or false
-  //       if (counterSaleCounts.hasOwnProperty(deliveryMode)) {
-  //         counterSaleCounts[deliveryMode]++;
-  //       }
-
-  //       // // on Table Notification
-  //       // const deliveryModeTable =
-  //       //   parsedSalesJson.cartSumUp.deliveryMode === "2";
-
-  //       // if (counterOnTable.hasOwnProperty(deliveryModeTable)) {
-  //       //   counterOnTable[deliveryModeTable]++;
-  //       // }
-
-  //       // Pick Up Notification
-  //       const deliveryModePickUp =
-  //         parsedSalesJson.cartSumUp.deliveryMode === "3";
-
-  //       if (counterPickUp.hasOwnProperty(deliveryModePickUp)) {
-  //         counterPickUp[deliveryModePickUp]++;
-  //       }
-
-  //       // Home Delivery Notification
-  //       const deliveryModeHomeDelivery =
-  //         parsedSalesJson.cartSumUp.deliveryMode === "4";
-
-  //       if (counterHomeDelivery.hasOwnProperty(deliveryModeHomeDelivery)) {
-  //         counterHomeDelivery[deliveryModeHomeDelivery]++;
-  //       }
-  //       // Zomato Delivery Notification
-  //       const zomatoDelivery =
-  //         parsedSalesJson.selectedCustomerJson.customer_name.slice(0, 6) ==
-  //         "ZOMATO";
-  //       if (counterZomato.hasOwnProperty(zomatoDelivery)) {
-  //         counterZomato[zomatoDelivery]++;
-  //       }
-  //       // Swiggy Delivery Notification
-  //       const swiggyDelivery =
-  //         parsedSalesJson.selectedCustomerJson.customer_name.slice(0, 6) ==
-  //         "SWIGGY";
-  //       if (counterSwiggy.hasOwnProperty(swiggyDelivery)) {
-  //         counterSwiggy[swiggyDelivery]++;
-  //       }
-
-  //       // on Table Notification
-  //       const deliveryModeTable =
-  //         (parsedSalesJson.cartSumUp.deliveryMode === "2" &&
-  //           parsedSalesJson.cartSumUp.payDetails == undefined) ||
-  //         // parsedSalesJson.cartSumUp.payDetails &&
-  //         (parsedSalesJson.cartSumUp.deliveryMode === "2" &&
-  //           parsedSalesJson.cartSumUp.payDetails[0].payMode !== "24");
-  //       if (counterOnTable.hasOwnProperty(deliveryModeTable)) {
-  //         counterOnTable[deliveryModeTable]++;
-  //       }
-  //     }
-  //   } catch (error) {
-  //     // console.error("Error parsing sales_json:", error);
-  //     return false;
-  //   }
-  // });
-  // const getPaymode = () => {
-  //   let payModes = [];
-  //   recentBooking.forEach(({ sales_json }) => {
-  //     try {
-  //       const parsedSalesJson = JSON.parse(sales_json);
-
-  //       if (parsedSalesJson.cartSumUp.payDetails) {
-  //         const payDetails = parsedSalesJson.cartSumUp.payDetails;
-  //         if (payDetails.length > 0) {
-  //           const payMode =
-  //             payDetails[0].payMode == "24" ? payDetails[0] : null;
-  //           payModes.push(payMode);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error parsing sales_json:", error);
-  //     }
-  //   });
-  //   const filteredPayModes = payModes.filter(Boolean);
-  //   return filteredPayModes; // Return the array of payMode values
-  // };
-
-  // const payModeArray = getPaymode(); // Call the function to get the payMode values
 
   const getAllRecentInvoices = async () => {
     try {
@@ -163,6 +48,7 @@ const RecentInvoice = () => {
         { outlet_id },
         { headers }
       );
+      // console.log(response.data.recentOrders);
       setRecentBooking(response.data.recentOrders);
       setLoading(false);
       setNetworkError(false);
@@ -186,6 +72,12 @@ const RecentInvoice = () => {
     getAllRecentInvoices();
   }, [outlet_id]);
 
+  const [invoiceDetails, setInvoiceDetails] = useState();
+
+  const clickInvoiceLink = (invoice_no, sales_json) => {
+    setPrintBooking(!printBooking);
+    setInvoiceDetails({ [invoice_no]: sales_json });
+  };
   return (
     <>
       <CCard className="invoice-card">
@@ -290,8 +182,15 @@ const RecentInvoice = () => {
                             </strong>
                           ) : null}
                         </td>
+
                         <td>
-                          <Link to="" className="text-primary text-link">
+                          <Link
+                            to=""
+                            className="text-primary text-link"
+                            onClick={() =>
+                              clickInvoiceLink(invoice_no, sales_json)
+                            }
+                          >
                             {invoice_no}
                             <br />
                           </Link>
@@ -333,152 +232,17 @@ const RecentInvoice = () => {
           </div>
         )}
       </CCard>
-      <CModal size="xl" visible={booking} onClose={() => setBooking(false)}>
-        <CModalHeader onClose={() => setBooking(false)}>
-          <CModalTitle>Recent Sales List</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <CNav variant="pills" role="tablist">
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 1}
-                onClick={() => setActiveKey(1)}
-              >
-                Counter Sale{" "}
-                {/* <span className="badge"> {counterSaleCounts[true]}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 2}
-                onClick={() => setActiveKey(2)}
-              >
-                {/* On Table <span className="badge"> {counterOnTable[true]}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 3}
-                onClick={() => setActiveKey(3)}
-              >
-                {/* Pick UP <span className="badge"> {counterPickUp[true]}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 4}
-                onClick={() => setActiveKey(4)}
-              >
-                Home Delivery{" "}
-                {/* <span className="badge"> {counterHomeDelivery[true]}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 5}
-                onClick={() => setActiveKey(5)}
-              >
-                {/* Razorpay <span className="badge"> {payModeArray.length}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 6}
-                onClick={() => setActiveKey(6)}
-              >
-                {/* Zomato <span className="badge"> {counterZomato[true]}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 7}
-                onClick={() => setActiveKey(7)}
-              >
-                {/* Swiggy<span className="badge"> {counterSwiggy[true]}</span> */}
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                active={activeKey === 8}
-                onClick={() => setActiveKey(8)}
-              >
-                Return Bills <span className="badge"> 0</span>
-              </CNavLink>
-            </CNavItem>
-          </CNav>
-
-          <CTabContent>
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="countersale"
-              visible={activeKey === 1}
-            >
-              <CounterSale recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="ontable"
-              visible={activeKey === 2}
-            >
-              <OnTable recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="pickup"
-              visible={activeKey === 3}
-            >
-              <PickUp recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="homedelivery"
-              visible={activeKey === 4}
-            >
-              <HomeDelivery recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="razorpay"
-              visible={activeKey === 5}
-            >
-              <RazorPay recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="zomoto"
-              visible={activeKey === 6}
-            >
-              <Zometo recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="swiggy"
-              visible={activeKey === 7}
-            >
-              <Swiggy recentBooking={recentBooking} />
-            </CTabPane>
-
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="returnbill"
-              visible={activeKey === 8}
-            >
-              <ReturnBIll />
-            </CTabPane>
-          </CTabContent>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setVisible(false)}>
-            Close
-          </CButton>
-        </CModalFooter>
-      </CModal>{" "}
+      <RecentTabModal
+        booking={booking}
+        setBooking={setBooking}
+        recentBooking={recentBooking}
+      />
+      <RecentPrintModal
+        recentBooking={recentBooking}
+        printBooking={printBooking}
+        setPrintBooking={setPrintBooking}
+        invoiceDetails={invoiceDetails}
+      />
     </>
   );
 };

@@ -56,12 +56,41 @@ const removeCartItem = (cartItemsArray, productUrno) => {
   return newFilteredArray.filter((item) => item.urno !== productUrno);
 };
 
+const selectedOutletData = (outletId, allOutlets) => {
+  const selectedOutlet = allOutlets.find(
+    (outlet) => outlet.outlet_id === outletId
+  );
+  // console.log(selectedOutlet, "142");
+  return selectedOutlet;
+};
+
+const setIsNote = (cartItemsArray, productId, visibleNote) => {
+  console.log(visibleNote);
+  const updatedItem = cartItemsArray.map((item) =>
+    item.prod_id === productId
+      ? {
+          ...item,
+          is_note: visibleNote ? 0 : 1,
+        }
+      : item
+  );
+  const updatedItems = updatedItem.map((item) =>
+    item.prod_id === productId
+      ? {
+          ...item,
+          is_prod_note: item.is_note === 0 ? "" : item.is_prod_note,
+        }
+      : item
+  );
+  return updatedItems;
+};
+
 const setProdNote = (cartItemsArray, productId, productNote) => {
   const updatedItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
           ...item,
-          is_prod_note: productNote,
+          is_prod_note: item.is_note === 1 ? productNote : "",
         }
       : item
   );
@@ -79,6 +108,29 @@ const setCompNote = (cartItemsArray, productId, complentaryNote) => {
   );
   return updatedItems;
 };
+
+const setIsCompNote = (cartItemsArray, productId, visibleComplentary) => {
+  console.log(visibleComplentary);
+  const updatedItem = cartItemsArray.map((item) =>
+    item.prod_id === productId
+      ? {
+          ...item,
+          is_complementary: visibleComplentary ? 0 : 1,
+        }
+      : item
+  );
+  const updatedItems = updatedItem.map((item) =>
+    item.prod_id === productId
+      ? {
+          ...item,
+          is_complementary_note:
+            item.is_complementary === 0 ? "" : item.is_complementary_note,
+        }
+      : item
+  );
+  return updatedItems;
+};
+
 const setParcel = (cartItemsArray, productId, parcelBtn) => {
   const updatedItems = cartItemsArray.map((item) =>
     item.prod_id === productId
@@ -148,7 +200,6 @@ const clearProdToppings = (cartItemsArray, productUrno) => {
 
 // helper functions end
 
-
 export const addToCart = (cartItemsArray, cartItem) => ({
   type: ADD_TO_CART,
   payload: addCartItem(cartItemsArray, cartItem),
@@ -173,6 +224,11 @@ export const setProductNoteInCart = (
   payload: setProdNote(cartItemsArray, productId, productNote),
 });
 
+export const setIsNoteInCart = (cartItemsArray, productId, visibleNote) => ({
+  type: SET_PRODUCT_NOTE,
+  payload: setIsNote(cartItemsArray, productId, visibleNote),
+});
+
 export const setComplementaryNoteInCart = (
   cartItemsArray,
   productId,
@@ -182,11 +238,16 @@ export const setComplementaryNoteInCart = (
   payload: setCompNote(cartItemsArray, productId, complentaryNote),
 });
 
-export const setParcelBtnInCart = (
+export const setIsComplementaryNoteInCart = (
   cartItemsArray,
   productId,
-  parcelBtn
+  visibleComplentary
 ) => ({
+  type: SET_COMPLEMENTARY_NOTE,
+  payload: setIsCompNote(cartItemsArray, productId, visibleComplentary),
+});
+
+export const setParcelBtnInCart = (cartItemsArray, productId, parcelBtn) => ({
   type: SET_IS_PARCEL,
   payload: setParcel(cartItemsArray, productId, parcelBtn),
 });
@@ -227,6 +288,13 @@ export const setSelectedOutletId = (outletId) => {
   return {
     type: "SET_SELECTED_OUTLET_ID",
     payload: outletId,
+  };
+};
+
+export const setSelectedOutletData = (outletId, allOutlets) => {
+  return {
+    type: "SET_SELECTED_OUTLET_DATA",
+    payload: selectedOutletData(outletId, allOutlets),
   };
 };
 

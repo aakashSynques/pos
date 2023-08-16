@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { CCol, CContainer, CRow } from "@coreui/react";
 
 const OnTable = ({ recentBooking }) => {
-  console.log(recentBooking, "6");
+  // console.log(recentBooking, "6");
   return (
     <>
       <table className="table table-bordered booking-or-table">
@@ -31,275 +31,240 @@ const OnTable = ({ recentBooking }) => {
           </tr>
         </thead>
         <tbody>
-          {recentBooking
-            .slice(0, 1)
-            .map(({ invoice_no, sales_json, salesid }) => {
-              let parsedSalesJson = null;
-              try {
-                parsedSalesJson = JSON.parse(sales_json);
-                // console.log(parsedSalesJson, "38 table");
-              } catch (error) {
-                return false;
-                // console.error("Error parsing sales_json:", error);
-              }
-              const total = Number(parsedSalesJson.cartSumUp.grandTotal);
-              return (
-                recentBooking
-                  // .slice(0, 1)
-                  .map(({ sales_json, salesid, invoice_no }) => {
-                    try {
-                      const parsedSalesJson = JSON.parse(sales_json);
-                      const deliveryMode =
-                        parsedSalesJson.cartSumUp.deliveryMode;
-                      const discount = parsedSalesJson.cartSumUp.discount;
-                      const devileryCharge =
-                        parsedSalesJson.cartSumUp.devileryCharges;
+          {recentBooking.map(({ sales_json, salesid, invoice_no }) => {
+            try {
+              const deliveryMode = sales_json.cartSumUp.deliveryMode;
+              const discount = sales_json.cartSumUp.discount;
+              const devileryCharge = sales_json.cartSumUp.devileryCharges;
 
-                      const roundoff = parsedSalesJson.cartSumUp.roundoff;
+              const roundoff = sales_json.cartSumUp.roundoff;
+              const payModes = sales_json.cartSumUp.payDetails
+                ? sales_json.cartSumUp.payDetails[0].payMode
+                : undefined;
 
-                      const payModes =
-                        parsedSalesJson.cartSumUp.payDetails[0].payMode;
-
-                      const deliveryModeTable =
-                        (parsedSalesJson.cartSumUp.deliveryMode === "2" &&
-                          parsedSalesJson.cartSumUp.payDetails == undefined) ||
-                        // parsedSalesJson.cartSumUp.payDetails &&
-                        (parsedSalesJson.cartSumUp.deliveryMode === "2" &&
-                          parsedSalesJson.cartSumUp.payDetails[0].payMode !==
-                            "24");
-
-                      if (deliveryModeTable === true) {
-                        return (
-                          <tr key={salesid}>
-                            <td>{salesid}</td>
-                            <td style={{ width: "17%" }}>
-                              <Link to="" className="text-primary text-link">
-                                {invoice_no}
-                                <br />
-                              </Link>
-                              <small>{parsedSalesJson.cartSumUp.eat}</small>
-                              <strong
-                                className="status-btn"
-                                style={{
-                                  fontWeight: "bold",
-                                  fontSize: "1em",
-                                  color: "white",
-                                  backgroundColor: "#f0ad4e",
-                                  height: "2%",
-                                  width: "2%",
-                                  marginLeft: "2%",
-                                }}
-                              >
-                                Table#{" "}
-                                <medium style={{ color: "black" }}>
-                                  {parsedSalesJson.cartSumUp.deliveryTableNo}
-                                </medium>
-                              </strong>
-                            </td>
-                            <td>
-                              {
-                                parsedSalesJson.selectedCustomerJson
-                                  .customer_name
-                              }
-                              <br />(
-                              {parsedSalesJson.selectedCustomerJson.mobile})
-                            </td>
-                            <td className="text-center">
-                              {parsedSalesJson.cartSumUp.items}
-                            </td>
-                            <td className="text-end">
-                              <bold>
-                                <span
-                                  style={{
-                                    paddingRight: "3px",
-                                  }}
-                                >
-                                  &#8377;
-                                </span>
-                              </bold>
-                              {Number(
-                                parsedSalesJson.cartSumUp.subTotal
-                              ).toFixed(2)}
-                            </td>
-                            <td className="text-end">
-                              {discount && Number(discount) !== 0 && (
-                                <bold>
-                                  <span style={{ paddingRight: "3px" }}>
-                                    &#8377;
-                                  </span>
-                                </bold>
-                              )}
-                              {discount && Number(discount) !== 0
-                                ? Number(discount).toFixed(2)
-                                : " "}
-                            </td>
-                            <td className="text-end">
-                              {devileryCharge &&
-                                Number(devileryCharge) !== 0 && (
-                                  <bold>
-                                    <span style={{ paddingRight: "3px" }}>
-                                      &#8377;
+              if (
+                (deliveryMode === "2" && payModes === undefined) ||
+                (deliveryMode === "2" && payModes !== "24")
+              ) {
+                return (
+                  <tr key={salesid}>
+                    <td>{salesid}</td>
+                    <td style={{ width: "17%" }}>
+                      <Link to="" className="text-primary text-link">
+                        {invoice_no}
+                        <br />
+                      </Link>
+                      <small>{sales_json.cartSumUp.eat}</small>
+                      <strong
+                        className="status-btn"
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "1em",
+                          color: "white",
+                          backgroundColor: "#f0ad4e",
+                          height: "2%",
+                          width: "2%",
+                          marginLeft: "2%",
+                        }}
+                      >
+                        Table#{" "}
+                        <medium style={{ color: "black" }}>
+                          {sales_json.cartSumUp.deliveryTableNo}
+                        </medium>
+                      </strong>
+                    </td>
+                    <td>
+                      {sales_json.selectedCustomerJson.customer_name}
+                      <br />({sales_json.selectedCustomerJson.mobile})
+                    </td>
+                    <td className="text-center">
+                      {sales_json.cartSumUp.items}
+                    </td>
+                    <td className="text-end">
+                      <bold>
+                        <span
+                          style={{
+                            paddingRight: "3px",
+                          }}
+                        >
+                          &#8377;
+                        </span>
+                      </bold>
+                      {Number(sales_json.cartSumUp.subTotal).toFixed(2)}
+                    </td>
+                    <td className="text-end">
+                      {discount && Number(discount) !== 0 && (
+                        <bold>
+                          <span style={{ paddingRight: "3px" }}>&#8377;</span>
+                        </bold>
+                      )}
+                      {discount && Number(discount) !== 0
+                        ? Number(discount).toFixed(2)
+                        : " "}
+                    </td>
+                    <td className="text-end">
+                      {devileryCharge && Number(devileryCharge) !== 0 && (
+                        <bold>
+                          <span style={{ paddingRight: "3px" }}>&#8377;</span>
+                        </bold>
+                      )}
+                      {devileryCharge && Number(devileryCharge) !== 0
+                        ? Number(devileryCharge).toFixed(2)
+                        : " "}
+                    </td>
+                    <td className="text-end">
+                      <bold>
+                        <span
+                          style={{
+                            paddingRight: "3px",
+                          }}
+                        >
+                          &#8377;
+                        </span>
+                      </bold>
+                      {Number(sales_json.cartSumUp.tax).toFixed(2)}
+                    </td>
+                    <td className="text-end">
+                      {roundoff && Number(roundoff) !== 0 && (
+                        <bold>
+                          <span style={{ paddingRight: "3px" }}>&#8377;</span>
+                        </bold>
+                      )}
+                      {roundoff && Number(roundoff) !== 0
+                        ? Number(roundoff).toFixed(2)
+                        : " "}
+                    </td>
+                    <td className="text-end" style={{ width: "15%" }}>
+                      <CContainer>
+                        <CRow>
+                          <CCol
+                            style={{
+                              // background: "red",
+                              padding: "3px",
+                              textAlign: "left",
+                            }}
+                          >
+                            {sales_json.cartSumUp.payDetails
+                              ? sales_json.cartSumUp.payDetails.map((p) => {
+                                  return (
+                                    <span className="text-start">
+                                      {p.payMode == "1" ? (
+                                        <strong
+                                          className="status-btn"
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "1.1em",
+                                            color: "white",
+                                            backgroundColor: "#777777",
+                                            padding: "2px",
+                                          }}
+                                        >
+                                          C<br />
+                                        </strong>
+                                      ) : p.payMode == "4" ? (
+                                        <strong
+                                          className="status-btn"
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "1em",
+                                            color: "white",
+                                            backgroundColor: "#777777",
+                                            padding: "2px",
+                                          }}
+                                        >
+                                          PTm
+                                          <br />
+                                        </strong>
+                                      ) : p.payMode == "6" ? (
+                                        <strong
+                                          className="status-btn"
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "1em",
+                                            color: "white",
+                                            backgroundColor: "#777777",
+                                            padding: "2px",
+                                          }}
+                                        >
+                                          W<br />
+                                        </strong>
+                                      ) : p.payMode == "25" ? (
+                                        <strong
+                                          className="status-btn"
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "1em",
+                                            color: "white",
+                                            backgroundColor: "#1a82c3",
+                                            padding: "2px",
+                                          }}
+                                        >
+                                          (HDFC 2)
+                                        </strong>
+                                      ) : p.payMode == "26" ? (
+                                        <strong
+                                          className="status-btn"
+                                          style={{
+                                            fontWeight: "bold",
+                                            fontSize: "1em",
+                                            color: "white",
+                                            backgroundColor: "#777777",
+                                            padding: "2px",
+                                          }}
+                                        >
+                                          HDFC QR
+                                        </strong>
+                                      ) : null}
                                     </span>
-                                  </bold>
-                                )}
-                              {devileryCharge && Number(devileryCharge) !== 0
-                                ? Number(devileryCharge).toFixed(2)
-                                : " "}
-                            </td>
-
-                            <td className="text-end">
-                              <bold>
-                                <span
-                                  style={{
-                                    paddingRight: "3px",
-                                  }}
-                                >
-                                  &#8377;
-                                </span>
-                              </bold>
-                              {Number(parsedSalesJson.cartSumUp.tax).toFixed(2)}
-                            </td>
-                            <td className="text-end">
-                              {roundoff && Number(roundoff) !== 0 && (
+                                  );
+                                })
+                              : null}
+                          </CCol>
+                          <CCol className="text-end" style={{}}>
+                            {sales_json.cartSumUp.grandTotal &&
+                              Number(sales_json.cartSumUp.grandTotal) !== 0 && (
                                 <bold>
                                   <span style={{ paddingRight: "3px" }}>
                                     &#8377;
                                   </span>
                                 </bold>
                               )}
-                              {roundoff && Number(roundoff) !== 0
-                                ? Number(roundoff).toFixed(2)
-                                : " "}
-                            </td>
-                            <td className="text-end" style={{ width: "15%" }}>
-                              <CContainer>
-                                <CRow>
-                                  <CCol
-                                    style={{
-                                      // background: "red",
-                                      padding: "3px",
-                                      textAlign: "left",
-                                    }}
-                                  >
-                                    {parsedSalesJson.cartSumUp.payDetails
-                                      ? parsedSalesJson.cartSumUp.payDetails.map(
-                                          (p) => {
-                                            return (
-                                              <span className="text-start">
-                                                {p.payMode == "1" ? (
-                                                  <strong
-                                                    className="status-btn"
-                                                    style={{
-                                                      fontWeight: "bold",
-                                                      fontSize: "1.1em",
-                                                      color: "white",
-                                                      backgroundColor:
-                                                        "#777777",
-                                                      padding: "2px",
-                                                    }}
-                                                  >
-                                                    C<br />
-                                                  </strong>
-                                                ) : p.payMode == "6" ? (
-                                                  <strong
-                                                    className="status-btn"
-                                                    style={{
-                                                      fontWeight: "bold",
-                                                      fontSize: "1em",
-                                                      color: "white",
-                                                      backgroundColor:
-                                                        "#777777",
-                                                      padding: "2px",
-                                                    }}
-                                                  >
-                                                    W<br />
-                                                  </strong>
-                                                ) : p.payMode == "25" ? (
-                                                  <strong
-                                                    className="status-btn"
-                                                    style={{
-                                                      fontWeight: "bold",
-                                                      fontSize: "1em",
-                                                      color: "white",
-                                                      backgroundColor:
-                                                        "#1a82c3",
-                                                      padding: "2px",
-                                                    }}
-                                                  >
-                                                    (HDFC 2)
-                                                  </strong>
-                                                ) : p.payMode == "26" ? (
-                                                  <strong
-                                                    className="status-btn"
-                                                    style={{
-                                                      fontWeight: "bold",
-                                                      fontSize: "1em",
-                                                      color: "white",
-                                                      backgroundColor:
-                                                        "#777777",
-                                                      padding: "2px",
-                                                    }}
-                                                  >
-                                                    HDFC QR
-                                                  </strong>
-                                                ) : null}
-                                              </span>
-                                            );
-                                          }
-                                        )
-                                      : null}
-                                  </CCol>
-                                  <CCol className="text-end" style={{}}>
-                                    {parsedSalesJson.cartSumUp.grandTotal &&
-                                      Number(
-                                        parsedSalesJson.cartSumUp.grandTotal
-                                      ) !== 0 && (
-                                        <bold>
-                                          <span style={{ paddingRight: "3px" }}>
-                                            &#8377;
-                                          </span>
-                                        </bold>
-                                      )}
-                                    {parsedSalesJson.cartSumUp.grandTotal &&
-                                    Number(
-                                      parsedSalesJson.cartSumUp.grandTotal
-                                    ) !== 0
-                                      ? Number(
-                                          parsedSalesJson.cartSumUp.grandTotal
-                                        ).toFixed(2)
-                                      : " "}
-                                  </CCol>
-                                </CRow>
-                              </CContainer>
-                            </td>
-                            <td>{parsedSalesJson.cartSumUp.note}</td>
-                            <td>
-                              <button className="btn btn-success btn-margin">
-                                <i className="fa fa-print"></i>
-                              </button>
-                            </td>
-                            <td>
-                              <button className="btn btn-info btn-margin">
-                                <i className="fa fa-edit"></i>
-                              </button>
-                            </td>
-                            <td>
-                              <button className="btn btn-danger btn-margin">
-                                <i className="fa fa-share-square-o"></i>
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      } else {
-                        return null; // Return null for rows that don't match the condition
-                      }
-                    } catch (error) {
-                      // console.error("Error parsing sales_json:", error);
-                      return null;
-                    }
-                  })
-              );
-            })}
+                            {sales_json.cartSumUp.grandTotal &&
+                            Number(sales_json.cartSumUp.grandTotal) !== 0
+                              ? Number(sales_json.cartSumUp.grandTotal).toFixed(
+                                  2
+                                )
+                              : " "}
+                          </CCol>
+                        </CRow>
+                      </CContainer>
+                    </td>
+                    <td>{sales_json.cartSumUp.note}</td>
+                    <td>
+                      <button className="btn btn-success btn-margin">
+                        <i className="fa fa-print"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <button className="btn btn-info btn-margin">
+                        <i className="fa fa-edit"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <button className="btn btn-danger btn-margin">
+                        <i className="fa fa-share-square-o"></i>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              } else {
+                return null; // Return null for rows that don't match the condition
+              }
+            } catch (error) {
+              // console.error("Error parsing sales_json:", error);
+              return null;
+            }
+          })}
         </tbody>
       </table>
     </>
