@@ -14,16 +14,16 @@ import {
 } from "@coreui/react";
 import React, { useState, useEffect } from "react";
 import { fetch } from "../../../utils";
-const CustomizeModel = ({ customizeModelVisible, onClose }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { setupdateCustomizInCart } from "../../../action/actions";
+
+const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
   const [customShapeList, setCustomShapeList] = useState([]);
-  const [selectedShape, setSelectedShape] = useState("");
-
+  const dispatch = useDispatch();
+  const [customjsonData, setcustomjsonData] = useState("");
+  const cartItemsArray = useSelector(state => state.cart.cartItems); // Replace 'state.cart.cartItems' with the correct path to your cart items in the Redux state
   const [customFlavorList, setCustomFlavorList] = useState([]);
-  const [selectedFlavor, setSelectedFlavor] = useState("");
-
   const [customSizeList, setCustomSizeList] = useState([]);
-  const [selectedSize, setSelectedSize] = useState("");
-
   const [photoMode, setPhotoMode] = useState(1); // 1 for Gallery, 2 for Upload
   const [selectedImage, setSelectedImage] = useState(null);
 
@@ -82,7 +82,7 @@ const CustomizeModel = ({ customizeModelVisible, onClose }) => {
     size_name: "",
   });
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (productId) => {
     const customjsonData = {
           choice_id: formData.choice_id,
           choice_name: formData.choice_name,
@@ -99,8 +99,14 @@ const CustomizeModel = ({ customizeModelVisible, onClose }) => {
           size_name: formData.size_name,
     };
 
-    console.log("customize product data:", customjsonData);
+    // console.log("customize product data:", customjsonData);
+    dispatch(setupdateCustomizInCart(cartItemsArray, productId, customjsonData));
+
+    onClose();
   };
+
+  // dispatch(setupdateCustomizInCart(cartItemsArray, productId, customjsonData));
+
 
   const handlePhotoModeChange = (mode) => {
     setPhotoMode(mode);
