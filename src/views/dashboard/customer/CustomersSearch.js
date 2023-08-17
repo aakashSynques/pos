@@ -19,16 +19,17 @@ const CustomersSearch = () => {
   const [customerSearchResults, setCustomerSearchResults] = useState([]);
   const [error, setError] = useState(null);
   const [cache, setCache] = useState({});
-  const [selectedCustomer, setSelectedCustomer] = useState(null); // New state to track the selected customer
+  const [selectedCustomer, setSelectedCustomers] = useState(null); // New state to track the selected customer
   const [addNewCustomer, setAddNewCustomer] = useState(false);
   const [editCustomerModel, setEditCustomerModel] = useState(false);
   const [accountModel, setAccountModel] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1); // Initialize focusedIndex
+  
 
   const customTooltipStyle = {
     "--cui-tooltip-bg": "var(--cui-primary)",
   };
-
+ 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       getProductSearch();
@@ -78,7 +79,7 @@ const CustomersSearch = () => {
   };
 
   const handleUpdateCustomerData = (updatedData) => {
-    setSelectedCustomer((prevCustomer) => ({
+    setSelectedCustomers((prevCustomer) => ({
       ...prevCustomer,
       json: { ...prevCustomer.json, ...updatedData },
     }));
@@ -90,9 +91,11 @@ const CustomersSearch = () => {
     const selectedCustomer = customerSearchResults.find(
       (customer) => customer.value === customerName
     );
-    setSelectedCustomer(selectedCustomer);
+    setSelectedCustomers(selectedCustomer); // Local state update
   };
+  
 
+  
   // Function to handle when the "Edit" button is clicked for a selected customer
   const handleEditCustomer = () => {
     if (selectedCustomer) {
@@ -127,47 +130,13 @@ const CustomersSearch = () => {
     setQuery("");
   };
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (ref.current && !ref.current.contains(event.target)) {
-  //       onClickOutside && onClickOutside();
-  //     }
-  //   };
-  //   document.addEventListener("click", handleClickOutside, true);
-  //   return () => {
-  //     document.removeEventListener("click", handleClickOutside, true);
-  //   };
-  // }, [onClickOutside]);
-
-  // useEffect to handle the shortcut key (Shift + c) for focusing on the input element
   const handleClearSelectedCustomer = () => {
-    setSelectedCustomer(null);
+    setSelectedCustomers(null);
     setFocusedIndex(-1); // Reset focused index
   };
 
-  useEffect(() => {
-    // const handleShortcutKeyPressCustomer = (event) => {
-    //   if (event.shiftKey && event.key === "C") {
-    //     // Prevent the default behavior of the "c" key (prevents it from appearing in the input box)
-    //     event.preventDefault();
-    //     const searchInput = document.getElementById("customer-search-input");
-    //     if (searchInput) {
-    //       searchInput.focus();
-    //     }
-    //   } else if (event.shiftKey && event.key === "E") {
-    //     event.preventDefault();
-    //     if (selectedCustomer) {
-    //       // setEditCustomerModel(true);
-    //       handleEditCustomer();
-    //     }
-    //   } else if (event.shiftKey && event.key === "A") {
-    //     event.preventDefault();
-    //     if (selectedCustomer) {
-    //       setAccountModel(true);
-    //     }
-    //   }
-    // };
 
+  useEffect(() => {
     const handleShortcutKeyPressCustomer = (event) => {
       if (event.shiftKey) {
         switch (event.key) {
@@ -260,12 +229,12 @@ const CustomersSearch = () => {
   return (
     <div className="customer-sarch-sec">
       {selectedCustomer ? ( // Render the selected customer data if a customer is selected
+       
         <div>
           <CRow>
-            {/* selected customer display data */}
             <CCol sm={6}>
               <div className="cust-name">
-                <b>
+                <b>                
                   {selectedCustomer.json.customer_name}
                   <i
                     className="fa fa-info-circle text-primary pl-2"
@@ -451,9 +420,11 @@ const CustomersSearch = () => {
           onClose={() => setEditCustomerModel(false)}
           customerData={selectedCustomer.json}
           onUpdate={handleUpdateCustomerData}
-          setSelectedCustomer={setSelectedCustomer} // Pass setSelectedCustomer here
+          setSelectedCustomers={setSelectedCustomers} // Pass setSelectedCustomers here
         />
       )}
+   
+    
     </div>
   );
 };

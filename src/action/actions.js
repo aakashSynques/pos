@@ -7,8 +7,6 @@ import {
   SET_PRODUCT_NOTE,
   SET_TOPPING_URNO,
   SET_IS_PARCEL,
-  UPDATE_CUSTOMIZED,
-
 } from "./actionTypes";
 
 // helper functions start
@@ -216,9 +214,6 @@ const setUpdateCustomize  = (cartItemsArray, productId, customjsonData) => {
 
   return updatedCartItems;
 };
-
-
-
 // helper functions end
 
 export const addToCart = (cartItemsArray, cartItem) => ({
@@ -286,8 +281,11 @@ export const clearAllToppings = (cartItemsArray, productUrno) => ({
 export const setupdateCustomizInCart = (cartItemsArray, productId, customjsonData) => ({
   type: UPDATE_CUSTOMIZED,
   payload: setUpdateCustomize(cartItemsArray, productId, customjsonData),
-
+  // payload: { cartItemsArray, productId, customjsonData },
 });
+
+
+
 
 
 
@@ -339,5 +337,3 @@ export const updateCartItems = (newCartItems) => {
     payload: newCartItems,
   };
 };
-
-

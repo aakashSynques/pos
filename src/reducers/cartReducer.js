@@ -7,7 +7,7 @@ import {
   SET_TOPPING_URNO,
   SET_IS_PARCEL,
   UPDATE_CUSTOMIZED,
-
+  
 } from "../action/actionTypes";
 
 const initialState = {
@@ -53,12 +53,13 @@ const cartReducer = (state = initialState, action) => {
           ...state,
           cartItems: action.payload,
         };
-
         case UPDATE_CUSTOMIZED:
           return {
             ...state,
             cartItems: action.payload,
           }
+
+         
     
     default:
       return state;

@@ -33,6 +33,8 @@ const CartSection = () => {
   const [categoryHead, setCategoryHead] = useState("");
   const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
     useState(0);
+  // const selectedCustomer = useSelector((state) => state.selectedCustomer);
+  const selectedCustomer = useSelector((state) => state.selectedCustomer);
 
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
@@ -45,15 +47,10 @@ const CartSection = () => {
   }, [cartItems]);
 
   const getTotalAmountForItem = (item) => {
-    // const rate = item.prod_rate;
-    // console.log('prod rate', rate);
-    // const toppingsTotalPrice = selectedToppingsTotalPrice;
-    // console.log(selectedToppingsTotalPrice)
-
-    // return rate + toppingsTotalPrice;
     const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate;
   };
+
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -126,6 +123,7 @@ const CartSection = () => {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedTopId, setSelectedTopId] = useState();
   const [toppingsData, setToppingsData] = useState([]);
+
   const getToppingsData = async () => {
     try {
       const token = localStorage.getItem("pos_token");
@@ -391,7 +389,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalSGSTAmount()} {/* Display the calculated SGST amount */}
+              {getTotalSGSTAmount().toFixed(2)} {/* Display the calculated SGST amount */}
             </CCol>
           </CRow>
           <CRow>
@@ -400,7 +398,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalCGSTAmount()} {/* Display the calculated CGST amount */}
+              {getTotalCGSTAmount().toFixed(2)} {/* Display the calculated CGST amount */}
             </CCol>
           </CRow>
 
@@ -410,8 +408,11 @@ const CartSection = () => {
                 className="btn pay-btn"
                 style={{ backgroundColor: "#26B99A" }}
                 type="button"
-                onClick={() => setPayBillsModel(!paybillsModel)}
-                disabled={isCartEmpty}
+                onClick={() => {
+                  console.log("Pay button clicked");
+                  setPayBillsModel(!paybillsModel);
+                }}
+                disabled={isCartEmpty} // Disable if cart is empty or no customer is selected
               >
                 PAY <font size="1">[ Shift + Enter ]</font>
               </button>
@@ -420,7 +421,7 @@ const CartSection = () => {
               <button
                 className="btn pay-btn btn-warning"
                 type="button"
-                disabled={isCartEmpty}
+                disabled={isCartEmpty || !selectedCustomer} // Disable if cart is empty or no customer is selected
               >
                 BOOKING <font size="1"></font>
               </button>
@@ -432,7 +433,7 @@ const CartSection = () => {
                 {getFinalPayAmount()} {/* Display the final pay amount */}
               </h4>
               <small>
-                {getTotalItemsInCart()} Item(s){" "}
+                {getTotalItemsInCart()} Item(s)
                 {/* Display total items in cart */}
               </small>
             </CCol>
@@ -455,6 +456,11 @@ const CartSection = () => {
     </div> */}
               counter
             </CCol>
+            {/* <CCol sm={12} className="pt-1">
+            Any Note <small>[F3]</small> <i className='fa fa-plus-square'></i>
+            </CCol> */}
+            
+
           </CRow>
         </CContainer>
       </div>
@@ -463,6 +469,13 @@ const CartSection = () => {
       <PayBillsModels
         visible={paybillsModel}
         onClose={() => setPayBillsModel(false)}
+        selectedCustomer={selectedCustomer}
+        cartItems={cartItems}
+        subtotal={getSubTotalAmount()}
+        totalSGST={getTotalSGSTAmount()}
+        totalCGST={getTotalCGSTAmount()}
+        finalPayAmount={getFinalPayAmount()}
+        totalItem={getTotalItemsInCart()}
       />
 
       <CModal

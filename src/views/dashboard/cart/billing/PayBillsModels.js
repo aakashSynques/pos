@@ -13,18 +13,24 @@ import {
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
 
-const PayBillsModels = ({ visible, onClose, onSuccess }) => {
+const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
+  subtotal, totalSGST, totalCGST, finalPayAmount, totalItem }) => {
   return (
     <>
-      <CContainer className="bills-model-width">
-        <CModal visible={visible} onClose={onClose}>
+      <CContainer>
+        <CModal
+          visible={visible}
+          onClose={onClose}
+          className="bills-model-width"
+        >
           <CModalHeader onClose={onClose} className="pt-2 pb-2">
             <CModalTitle>Sales Summary</CModalTitle>
           </CModalHeader>
           <CModalBody>
             <span>
               <font size="2">
-                <b>Customer Details:</b> <b>AAKASH</b>
+                {/* <b>Customer Details:</b> <b>AAKASH</b> */}
+                <span>Customer: {selectedCustomer?.json?.customer_name}</span>
                 <br />
                 <font size="2">
                   <CFormLabel className="label-default cust-label">
@@ -33,12 +39,11 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                 </font>
                 <font size="1"> - 1234567890</font> <br />
               </font>
-
               <CRow className="bill-head-bg mt-2 mb-2">
-                <CCol sm={6} xs={6}>
+                <CCol sm={7} xs={7}>
                   <b>Product Details</b>
                 </CCol>
-                <CCol sm={2} xs={2} className="text-center">
+                <CCol sm={1} xs={1} className="text-center">
                   <b>Qty</b>
                 </CCol>
                 <CCol sm={2} xs={2} className="text-center">
@@ -50,21 +55,45 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
               </CRow>
 
               <CRow className="pt-2 pb-2">
-                <CCol sm={6} xs={6}>
-                  VEG CHEESE PIZZA 7
-                  {/* <font size="1" className="text-primary pull-right">
-                  (Parcel)
-                </font> */}
-                </CCol>
-                <CCol sm={2} xs={2} className="text-center">
-                  1
-                </CCol>
-                <CCol sm={2} xs={2} className="text-center">
-                  <i className="fa fa-inr"></i> 200.00
-                </CCol>
-                <CCol sm={2} xs={2} className="text-right">
-                  <i className="fa fa-inr"></i> 200.00
-                </CCol>
+                {cartItems.map((item) => (
+                  <>
+                    <CCol sm={7} xs={7}>
+                      <b>{item.prod_name}</b>
+                      {item.is_parcel === 1 && (
+                        <font size="1" className="text-primary pull-right">
+                          Parcel &nbsp;
+                        </font>
+                      )}
+
+                      {item.is_complementary === 1 && (
+                        <font size="1" className="text-primary pull-right">
+                          Complementary &nbsp;
+                        </font>
+                      )}
+                      <br />
+                      {item.is_note === 1 && (
+                        <small className="text-danger">
+                          Note : {item.is_prod_note},  &nbsp;
+                        </small>
+                      )}
+                      {item.is_complementary === 1 && (
+                        <small className="text-danger" style={{fontSize: "10px"}}>
+                          Compli: { item.is_complementary_note}, &nbsp;
+                        </small>
+                      )}
+                    </CCol>
+
+                    <CCol sm={1} xs={1} className="text-center">
+                      {item.prod_qty}
+                    </CCol>
+                    <CCol sm={2} xs={2} className="text-center">
+                      <i className="fa fa-inr"></i> {item.prod_rate}
+                    </CCol>
+                    <CCol sm={2} xs={2} className="text-right">
+                      <i className="fa fa-inr"></i> {item.prod_rate}
+                    </CCol>
+                  </>
+                ))}
               </CRow>
             </span>
 
@@ -83,23 +112,23 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                     <b>Total</b>
                   </CCol>
                   <CCol sm={4} className="text-left">
-                    1 Item(s)
+                    {totalItem} Item(s)
                   </CCol>
                   <CCol sm={4} className="text-right">
-                    <i className="fa fa-inr"></i> 200.00
+                  <i className="fa fa-inr"></i> {subtotal}
                   </CCol>
                 </CRow>
 
                 <CRow className="pt-1">
                   <CCol sm={7}>Tax GST (2.5% SGST) </CCol>
                   <CCol sm={5} className="text-right">
-                    <i className="fa fa-inr"></i> 5.00
+                    <i className="fa fa-inr"></i> {totalSGST}
                   </CCol>
                 </CRow>
                 <CRow className="pt-1">
                   <CCol sm={7}>Tax GST (2.5% CGST)</CCol>
                   <CCol sm={5} className="text-right">
-                    <i className="fa fa-inr"></i> 5.00
+                    <i className="fa fa-inr"></i> {totalCGST}
                   </CCol>
                 </CRow>
 
@@ -111,7 +140,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                   <CCol sm={5} className="text-right">
                     <b>
                       {" "}
-                      <i className="fa fa-inr"></i> 210.00
+                      <i className="fa fa-inr"></i> {finalPayAmount}
                     </b>
                   </CCol>
                 </CRow>
@@ -156,9 +185,11 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                       <i className="fa fa-trash fa-xs"></i>
                     </CButton>
                   </CCol>
-                  <CCol sm={2 }><b>Cash</b></CCol>
+                  <CCol sm={2}>
+                    <b>Cash</b>
+                  </CCol>
                   <CCol sm={5}>
-                  <input
+                    <input
                       type="text"
                       className="form-control input-sm rounded-0"
                       placeholder="Extra information"
@@ -171,7 +202,7 @@ const PayBillsModels = ({ visible, onClose, onSuccess }) => {
                     />
                   </CCol>
                   <CCol sm={3}>
-                  <input
+                    <input
                       type="number"
                       className="form-control p-0 text-end rounded-0"
                       autocomplete="off"

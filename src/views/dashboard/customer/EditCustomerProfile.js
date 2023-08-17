@@ -18,7 +18,7 @@ const EditCustomerProfile = ({
   visible,
   onClose,
   customerData: initialData,
-  setSelectedCustomer, // Receive the prop here
+  setSelectedCustomers, // Receive the prop here
 }) => {
   const [customerData, setCustomerData] = useState(initialData);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -82,7 +82,7 @@ const EditCustomerProfile = ({
         toast.success("Customer Details Updated Successfully!");
 
         // Set the updated customer name in the selectedCustomer state
-        setSelectedCustomer((prevCustomer) => ({
+        setSelectedCustomers((prevCustomer) => ({
           ...prevCustomer,
           json: {
             ...prevCustomer.json,
