@@ -4,6 +4,7 @@ import outletReducer from "./reducers/outletReducer"; // assign outlet
 import deliveryReducer from "./reducers/deliveryReducer"; // delivery mode
 import outletIdReducer from "./reducers/outletIdReducer";
 import selectedOutletReducer from "./reducers/selectedOutletReducer";
+import customerReducer from "./reducers/customerReducer";
 // import deliveryReducer from "./reducers/deliveryReducer";
 
 const rootReducer = combineReducers({
@@ -14,6 +15,8 @@ const rootReducer = combineReducers({
   // Add other reducers here if needed
   delivery: deliveryReducer, // select deliver mode reducer
   selectedOutlet: selectedOutletReducer,
+  customer: customerReducer,
+
 });
 
 const mapStateToProps = (state) => ({

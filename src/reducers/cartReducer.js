@@ -13,6 +13,7 @@ import {
 const initialState = {
   sidebarShow: true,
   cartItems: [],
+  selectedCustomer: null,
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -58,8 +59,7 @@ const cartReducer = (state = initialState, action) => {
             ...state,
             cartItems: action.payload,
           }
-
-         
+        
     
     default:
       return state;

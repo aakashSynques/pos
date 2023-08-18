@@ -5,6 +5,7 @@ import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
 import PayBillsModels from "./billing/PayBillsModels";
 
+
 import {
   CFormInput,
   CRow,
@@ -19,12 +20,16 @@ import {
   CInputGroup,
 } from "@coreui/react";
 import ToppingsModal from "./ToppingsModal";
+import AnyNotes from "./AnyNotes";
 
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   console.log(cartItems, "cart");
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
+  );
+  const selectedCustomer = useSelector(
+    (state) => state.customer.selectedCustomer
   );
   const dispatch = useDispatch();
   const [toppingModel, setToppingModel] = useState(false);
@@ -33,8 +38,6 @@ const CartSection = () => {
   const [categoryHead, setCategoryHead] = useState("");
   const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
     useState(0);
-  // const selectedCustomer = useSelector((state) => state.selectedCustomer);
-  const selectedCustomer = useSelector((state) => state.selectedCustomer);
 
   // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
@@ -421,7 +424,7 @@ const CartSection = () => {
               <button
                 className="btn pay-btn btn-warning"
                 type="button"
-                disabled={isCartEmpty || !selectedCustomer} // Disable if cart is empty or no customer is selected
+                disabled={isCartEmpty} // Disable if cart is empty or no customer is selected
               >
                 BOOKING <font size="1"></font>
               </button>
@@ -444,23 +447,11 @@ const CartSection = () => {
               Delivery Mode [F2]
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              {/* <div>
-      {selectedDeliveryMode ? (
-        <div>
-          <h3>Selected Delivery Mode:</h3>
-          <p>{selectedDeliveryMode}</p>
-        </div>
-      ) : (
-        <div>No delivery mode selected.</div>
-      )}
-    </div> */}
               counter
             </CCol>
-            {/* <CCol sm={12} className="pt-1">
-            Any Note <small>[F3]</small> <i className='fa fa-plus-square'></i>
-            </CCol> */}
-            
-
+            <CCol sm={12}>
+                <AnyNotes />
+            </CCol>
           </CRow>
         </CContainer>
       </div>
@@ -469,13 +460,14 @@ const CartSection = () => {
       <PayBillsModels
         visible={paybillsModel}
         onClose={() => setPayBillsModel(false)}
-        selectedCustomer={selectedCustomer}
-        cartItems={cartItems}
+        cartItems={cartItems}        
         subtotal={getSubTotalAmount()}
         totalSGST={getTotalSGSTAmount()}
         totalCGST={getTotalCGSTAmount()}
         finalPayAmount={getFinalPayAmount()}
         totalItem={getTotalItemsInCart()}
+        selectedCustomer={selectedCustomer} // Pass the selected customer here
+
       />
 
       <CModal

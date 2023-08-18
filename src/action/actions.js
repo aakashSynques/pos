@@ -7,6 +7,7 @@ import {
   SET_PRODUCT_NOTE,
   SET_TOPPING_URNO,
   SET_IS_PARCEL,
+  SET_SELECTED_CUSTOMER,
 } from "./actionTypes";
 
 // helper functions start
@@ -284,10 +285,10 @@ export const setupdateCustomizInCart = (cartItemsArray, productId, customjsonDat
   // payload: { cartItemsArray, productId, customjsonData },
 });
 
-
-
-
-
+export const setSelectedCustomer = (customerData) => ({
+  type: SET_SELECTED_CUSTOMER,
+  payload: customerData,
+});
 
 export const setOutletList = (outletList) => ({
   type: "SET_OUTLET_LIST",

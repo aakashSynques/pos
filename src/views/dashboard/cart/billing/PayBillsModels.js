@@ -12,9 +12,20 @@ import {
   CFormInput,
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+const PayBillsModels = ({
+  visible,
+  onClose,
+  cartItems,
+  subtotal,
+  totalSGST,
+  totalCGST,
+  finalPayAmount,
+  totalItem,
+  selectedCustomer, // Access selectedCustomer prop
+}) => {
+  // const selectedCustomer = useSelector((state) => state.selectedCustomer);
 
-const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
-  subtotal, totalSGST, totalCGST, finalPayAmount, totalItem }) => {
   return (
     <>
       <CContainer>
@@ -29,15 +40,19 @@ const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
           <CModalBody>
             <span>
               <font size="2">
-                {/* <b>Customer Details:</b> <b>AAKASH</b> */}
-                <span>Customer: {selectedCustomer?.json?.customer_name}</span>
-                <br />
-                <font size="2">
-                  <CFormLabel className="label-default cust-label">
-                    Customer Account
-                  </CFormLabel>
-                </font>
-                <font size="1"> - 1234567890</font> <br />
+                {selectedCustomer && (
+                  <>
+                    <b>Customer Details:</b>{" "}
+                    <b>{selectedCustomer.json.customer_name}</b> <br />
+                    <font size="2">
+                      <CFormLabel className="label-default cust-label">
+                        {selectedCustomer.json.cust_type_name} Account
+                      </CFormLabel>
+                    </font>
+                    <font size="1"> - {selectedCustomer.json.mobile}</font>{" "}
+                    <br />
+                  </>
+                )}
               </font>
               <CRow className="bill-head-bg mt-2 mb-2">
                 <CCol sm={7} xs={7}>
@@ -73,12 +88,15 @@ const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
                       <br />
                       {item.is_note === 1 && (
                         <small className="text-danger">
-                          Note : {item.is_prod_note},  &nbsp;
+                          Note : {item.is_prod_note}, &nbsp;
                         </small>
                       )}
                       {item.is_complementary === 1 && (
-                        <small className="text-danger" style={{fontSize: "10px"}}>
-                          Compli: { item.is_complementary_note}, &nbsp;
+                        <small
+                          className="text-danger"
+                          style={{ fontSize: "10px" }}
+                        >
+                          Compli: {item.is_complementary_note}, &nbsp;
                         </small>
                       )}
                     </CCol>
@@ -101,7 +119,7 @@ const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
               <CCol sm={5}>
                 <b>Delivery Mode</b> <br />
                 <b>PickUp</b> <br />
-                <b>DateTime: 2023-08-05 12:00 PM</b> <br />
+                <b>DateTime: {new Date().toLocaleString()}</b> <br />
                 <b>Note</b>
               </CCol>
 
@@ -115,7 +133,7 @@ const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
                     {totalItem} Item(s)
                   </CCol>
                   <CCol sm={4} className="text-right">
-                  <i className="fa fa-inr"></i> {subtotal}
+                    <i className="fa fa-inr"></i> {subtotal}
                   </CCol>
                 </CRow>
 
@@ -148,37 +166,6 @@ const PayBillsModels = ({ visible, onClose, selectedCustomer, cartItems,
                 <center className="alert text-danger p-1 m-1">
                   ** Please select the payment mode.
                 </center>
-                {/* <CRow>
-                  <CCol sm={1}>
-                    <CButton className="btn-invisible">
-                      <i className="fa fa-trash fa-xs"></i>
-                    </CButton>
-                  </CCol>
-                  <CCol sm={3}>
-                    <b>Cash</b>
-                  </CCol>
-                  <CCol sm={5}>
-                    <input
-                      type="text"
-                      className="form-control input-sm rounded-0"
-                      placeholder="Extra information"
-                      autocomplete="off"
-                      style={{
-                        height: "21px",
-                        border: "none",
-                        fontSize: "13px",
-                      }}
-                    />
-                  </CCol>
-                  <CCol sm={3}>
-                    <input
-                      type="number"
-                      className="form-control p-0 text-end rounded-0"
-                      autocomplete="off"
-                      value="0"
-                    />
-                  </CCol>
-                </CRow> */}
                 <CRow>
                   <CCol sm={1}>
                     <CButton className="btn-invisible p-0">
