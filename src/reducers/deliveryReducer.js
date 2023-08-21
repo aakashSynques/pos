@@ -1,17 +1,17 @@
-const deliveryReducer = (state = [], action) => {
-    switch (action.type) {
-      case "SET_DELIVERY_LIST":
-        return action.payload;
-      
-      case "SET_SELECTED_DELIVERY_MODE":
-        return {
-          ...state,
-          selectedDeliveryMode: action.payload,
-        };
-      
-      default:
-        return state;
-    }
-  };
-  
-  export default deliveryReducer;
+const initialState = {
+  selectedDelivery: null,
+};
+
+const deliveryReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "SELECT_DELIVERY":
+      return {
+        ...state,
+        selectedDelivery: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export default deliveryReducer;

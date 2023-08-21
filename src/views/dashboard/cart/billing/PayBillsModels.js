@@ -13,6 +13,7 @@ import {
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+
 const PayBillsModels = ({
   visible,
   onClose,
@@ -23,9 +24,11 @@ const PayBillsModels = ({
   finalPayAmount,
   totalItem,
   selectedCustomer, // Access selectedCustomer prop
+  anyNotesContent, // Receive the note content
+
 }) => {
   // const selectedCustomer = useSelector((state) => state.selectedCustomer);
-
+  const selectedDelivery = useSelector((state) => state.delivery.selectedDelivery);
   return (
     <>
       <CContainer>
@@ -118,8 +121,8 @@ const PayBillsModels = ({
             <CRow className="billing-note">
               <CCol sm={5}>
                 <b>Delivery Mode</b> <br />
-                <b>PickUp</b> <br />
-                <b>DateTime: {new Date().toLocaleString()}</b> <br />
+                <div>{selectedDelivery}</div> 
+                <b >DateTime : </b> <div>{new Date().toLocaleString()}</div>
                 <b>Note</b>
               </CCol>
 

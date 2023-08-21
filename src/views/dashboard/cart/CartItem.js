@@ -22,13 +22,25 @@ const CartItem = ({
 }) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(item.prod_qty);
-  const [visibleNote, setVisibleNote] = useState(false);
+  const [visibleNote, setVisibleNote] = useState(item.is_note);
   const [visibleComplentary, setVisibleComplentary] = useState(false);
 
   const [productNote, setProductNote] = useState(item.is_prod_note);
   const [complentaryNote, setComplentaryNote] = useState("");
   const [parcelBtn, setParcelBtn] = useState(item.is_parcel === 1);
   const [customizeModelVisible, setCustomizeModelVisible] = useState(false);
+
+  useEffect(() => {
+    setProductNote(item.is_prod_note);
+  }, [item.is_prod_note]);
+
+  useEffect(() => {
+    setVisibleNote(item.is_note);
+  }, [item.is_note]);
+
+  useEffect(() => {
+    setQuantity(item.prod_qty);
+  }, [item.prod_qty]);
 
   const setCartQtyHandler = () => {
     dispatch(setCartQty(cartItems, item.prod_id, quantity));
@@ -89,13 +101,20 @@ const CartItem = ({
     }
     // inputReference.current.focus();
   }, []);
-  console.log("visibleNote", visibleNote);
 
+  let displayText;
+
+  if (Array.isArray(item.customized)) {
+    displayText = item.prod_name;
+  } else {
+    // const customized = item.customized;
+    displayText = `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`;
+  }
   return (
     <>
       <tr key={item.prod_id}>
         <td>
-          <b>{item.prod_name}</b> <br />
+          <b>{displayText}</b> <br />
           <small>
             {item.category_name} | @ {item.prod_rate} <br />
             {/* selected topping list */}
@@ -114,21 +133,43 @@ const CartItem = ({
                   </div>
                 );
               })}
+            {item.customized && (
+              <>
+                {item.customized.message_on_cake && (
+                  <>
+                    <span style={{ fontWeight: "bold" }}>
+                      Message on Cake:{" "}
+                    </span>
+                    <span>{item.customized.message_on_cake}</span>
+                    <br />
+                  </>
+                )}
+                {item.customized.message_on_card && (
+                  <>
+                    <span style={{ fontWeight: "bold" }}>Message on Card:</span>
+                    <span> {item.customized.message_on_card}</span>
+                  </>
+                )}
+              </>
+            )}
           </small>
           <div className="toppings-btn">
             <CButton
               style={{
                 backgroundColor: item.is_note === 1 ? "#26B99A" : "",
                 borderColor: item.is_note === 1 ? "#4cae4c" : "",
+                color: item.is_note === 1 ? "white" : "",
               }}
               onClick={() => noteClickHandler(cartItems, item.prod_id)}
             >
               <u className="text-danger">N</u>ote
             </CButton>
+
             <CButton
               style={{
                 backgroundColor: item.is_complementary === 1 ? "#26B99A" : "",
                 borderColor: item.is_complementary === 1 ? "#4cae4c" : "",
+                color: item.is_complementary === 1 ? "white" : "",
               }}
               onClick={() => complentaryClickHandler(cartItems, item.prod_id)}
             >
@@ -140,6 +181,7 @@ const CartItem = ({
                 style={{
                   backgroundColor: item.toppings.length > 0 ? "#26B99A" : "",
                   borderColor: item.toppings.length > 0 ? "#4cae4c" : "",
+                  color: item.toppings.length > 0 ? "white" : "",
                 }}
                 onClick={() => openToppingModel(item.urno, item.category_heads)}
               >
@@ -149,7 +191,13 @@ const CartItem = ({
 
             {item.prod_Customized_status == 1 ? (
               <CButton
-                // onClick={() => openToppingModel(item.urno, item.category_heads)}
+                style={{
+                  backgroundColor: Array.isArray(item.customized)
+                    ? ""
+                    : "#26B99A",
+                  borderColor: Array.isArray(item.customized) ? "" : "#4cae4c",
+                  color: Array.isArray(item.customized) ? "" : "white",
+                }}
                 onClick={() => setCustomizeModelVisible(!customizeModelVisible)}
               >
                 <u className="text-danger">C</u>ustomize
@@ -229,7 +277,10 @@ const CartItem = ({
 
       <CustmizeModel
         customizeModelVisible={customizeModelVisible}
+        productId={item.prod_id}
         onClose={() => setCustomizeModelVisible(false)} // Close the modal when onClose is called
+        item={item}
+        setVisibleNote={setVisibleNote}
       />
     </>
   );

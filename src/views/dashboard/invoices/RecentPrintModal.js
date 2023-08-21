@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
 import {
   CCardHeader,
   CLink,
@@ -20,16 +20,23 @@ import {
   CRow,
   CCol,
 } from "@coreui/react";
+import { useSelector } from "react-redux";
 
 function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
+  const [isVisible, setIsVisible] = useState(false);
+  const componentRef = useRef();
+
+  const handleClick = () => {
+    setIsVisible(!isVisible);
+  };
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
   );
-  console.log(selectedOutletObj);
+
   const invoice_no = invoiceDetails && Object.keys(invoiceDetails)[0];
   const cartSumUp = invoiceDetails && invoiceDetails[invoice_no].cartSumUp;
   console.log(invoiceDetails, "38 invoice");
-
+  console.log(isVisible);
   const productsInCart =
     invoiceDetails && invoiceDetails[invoice_no].productsInCart;
   const selectedCustomerJson =
@@ -40,6 +47,7 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
     cartSumUp && cartSumUp.payDetails
       ? cartSumUp && cartSumUp.payDetails[0].payMode
       : undefined;
+
   return (
     <>
       <CModal
@@ -47,7 +55,7 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
         visible={printBooking}
         onClose={() => setPrintBooking(false)}
       >
-        <CModalBody>
+        <CModalBody ref={componentRef}>
           <CTabContent className="text-center">
             <div>
               <strong style={{ fontSize: "1.5em" }}>
@@ -65,8 +73,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                 style={{
                   borderBottomStyle: "dashed",
                   marginTop: "-3%",
-                  borderColor: "gray",
-                  paddingBottom: "1%",
+                  borderColor: "black",
+                  marginBottom: "1%",
+                  borderWidth: "1px",
                 }}
               >
                 {deliveryMode == "4" ? " BILL OF SUPPLY" : "TAX INVOICE"}
@@ -143,8 +152,10 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                   <p
                     style={{
                       borderBottomStyle: "dashed",
-                      borderColor: "gray",
                       marginTop: "-2%",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                      marginBottom: "6px",
                     }}
                   />
                 </React.Fragment>
@@ -161,8 +172,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                 <p
                   style={{
                     borderBottomStyle: "dashed",
-                    borderColor: "gray",
                     marginTop: "1%",
+                    borderColor: "black",
+                    borderWidth: "1px",
                   }}
                 ></p>
               </CRow>
@@ -211,8 +223,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                 <p
                   style={{
                     borderBottomStyle: "dashed",
-                    borderColor: "gray",
                     marginTop: "1%",
+                    borderColor: "black",
+                    borderWidth: "1px",
                   }}
                 ></p>
               </CRow>
@@ -227,13 +240,18 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                 <CCol xs={2} className="text-center ">
                   {Number(cartSumUp && cartSumUp.subTotal).toFixed(2)}
                   <p
-                    style={{ borderBottomStyle: "dashed", borderColor: "gray" }}
+                    style={{
+                      borderBottomStyle: "dashed",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
                   ></p>
                 </CCol>
               </CRow>
               <CRow>
                 <CCol xs={10} className="text-end ">
-                  2.50% SGST on GST
+                  {cartSumUp && cartSumUp.taxsplitGST[0].taxPercent}%{" "}
+                  {cartSumUp && cartSumUp.taxsplitGST[0].taxType} on GST
                 </CCol>
                 <CCol xs={2} className="text-center ">
                   {Number(cartSumUp && cartSumUp.taxsplitGST[0].tax).toFixed(2)}
@@ -241,13 +259,18 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
               </CRow>
               <CRow>
                 <CCol xs={10} className="text-end ">
-                  2.50% CGST on GST
+                  {cartSumUp && cartSumUp.taxsplitGST[1].taxPercent}%{" "}
+                  {cartSumUp && cartSumUp.taxsplitGST[1].taxType} on GST
                 </CCol>
                 <CCol xs={2} className="text-center ">
                   {Number(cartSumUp && cartSumUp.taxsplitGST[1].tax).toFixed(2)}
 
                   <p
-                    style={{ borderBottomStyle: "dashed", borderColor: "gray" }}
+                    style={{
+                      borderBottomStyle: "dashed",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
                   ></p>
                 </CCol>
               </CRow>
@@ -258,27 +281,112 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                 <CCol xs={2} className="text-center ">
                   {Number(cartSumUp && cartSumUp.grandTotal).toFixed(2)}
                 </CCol>
+                {deliveryMode == "4" ? (
+                  <CRow>
+                    <CCol xs="auto">
+                      <span
+                        className="text-start"
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "1em",
+                          padding: "2px",
+                        }}
+                      >
+                        Home Delivery : {cartSumUp && cartSumUp.deliveryDate}{" "}
+                        {cartSumUp && cartSumUp.deliveryTime}
+                      </span>
+                    </CCol>
+                    <CCol xs="auto" className="text-start ">
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "1em",
+                          padding: "2px",
+                        }}
+                      >
+                        Receiver
+                      </span>{" "}
+                      : {cartSumUp && cartSumUp.receiverName}{" "}
+                      {cartSumUp && cartSumUp.receiverMobileNo}
+                    </CCol>
+                    <CCol xs="auto" className="text-start ">
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "1em",
+                          padding: "2px",
+                        }}
+                      >
+                        At Location
+                      </span>{" "}
+                      : {cartSumUp && cartSumUp.deliveryAddress}
+                    </CCol>
+                    <CCol xs={10} className="text-start ">
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "1em",
+                          padding: "2px",
+                        }}
+                      >
+                        Ref# :
+                      </span>{" "}
+                      {cartSumUp && cartSumUp.up_biz_id}
+                    </CCol>
+                  </CRow>
+                ) : (
+                  ""
+                )}
+
                 <p
-                  style={{ borderBottomStyle: "dashed", borderColor: "gray" }}
+                  style={{
+                    borderBottomStyle: "dashed",
+                    borderColor: "black",
+                    borderWidth: "1px",
+                    marginBottom: "3px",
+                  }}
                 ></p>
               </CRow>
+
+              {cartSumUp && cartSumUp.note && (
+                <CRow>
+                  {deliveryMode == "1" &&
+                  deliveryMode == "2" &&
+                  deliveryMode == "3" ? (
+                    <p
+                      style={{
+                        borderBottomStyle: "dashed",
+                        borderColor: "black",
+                        marginTop: "1%",
+                        borderWidth: "1px",
+                      }}
+                    ></p>
+                  ) : (
+                    ""
+                  )}
+                  <CCol xs={10} className="text-start ">
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                        padding: "2px",
+                      }}
+                    >
+                      Note :
+                    </span>
+                    {cartSumUp && cartSumUp.note}
+                  </CCol>
+                  <p
+                    style={{
+                      borderBottomStyle: "dashed",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
+                  ></p>
+                </CRow>
+              )}
               <CRow>
-                <CCol xs={10} className="text-start ">
-                  Home Delivery : {cartSumUp && cartSumUp.deliveryTime}
-                </CCol>
-                <CCol xs={10} className="text-start ">
-                  Receiver : {cartSumUp && cartSumUp.receiverName}{" "}
-                  {cartSumUp && cartSumUp.receiverMobileNo}
-                </CCol>
-                <CCol xs={10} className="text-start ">
-                  At Location : {cartSumUp && cartSumUp.deliveryAddress}
-                </CCol>
-                <CCol xs={10} className="text-start ">
-                  Ref# : {cartSumUp && cartSumUp.up_biz_id}
-                </CCol>
-              </CRow>
-              <CRow>
-                {deliveryMode === "4" && cartSumUp && cartSumUp.payDetails
+                {cartSumUp && cartSumUp.payDetails
                   ? cartSumUp.payDetails.map((p) => (
                       <React.Fragment key={p.payMode}>
                         <CCol xs={10} className="text-end">
@@ -359,18 +467,73 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                     ))
                   : null}
               </CRow>
+              {cartSumUp && cartSumUp.deliveryMode && (
+                <CRow>
+                  {deliveryMode === "3" && (
+                    <p
+                      style={{
+                        borderBottomStyle: "dashed",
+                        borderColor: "black",
+                        marginTop: "1%",
+                        borderWidth: "1px",
+                        marginBottom: "3px",
+                      }}
+                    ></p>
+                  )}
+                  <CCol xs={10} className="text-start ">
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                        padding: "2px",
+                      }}
+                    >
+                      {deliveryMode === "3" ? "Pick Up:" : ""}
+                    </span>
+                    {deliveryMode === "3" ? (
+                      <span>
+                        {cartSumUp && cartSumUp.deliveryDate}{" "}
+                        {cartSumUp && cartSumUp.deliveryTime}
+                      </span>
+                    ) : (
+                      ""
+                    )}
+                  </CCol>
+                  {deliveryMode === "3" ? (
+                    <p
+                      style={{
+                        borderBottomStyle: "dashed",
+                        borderColor: "black",
+                        borderWidth: "1px",
+                      }}
+                    ></p>
+                  ) : (
+                    ""
+                  )}
+                </CRow>
+              )}
 
               <CRow>
                 <CCol xs={10} className="text-start ">
-                  {deliveryMode === "4" ? (
+                  {deliveryMode == "4" ? (
                     <span>
-                      Agent - {cartSumUp && cartSumUp.salesUser.user_name}
+                      Agent -{cartSumUp && cartSumUp.salesUser.user_name}
                     </span>
                   ) : (
                     <span>
                       Sales Person -{" "}
                       {cartSumUp && cartSumUp.salesUser.user_name}
                     </span>
+                  )}
+                </CCol>
+              </CRow>
+
+              <CRow>
+                <CCol className="text-center ">
+                  {isVisible ? (
+                    <strong>Thanks Visit Again</strong>
+                  ) : (
+                    <strong>Error</strong>
                   )}
                 </CCol>
               </CRow>
@@ -381,13 +544,19 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
           <CContainer>
             <CRow xs={2}>
               <CCol>
-                <CButton
-                  onClick={() => setVisible(false)}
-                  style={{ background: "#26b99a", border: "none" }}
-                >
-                  Print
-                </CButton>
+                <ReactToPrint
+                  trigger={() => (
+                    <CButton
+                      style={{ background: "#26b99a", border: "none" }}
+                      onClick={handleClick}
+                    >
+                      <i className="fa fa-print"></i> {""}Print
+                    </CButton>
+                  )}
+                  content={() => componentRef.current}
+                />
               </CCol>
+
               <CCol className="text-end">
                 <CButton
                   color="secondary"

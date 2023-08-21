@@ -154,9 +154,7 @@ const ProductsSearchBar = () => {
       // customized: item.customized,
       customized: [],
     }));
-    // console.log(cartItemData);
-    // console.log(cartItemsArray, "cartState");
-
+    
     dispatch(addToCart(cartItemsArray, ...cartItemData));
   };
 
@@ -227,43 +225,7 @@ const ProductsSearchBar = () => {
           }}
         />
       </CInputGroup>
-      <div className="product-list-abslute" ref={ref}>
-        {/* {query !== "" &&
-          filteredItems.map((product) => (
-            <div key={product.prod_id} className="product-list">
-              <button
-                onClick={() => {
-                  handleAddToCart(product.prod_id);
-                  setQuery("");
-                }}
-              >
-                <div className="pull-left fa-stack fa-xs prod-sign">
-                  <span
-                    className={`fa-stack fa-xs ${getTextColorClass(
-                      product.prod_sign
-                    )}`}
-                  >
-                    <i className="fa fa-square-o fa-stack-2x"></i>
-                    <i className="fa fa-circle fa-stack-1x"></i>
-                  </span>
-                </div>
-
-                <div className="pull-left">
-                  <b className="pull-left">{product.prod_name}</b>
-                  <br />
-                  <small className="pull-left">
-                    Code : {product.prod_code} {product.category_name}
-                  </small>
-                </div>
-
-                <div className="product-price">
-                  <i className="fa fa-inr"></i>
-                  {getPriceForOutlet(product)}
-                </div>
-                <br />
-              </button>
-            </div>
-          ))} */}
+      <div className="product-list-abslute" ref={ref}>  
         {query !== "" &&
           Object.entries(groupedItems).map(([categoryHeads, products]) => (
             <div key={categoryHeads}>

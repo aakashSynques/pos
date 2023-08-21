@@ -7,7 +7,17 @@ import {
   SET_PRODUCT_NOTE,
   SET_TOPPING_URNO,
   SET_IS_PARCEL,
+  UPDATE_CUSTOMIZED,
+  SET_OUTLET_LIST,
+  SET_USER,
+  LOGOUT_USER,
+  SET_SELECTED_OUTLET_ID,
+  SET_SELECTED_OUTLET_DATA,
+  UPDATE_CART_ITEMS,
   SET_SELECTED_CUSTOMER,
+  CLEAR_SELECTED_CUSTOMER,
+  SELECT_DELIVERY,
+
 } from "./actionTypes";
 
 // helper functions start
@@ -16,7 +26,10 @@ const addCartItem = (cartItemsArray, cartItem) => {
   console.log(cartItem);
   const existingCartItem =
     cartItemsArray.length > 0 &&
-    cartItemsArray.find((item) => item.prod_id === cartItem.prod_id);
+    cartItemsArray.find(
+      (item) =>
+        item.prod_id === cartItem.prod_id && Array.isArray(item.customized)
+    );
 
   if (existingCartItem) {
     return cartItemsArray.map((item) =>
@@ -91,10 +104,12 @@ const setProdNote = (cartItemsArray, productId, productNote) => {
     item.prod_id === productId
       ? {
           ...item,
-          is_prod_note: item.is_note === 1 ? productNote : "",
+          is_note: 1,
+          is_prod_note: productNote,
         }
       : item
   );
+  console.log(updatedItems);
   return updatedItems;
 };
 
@@ -156,19 +171,16 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
         }
       : item
   );
-
   let cartWithNewToppings = newUpdatedCart.map((cartItem) => {
     return {
       ...cartItem,
     };
   });
-
   let toppingsWithInfo = selectedToppings.map((toppingObj) => ({
     ...toppingObj,
     prod_qty: 1,
     associated_prod_urno: productUrno,
   }));
-
   cartWithNewToppings.push(...toppingsWithInfo);
   cartWithNewToppings = cartWithNewToppings.map((item) =>
     item.urno === productUrno
@@ -199,23 +211,44 @@ const clearProdToppings = (cartItemsArray, productUrno) => {
   return cartWithoutToppings;
 };
 
-
-
-const setUpdateCustomize  = (cartItemsArray, productId, customjsonData) => {
+const setUpdateCustomize = (cartItemsArray, productId, customjsonData) => {
+  console.log(productId);
   const updatedCartItems = cartItemsArray.map((item) =>
-  item.prod_id === productId
-    ? {
-        ...item,
-        customized : customjsonData,
-      }
-    : item
+    item.prod_id === productId
+      ? {
+          ...item,
+          customized: customjsonData,
+        }
+      : item
   );
-  console.log('custom json data', customjsonData)
-  console.log('updated item', updatedCartItems)
+  console.log("custom json data", customjsonData);
+  console.log("updated item", updatedCartItems);
 
   return updatedCartItems;
 };
+
+const setClearCustomization = (cartItemsArray, productId) => {
+  const updatedCartItems = cartItemsArray.map((item) =>
+    item.prod_id === productId
+      ? {
+          ...item,
+          customized: [],
+        }
+      : item
+  );
+
+  return updatedCartItems;
+};
+
 // helper functions end
+
+export const setSelectedCustomer = (customerData) => ({
+  type: SET_SELECTED_CUSTOMER,
+  payload: customerData,
+});
+export const clearSelectedCustomer = () => ({
+  type: CLEAR_SELECTED_CUSTOMER,
+});
 
 export const addToCart = (cartItemsArray, cartItem) => ({
   type: ADD_TO_CART,
@@ -279,62 +312,65 @@ export const clearAllToppings = (cartItemsArray, productUrno) => ({
   payload: clearProdToppings(cartItemsArray, productUrno),
 });
 
-export const setupdateCustomizInCart = (cartItemsArray, productId, customjsonData) => ({
+export const setupdateCustomizInCart = (
+  cartItemsArray,
+  productId,
+  customjsonData
+) => ({
   type: UPDATE_CUSTOMIZED,
   payload: setUpdateCustomize(cartItemsArray, productId, customjsonData),
-  // payload: { cartItemsArray, productId, customjsonData },
 });
 
-export const setSelectedCustomer = (customerData) => ({
-  type: SET_SELECTED_CUSTOMER,
-  payload: customerData,
+export const setClearCustomizationInCart = (
+  cartItemsArray,
+  productId,
+  customjsonData
+) => ({
+  type: UPDATE_CUSTOMIZED,
+  payload: setClearCustomization(cartItemsArray, productId),
 });
 
 export const setOutletList = (outletList) => ({
-  type: "SET_OUTLET_LIST",
+  type: SET_OUTLET_LIST,
   payload: outletList,
-});
-
-export const setDeliveryList = (deliveryList) => ({
-  type: "SET_DELIVERY_LIST",
-  payload: deliveryList,
 });
 
 // login
 export const setUser = (user) => ({
-  type: "SET_USER",
+  type: SET_USER,
   payload: user,
 });
 
 export const logoutUser = () => ({
-  type: "LOGOUT_USER",
+  type: LOGOUT_USER,
 });
 
 // select outlet
 
 export const setSelectedOutletId = (outletId) => {
   return {
-    type: "SET_SELECTED_OUTLET_ID",
+    type: SET_SELECTED_OUTLET_ID,
     payload: outletId,
   };
 };
 
 export const setSelectedOutletData = (outletId, allOutlets) => {
   return {
-    type: "SET_SELECTED_OUTLET_DATA",
+    type: SET_SELECTED_OUTLET_DATA,
     payload: selectedOutletData(outletId, allOutlets),
   };
 };
 
-// select delivery mode
-export const setSelectedDeliveryMode = (deliveryMode) => ({
-  type: "SET_SELECTED_DELIVERY_MODE",
-  payload: deliveryMode,
-});
-
 export const updateCartItems = (newCartItems) => {
   return {
-    type: "UPDATE_CART_ITEMS",
+    type: UPDATE_CART_ITEMS,
     payload: newCartItems,
+  };
+};
+
+export const selectDelivery = (deliveryName) => {
+  return {
+    type: SELECT_DELIVERY,
+    payload: deliveryName,
   };
 };

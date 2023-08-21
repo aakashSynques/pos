@@ -25,7 +25,7 @@ or
 $ yarn start
 ```
 
-Navigate to [http://localhost:3001](http://localhost:3001). The app will automatically reload if you change any of the source files.
+Navigate to [http://localhost:3000](http://localhost:3000). The app will automatically reload if you change any of the source files.
 
 #### Build
 

@@ -4,7 +4,9 @@ import { setToppings, clearAllToppings } from "../../../action/actions";
 import { fetch } from "../../../utils";
 import CartItem from "./CartItem";
 import PayBillsModels from "./billing/PayBillsModels";
+import AnyNotes from "./AnyNotes";
 
+import { ToastContainer, toast } from "react-toastify";
 
 import {
   CFormInput,
@@ -20,7 +22,7 @@ import {
   CInputGroup,
 } from "@coreui/react";
 import ToppingsModal from "./ToppingsModal";
-import AnyNotes from "./AnyNotes";
+import KOTDeliveryOnTable from "./KOTDeliveryOnTable";
 
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -31,6 +33,10 @@ const CartSection = () => {
   const selectedCustomer = useSelector(
     (state) => state.customer.selectedCustomer
   );
+  const selectedDelivery = useSelector(
+    (state) => state.delivery.selectedDelivery
+  );
+
   const dispatch = useDispatch();
   const [toppingModel, setToppingModel] = useState(false);
   const [paybillsModel, setPayBillsModel] = useState(false);
@@ -39,21 +45,23 @@ const CartSection = () => {
   const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
     useState(0);
 
-  // Use a separate state object to store the quantity for each product
   const [quantity, setQuantity] = useState(1);
-  // New state variable to track cart emptiness
   const [isCartEmpty, setCartEmpty] = useState(true);
 
-  // Update the cart emptiness state whenever the cart items change  for pay and Booking button
   useEffect(() => {
     setCartEmpty(cartItems.length === 0);
   }, [cartItems]);
 
   const getTotalAmountForItem = (item) => {
+    // const rate = item.prod_rate;
+    // console.log('prod rate', rate);
+    // const toppingsTotalPrice = selectedToppingsTotalPrice;
+    // console.log(selectedToppingsTotalPrice)
+
+    // return rate + toppingsTotalPrice;
     const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate;
   };
-
   // Function to get the subtotal amount of all products in the cart
   const getSubTotalAmount = () => {
     let subTotal = 0;
@@ -126,12 +134,12 @@ const CartSection = () => {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedTopId, setSelectedTopId] = useState();
   const [toppingsData, setToppingsData] = useState([]);
-
   const getToppingsData = async () => {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/products/all", "get", null, headers);
+      console.log(response.data.prodAllList);
       const filteredToppings = response.data.prodAllList.filter(
         (item) => item.category_heads === "Toppings"
       );
@@ -154,9 +162,13 @@ const CartSection = () => {
     setSelectedUrno(urno);
     setCategoryHead(category_heads);
 
-    const displayToppings = cartItems.filter(
-      (toppings) => toppings.associated_prod_urno === urno
+    let displayToppings = cartItems.map((el) =>
+      el.associated_prod_urno === urno
+        ? toppingsData.find((top) => top.prod_id === el.prod_id)
+        : null
     );
+
+    displayToppings = displayToppings.filter(Boolean);
 
     console.log(displayToppings);
 
@@ -167,6 +179,7 @@ const CartSection = () => {
 
   // CHECK IF TOPPING EXISTS AND ADD OR REMOVE ACCORDINGLY ON ONCLICK
   const handleToppingClick = (topping) => {
+    console.log(topping.prod_id);
     const isSelected = selectedToppings.some(
       (st) => st.prod_id === topping.prod_id
     );
@@ -219,7 +232,10 @@ const CartSection = () => {
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
 
+    // console.log(selectedToppings, "selectedToppings");
+
     const cartItemData = selectedToppings.map((item) => {
+      // console.log(item, "selectedToppings");
       return {
         prod_id: item.prod_id,
         prod_code: item.prod_code,
@@ -322,6 +338,35 @@ const CartSection = () => {
     };
   }, [selectedToppings]);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.shiftKey && event.key === "Enter") {
+        // Call the function to handle the "PAY" action
+        handlePayButtonClick();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+  // const handlePayButtonClick = () => {
+  //   if (!isCartEmpty && selectedCustomer) {
+  //     setPayBillsModel(true);
+  //   }
+  // };
+  const handlePayButtonClick = () => {
+    if (!isCartEmpty) {
+      if (selectedCustomer) {
+        setPayBillsModel(true);
+      } else {
+        toast.error("Enter Customer Name First");
+      }
+    }
+  };
+
   return (
     <div className="cartlist">
       <div
@@ -363,9 +408,18 @@ const CartSection = () => {
         )}
       </div>
 
+      <div className="deliveryOnTable">
+        <hr style={{ margin: "0px" }} />
+        <KOTDeliveryOnTable
+          selectedCustomer={selectedCustomer}
+          cartItems={cartItems}
+          subtotal={getSubTotalAmount()}
+        />
+      </div>
+
       {/* price Table   */}
       <hr style={{ margin: "0px" }} />
-      <div className="bil-table mt-3">
+      <div className="bil-table mt-2">
         <CContainer>
           <CRow>
             <CCol sm={6} className="font-size">
@@ -373,7 +427,7 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getSubTotalAmount()}
+              {getSubTotalAmount().toFixed(2)}
               {/* Display the calculated subtotal */}
             </CCol>
           </CRow>
@@ -392,7 +446,8 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalSGSTAmount().toFixed(2)} {/* Display the calculated SGST amount */}
+              {getTotalSGSTAmount().toFixed(2)}{" "}
+              {/* Display the calculated SGST amount */}
             </CCol>
           </CRow>
           <CRow>
@@ -401,42 +456,45 @@ const CartSection = () => {
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
-              {getTotalCGSTAmount().toFixed(2)} {/* Display the calculated CGST amount */}
+              {getTotalCGSTAmount().toFixed(2)}{" "}
+              {/* Display the calculated CGST amount */}
             </CCol>
           </CRow>
 
           <CRow>
-            <CCol sm={4} className="font-size">
-              <button
-                className="btn pay-btn"
-                style={{ backgroundColor: "#26B99A" }}
-                type="button"
-                onClick={() => {
-                  console.log("Pay button clicked");
-                  setPayBillsModel(!paybillsModel);
-                }}
-                disabled={isCartEmpty} // Disable if cart is empty or no customer is selected
-              >
-                PAY <font size="1">[ Shift + Enter ]</font>
-              </button>
-            </CCol>
-            <CCol sm={4} className="font-size pl-0" disabled={isCartEmpty}>
-              <button
-                className="btn pay-btn btn-warning"
-                type="button"
-                disabled={isCartEmpty} // Disable if cart is empty or no customer is selected
-              >
-                BOOKING <font size="1"></font>
-              </button>
+            <CCol sm={8} className="font-size">
+              <CRow>
+                <div className="col-sm-6">
+                  <button
+                    className="btn pay-btn"
+                    style={{ backgroundColor: "#26B99A" }}
+                    type="button"
+                    onClick={() => setPayBillsModel(!paybillsModel)}
+                    disabled={isCartEmpty || !selectedCustomer} // Disable if cart is empty or no customer selected
+                  >
+                    PAY <font size="1">[ Shift + Enter ]</font>
+                  </button>
+                </div>
+                <div className="col-sm-6 font-size pl-0">
+                  <button
+                    className="btn pay-btn btn-warning"
+                    type="button"
+                    disabled={isCartEmpty || !selectedCustomer}
+                  >
+                    BOOKING <font size="1"></font>
+                  </button>
+                </div>
+              </CRow>
             </CCol>
 
             <CCol sm={4} style={{ textAlign: "right" }} className="font-size">
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
-                {getFinalPayAmount()} {/* Display the final pay amount */}
+                {getFinalPayAmount().toFixed(2)}{" "}
+                {/* Display the final pay amount */}
               </h4>
               <small>
-                {getTotalItemsInCart()} Item(s)
+                {getTotalItemsInCart()} Item(s){" "}
                 {/* Display total items in cart */}
               </small>
             </CCol>
@@ -447,27 +505,27 @@ const CartSection = () => {
               Delivery Mode [F2]
             </CCol>
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              counter
+              {selectedDelivery}{" "}
             </CCol>
             <CCol sm={12}>
-                <AnyNotes />
+              <AnyNotes />
             </CCol>
           </CRow>
         </CContainer>
       </div>
 
       {/* pay bills model */}
+      {/* pay bills model */}
       <PayBillsModels
         visible={paybillsModel}
         onClose={() => setPayBillsModel(false)}
-        cartItems={cartItems}        
+        cartItems={cartItems}
         subtotal={getSubTotalAmount()}
         totalSGST={getTotalSGSTAmount()}
         totalCGST={getTotalCGSTAmount()}
         finalPayAmount={getFinalPayAmount()}
         totalItem={getTotalItemsInCart()}
         selectedCustomer={selectedCustomer} // Pass the selected customer here
-
       />
 
       <CModal
@@ -513,6 +571,7 @@ const CartSection = () => {
                 <button
                   className={`btn btn-sm pull-right ${
                     // selectedToppings[topping.prod_id]?.includes(topping.prod_id)
+                    selectedToppings &&
                     selectedToppings.find(
                       (object) => object.prod_id === topping.prod_id
                     )

@@ -1,10 +1,19 @@
-import { CCol, CContainer, CRow } from "@coreui/react";
+import { CCol, CContainer, CNavItem, CRow } from "@coreui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import RecentPrintModal from "../RecentPrintModal";
 
 const CounterSale = ({ recentBooking }) => {
+  const [printBooking, setPrintBooking] = useState(false);
+  const [invoiceDetails, setInvoiceDetails] = useState();
+  const [activeKey, setActiveKey] = useState(1);
+
+  const clickInvoiceLink = (invoice_no, sales_json) => {
+    setPrintBooking(!printBooking);
+    setInvoiceDetails({ [invoice_no]: sales_json });
+  };
   return (
     <>
       <table className="table table-bordered booking-or-table">
@@ -44,7 +53,11 @@ const CounterSale = ({ recentBooking }) => {
                   <tr key={salesid}>
                     <td>{salesid}</td>
                     <td>
-                      <Link to="" className="text-primary text-link">
+                      <Link
+                        to=""
+                        className="text-primary text-link"
+                        onClick={() => clickInvoiceLink(invoice_no, sales_json)}
+                      >
                         {invoice_no}
                         <br />
                       </Link>
@@ -245,6 +258,14 @@ const CounterSale = ({ recentBooking }) => {
           })}
         </tbody>
       </table>
+
+      <RecentPrintModal
+        active={activeKey === 1}
+        onClick={() => setActiveKey(1)}
+        printBooking={printBooking}
+        setPrintBooking={setPrintBooking}
+        invoiceDetails={invoiceDetails}
+      />
     </>
   );
 };

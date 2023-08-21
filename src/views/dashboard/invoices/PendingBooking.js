@@ -16,7 +16,6 @@ import {
   CTabPane,
 } from "@coreui/react";
 import React, { useEffect, useState } from "react";
-import Pendding from "./bookingtables/Delivered";
 import Pending from "./bookingtables/Pending";
 import Delivered from "./bookingtables/Delivered";
 import Future from "./bookingtables/Future";
@@ -29,7 +28,7 @@ const PendingBooking = () => {
   const [booking, setBooking] = useState(false);
   const [activeKey, setActiveKey] = useState(1);
   const [pendingBooking, setPendingBooking] = useState([]);
-
+  // console.log(pendingBooking, "32");
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
 
@@ -43,7 +42,6 @@ const PendingBooking = () => {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      // console.log(outlet_id, "39");
       setLoading(true);
       const response = await axios.post(
         "http://posapi.q4hosting.com/api/order/pending",
@@ -112,36 +110,24 @@ const PendingBooking = () => {
           <div className="pending-booking">
             <table width="100%" className="table table-bordered ongoing">
               <tbody>
+                {/* {console.log(pendingBooking, "98")}  */}
                 {pendingBooking
                   .slice(0, 10)
                   .map(({ booking_json, booking_no }) => {
-                    let parsedbooking_json = null;
-                    try {
-                      parsedbooking_json = JSON.parse(booking_json);
-                      // console.log(parsedbooking_json, "98");
-                    } catch (error) {
-                      // return false;
-                      console.error("Error parsing sales_json:", error);
-                    }
-                    // const total = Number(parsedbooking_json.cartSumUp.grandTotal);
                     return (
                       <tr>
-                        <td style={{ width: "60%" }}>
+                        <td style={{ width: "65%" }}>
                           <Link to="" className="text-primary text-link">
                             {booking_no}
                             <br />
                           </Link>
                           <small className="text-sm" style={{ fontSize: "px" }}>
-                            {
-                              parsedbooking_json.selectedCustomerJson
-                                .customer_name
-                            }
-                            <br />(
-                            {parsedbooking_json.selectedCustomerJson.mobile})
+                            {booking_json.selectedCustomerJson.customer_name}
+                            <br />({booking_json.selectedCustomerJson.mobile})
                           </small>
                         </td>
                         <td>
-                          {parsedbooking_json.cartSumUp.deliveryMode == "1" ? (
+                          {booking_json.cartSumUp.deliveryMode == "1" ? (
                             <strong
                               className="status-btn"
                               style={{
@@ -155,8 +141,7 @@ const PendingBooking = () => {
                             >
                               Cs
                             </strong>
-                          ) : parsedbooking_json.cartSumUp.deliveryMode ==
-                            "2" ? (
+                          ) : booking_json.cartSumUp.deliveryMode == "2" ? (
                             <strong
                               className="status-btn"
                               style={{
@@ -170,8 +155,7 @@ const PendingBooking = () => {
                             >
                               OT
                             </strong>
-                          ) : parsedbooking_json.cartSumUp.deliveryMode ==
-                            "3" ? (
+                          ) : booking_json.cartSumUp.deliveryMode == "3" ? (
                             <strong
                               className="status-btn"
                               style={{
@@ -185,8 +169,7 @@ const PendingBooking = () => {
                             >
                               PickUp
                             </strong>
-                          ) : parsedbooking_json.cartSumUp.deliveryMode ==
-                            "4" ? (
+                          ) : booking_json.cartSumUp.deliveryMode == "4" ? (
                             <strong
                               className="status-btn"
                               style={{
@@ -196,19 +179,16 @@ const PendingBooking = () => {
                                 backgroundColor: "#d9534f",
                                 height: "2%",
                                 width: "2%",
+                                padding: "0px 3px 0px 3px",
                               }}
                             >
                               <small>Home Delivery</small>
                             </strong>
                           ) : null}
                           <br />
-                          <font>
-                            {parsedbooking_json.cartSumUp.deliveryDate}
-                          </font>
+                          <font>{booking_json.cartSumUp.deliveryDate}</font>
                           <br />
-                          <font>
-                            {parsedbooking_json.cartSumUp.deliveryTime}
-                          </font>
+                          <font>{booking_json.cartSumUp.deliveryTime}</font>
                         </td>
                       </tr>
                     );
@@ -217,10 +197,8 @@ const PendingBooking = () => {
             </table>
           </div>
         )}
-      </CCard>
-
+      </CCard>{" "}
       {/* booking order model */}
-
       <CModal size="xl" visible={booking} onClose={() => setBooking(false)}>
         <CModalHeader onClose={() => setBooking(false)}>
           <CModalTitle>Booking Orders</CModalTitle>

@@ -10,12 +10,14 @@ import {
 } from "@coreui/react";
 import React from "react";
 import AssignOutLet from "./AssignOutLet";
+import DeliveryModeModal from "./DeliveryModeModal";
 
 const OutletOptions = ({ outletName }) => {
   return (
     <>
       <div className="outlet-btn">
         <AssignOutLet />
+        <DeliveryModeModal />
         <br /> 
         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
           <b>New Sale</b>

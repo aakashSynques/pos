@@ -10,18 +10,27 @@ import {
   CFormSelect,
   CFormCheck,
   CFormTextarea,
-  CFormInput,
 } from "@coreui/react";
 import React, { useState, useEffect } from "react";
 import { fetch } from "../../../utils";
-import { useDispatch, useSelector } from 'react-redux';
-import { setupdateCustomizInCart } from "../../../action/actions";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setupdateCustomizInCart,
+  setProductNoteInCart,
+  setClearCustomizationInCart,
+} from "../../../action/actions";
 
-const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
+const CustomizeModel = ({
+  customizeModelVisible,
+  onClose,
+  productId,
+  item,
+  setVisibleNote,
+}) => {
   const [customShapeList, setCustomShapeList] = useState([]);
   const dispatch = useDispatch();
-  const [customjsonData, setcustomjsonData] = useState("");
-  const cartItemsArray = useSelector(state => state.cart.cartItems); // Replace 'state.cart.cartItems' with the correct path to your cart items in the Redux state
+  const [extraProdNote, setExtraProdNote] = useState("");
+  const cartItemsArray = useSelector((state) => state.cart.cartItems); // Replace 'state.cart.cartItems' with the correct path to your cart items in the Redux state
   const [customFlavorList, setCustomFlavorList] = useState([]);
   const [customSizeList, setCustomSizeList] = useState([]);
   const [photoMode, setPhotoMode] = useState(1); // 1 for Gallery, 2 for Upload
@@ -66,6 +75,10 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
     getCustomSize();
   }, []);
 
+  useEffect(() => {
+    setExtraProdNote(item.is_prod_note);
+  }, [item.is_prod_note]);
+
   const [formData, setFormData] = useState({
     choice_id: "",
     choice_name: "",
@@ -82,31 +95,48 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
     size_name: "",
   });
 
-  const handleFormSubmit = (productId) => {
+  const handleFormSubmit = () => {
+    console.log(productId);
     const customjsonData = {
-          choice_id: formData.choice_id,
-          choice_name: formData.choice_name,
-          flavor_id: formData.flavor_id,
-          flavor_name: formData.flavor_name,
-          message_on_cake: formData.message_on_cake,
-          message_on_card: formData.message_on_card,
-          photo_mode_id: formData.photo_mode_id,
-          photo_mode_name: formData.photo_mode_name,
-          photo_path: formData.photo_path,
-          shape_id: formData.shape_id,
-          shape_name: formData.shape_name,
-          size_id: formData.size_id,
-          size_name: formData.size_name,
+      choice_id: formData.choice_id,
+      choice_name: formData.choice_name,
+      flavor_id: formData.flavor_id,
+      flavor_name: formData.flavor_name,
+      message_on_cake: formData.message_on_cake,
+      message_on_card: formData.message_on_card,
+      photo_mode_id: formData.photo_mode_id,
+      photo_mode_name: formData.photo_mode_name,
+      photo_path: formData.photo_path,
+      shape_id: formData.shape_id,
+      shape_name: formData.shape_name,
+      size_id: formData.size_id,
+      size_name: formData.size_name,
     };
+    let newCartWithNote = [];
+    if (extraProdNote !== "") {
+      setVisibleNote(true);
+      const noteDispatch = () => {
+        let disp = dispatch(
+          setProductNoteInCart(cartItemsArray, productId, extraProdNote)
+        );
+        newCartWithNote = disp.payload;
+        return newCartWithNote;
+      };
+      noteDispatch();
+    }
 
-    // console.log("customize product data:", customjsonData);
-    dispatch(setupdateCustomizInCart(cartItemsArray, productId, customjsonData));
+    dispatch(
+      setupdateCustomizInCart(
+        newCartWithNote.length > 0 ? newCartWithNote : cartItemsArray,
+        productId,
+        customjsonData
+      )
+    );
 
     onClose();
   };
 
   // dispatch(setupdateCustomizInCart(cartItemsArray, productId, customjsonData));
-
 
   const handlePhotoModeChange = (mode) => {
     setPhotoMode(mode);
@@ -138,10 +168,7 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
         size="lg"
         className="topping-modals cust-model"
       >
-        <CModalHeader
-          className="pt-3 pb-0"
-          onClose={() => setCustomizeModelVisible(false)}
-        >
+        <CModalHeader className="pt-3 pb-0" onClose={onClose}>
           <CModalTitle>Apply Cake Customization</CModalTitle>
         </CModalHeader>
         <CModalBody>
@@ -174,6 +201,7 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
               </CFormSelect>
             </CCol>
             {/* selected custom shap */}
+
             <CCol md={6}>
               <CFormSelect
                 id="inputCustomShape"
@@ -205,7 +233,6 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
               <legend className="col-form-label pt-0">Custom Choice</legend>
               <label className="btn  btn-default rounded-0 border cust-radio">
                 <CFormCheck
-                  
                   type="radio"
                   name="customChoice"
                   id="choiceRadios1"
@@ -227,7 +254,7 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
                 <CFormCheck
                   type="radio"
                   name="customChoice"
-                  id="choiceRadios1"
+                  id="choiceRadios2"
                   value="2"
                   label="EggLess"
                   className="input-dro-font"
@@ -311,7 +338,12 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
               <legend className="col-form-label pt-4">
                 Extra Information / Product Note
               </legend>
-              <CFormTextarea rows={2} className="rounded-0 "></CFormTextarea>
+              <CFormTextarea
+                rows={2}
+                className="rounded-0"
+                value={extraProdNote}
+                onChange={(e) => setExtraProdNote(e.target.value)}
+              ></CFormTextarea>
             </CCol>
             {/* <CCol md={6} className="mt-2">
               <legend className="col-form-label pt-0">Photo</legend>
@@ -448,17 +480,19 @@ const CustomizeModel = ({ customizeModelVisible, onClose, productId }) => {
         <CModalFooter>
           <CButton
             color="danger"
-            onClick={() => setCustomizeModelVisible(false)}
+            onClick={() => {
+              dispatch(
+                setClearCustomizationInCart(cartItemsArray, item.prod_id)
+              );
+              onClose();
+            }}
           >
             Clear All [Alt + C]
           </CButton>
           <CButton color="success" onClick={handleFormSubmit}>
             Submit [Alt + Enter]
           </CButton>
-          <CButton
-            color="light"
-            onClick={() => setCustomizeModelVisible(false)}
-          >
+          <CButton color="light" onClick={onClose}>
             Cancel [Esc]
           </CButton>
         </CModalFooter>

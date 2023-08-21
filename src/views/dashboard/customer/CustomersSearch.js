@@ -14,7 +14,7 @@ import EditCustomerProfile from "./EditCustomerProfile";
 import CustAccountsModel from "./CustAccountsModel";
 import PayBillsModels from "../cart/billing/PayBillsModels";
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedCustomer } from "../../../action/actions";
+import { setSelectedCustomer, clearSelectedCustomer } from "../../../action/actions";
 
 const CustomersSearch = () => {
   const dispatch = useDispatch();
@@ -132,16 +132,15 @@ const CustomersSearch = () => {
   // clickoutside to hide the search suggestions
   const ref = useRef(null);
 
-  // const handleClearSelectedCustomer = () => {
-  //   setSelectedCustomer(null);
-  //   setFocusedIndex(-1); // Reset focused index
-  //   console.log(setSelectedCustomer(null))
-  // };
-
   const handleClearSelectedCustomer = () => {
-    setSelectedCustomer(null);
+    dispatch(clearSelectedCustomer()); // Dispatch the action to clear selected customer
+    setQuery(""); // Clear the search input data
     setFocusedIndex(-1); // Reset focused index
-    console.log('clear customer')
+    
+    // Focus on the customer search input
+    if (customerSearchInputRef.current) {
+      customerSearchInputRef.current.focus();
+    }
   };
 
   useEffect(() => {
@@ -312,7 +311,7 @@ const CustomersSearch = () => {
                         data-original-title="Clear Selected Accounts<br>[ Shift + C ]"
                         onClick={handleClearSelectedCustomer} // Update the click handler
                       >
-                        <i className="fa fa-times"></i> clear
+                        <i className="fa fa-times"></i>
                       </button>
                     </CTooltip>
                   </div>
@@ -330,7 +329,7 @@ const CustomersSearch = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 ref={customerSearchInputRef} // Make sure this is correctly placed
-              />
+                />
             </CInputGroup>
             <div className="product-list-abslute" ref={ref}>
               {loading && <div style={{ background: "white" }}>Loading...</div>}

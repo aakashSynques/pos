@@ -238,7 +238,6 @@ const RecentInvoice = () => {
         recentBooking={recentBooking}
       />
       <RecentPrintModal
-        recentBooking={recentBooking}
         printBooking={printBooking}
         setPrintBooking={setPrintBooking}
         invoiceDetails={invoiceDetails}
