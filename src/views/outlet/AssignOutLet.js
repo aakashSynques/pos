@@ -16,6 +16,8 @@ import {
   setSelectedOutletId,
   setSelectedOutletData,
 } from "../../action/actions";
+import DeliveryModeModal from "../outlet/DeliveryModeModal"; // Import the DeliveryModeModal component
+
 import { BallTriangle } from "react-loader-spinner";
 
 // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
@@ -25,10 +27,13 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
   const [selectedOutlet, setSelectedOutlet] = useState(null);
   const [outletListdata, setOutletListdata] = useState([]);
   const [networkError, setNetworkError] = useState(false);
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false); // Control DeliveryModeModal visibility
+
   // Function to toggle the outlet modal visibility and fetch data if not already fetched
   const toggleOutletModal = () => {
-    // console.log("Toggling outletmodel");
     setOutletmodel((prevState) => !prevState);
+    setShowDeliveryModal(true); // Show the delivery modal when outlet modal is closed
+
   };
 
   const dispatch = useDispatch();
@@ -91,10 +96,8 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
   return (
     <>
       {/* oulet model */}
-      <CButton
-        className="gray-outlet"
-        onClick={toggleOutletModal}
-      >
+      <CButton className="gray-outlet" onClick={toggleOutletModal}>
+
         <b>OUTLET - [F1]</b> <br />
         {selectedOutlet && (
           <div>
@@ -149,6 +152,15 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
           </CContainer>
         </CModalBody>
       </CModal>
+
+   {/* DeliveryModeModal */}
+    {/* DeliveryModeModal */}
+    {showDeliveryModal && (
+        <DeliveryModeModal
+          onClose={() => setShowDeliveryModal(false)} // Close DeliveryModeModal
+          onOpen={() => setOutletmodel(true)} // Open AssignOutLet modal
+        />
+      )}
     </>
   );
 };

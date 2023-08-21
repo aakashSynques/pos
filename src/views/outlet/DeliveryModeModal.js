@@ -10,7 +10,7 @@ import { fetch } from "../../utils";
 import { useDispatch, useSelector } from "react-redux"; // Import these
 import { selectDelivery } from "../../action/actions"; // Import the action
 
-const KOTDeliveryModeModal = () => {
+const DeliveryModeModal = ({ onClose, onOpen }) => {
   const [deliverymodel, setDeliverymodel] = useState(false);
   const [deliveryListdata, setDeliveryListdata] = useState([]);
   const dispatch = useDispatch(); // Initialize the dispatch function
@@ -56,11 +56,15 @@ const KOTDeliveryModeModal = () => {
 
   return (
     <>
-      <CButton
+       <CButton
         className="gray-outlet"
-        // color="light"
-        onClick={() => setDeliverymodel(!deliverymodel)}
+        onClick={() => {
+          setDeliverymodel(false); // Close the DeliveryModeModal
+          onClose(); // Handle further behavior (e.g., show AssignOutLet modal)
+          onOpen(); // Open the AssignOutLet modal
+        }}
       >
+
         <b>DELIVERY - [F2]</b> <br />
         <div>
           <p style={{ color: "#09a30e" }}>{selectedDelivery}</p>
@@ -100,4 +104,4 @@ const KOTDeliveryModeModal = () => {
   );
 };
 
-export default KOTDeliveryModeModal;
+export default DeliveryModeModal;
