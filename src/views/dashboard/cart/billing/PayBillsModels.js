@@ -25,10 +25,16 @@ const PayBillsModels = ({
   totalItem,
   selectedCustomer, // Access selectedCustomer prop
   anyNotesContent, // Receive the note content
-
 }) => {
-  // const selectedCustomer = useSelector((state) => state.selectedCustomer);
-  const selectedDelivery = useSelector((state) => state.delivery.selectedDelivery);
+  const selectedDelivery = useSelector(
+    (state) => state.delivery.selectedDelivery
+  );
+
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const setPayment = (paymentMode) => {
+    setSelectedPayment(paymentMode);
+  };
+
   return (
     <>
       <CContainer>
@@ -121,8 +127,8 @@ const PayBillsModels = ({
             <CRow className="billing-note">
               <CCol sm={5}>
                 <b>Delivery Mode</b> <br />
-                <div>{selectedDelivery}</div> 
-                <b >DateTime : </b> <div>{new Date().toLocaleString()}</div>
+                <div>{selectedDelivery}</div>
+                <b>DateTime : </b> <div>{new Date().toLocaleString()}</div>
                 <b>Note</b>
               </CCol>
 
@@ -156,48 +162,88 @@ const PayBillsModels = ({
                 <hr className="borders" />
                 <CRow className="pb-1 text-success">
                   <CCol sm={7}>
-                    <b size="2">Payable Amount</b>
+                    <b size="2" style={{ color: "#26B99A" }}>
+                      Payable Amount
+                    </b>
                   </CCol>
                   <CCol sm={5} className="text-right">
-                    <b>
-                      {" "}
+                    <b style={{ color: "#26B99A" }}>
                       <i className="fa fa-inr"></i> {finalPayAmount}
                     </b>
                   </CCol>
                 </CRow>
                 <hr className="borders" />
-                <center className="alert text-danger p-1 m-1">
-                  ** Please select the payment mode.
-                </center>
+                {/* {!showAlert && (
+                  <center className="alert text-danger p-1 m-1">
+                    ** Please select the payment mode.
+                  </center>
+                )} */}
+
                 <CRow>
-                  <CCol sm={1}>
-                    <CButton className="btn-invisible p-0">
-                      <i className="fa fa-trash fa-xs"></i>
-                    </CButton>
+                  {selectedPayment && (
+                    <>
+                      <CCol sm={1}>
+                        <CButton className="btn-invisible p-0">
+                          <i className="fa fa-trash fa-xs"></i>
+                        </CButton>
+                      </CCol>
+                      <CCol sm={3}>
+                        <b>{selectedPayment === 1 ? "Cash" : ""}</b>
+                      </CCol>
+                      <CCol sm={5}>
+                        <input
+                          type="text"
+                          className="form-control input-sm rounded-0"
+                          placeholder="Extra information"
+                          autocomplete="off"
+                          style={{
+                            height: "21px",
+                            border: "none",
+                            fontSize: "13px",
+                          }}
+                        />
+                      </CCol>
+                      <CCol sm={3} className="text-right">
+                        <input
+                          type="number"
+                          maxlength="6"
+                          className="form-control p-0 text-end rounded-0"
+                          autocomplete="off"
+                        />
+                      </CCol>
+                    </>
+                  )}
+                </CRow>
+
+                <hr
+                  className="mt-2"
+                  style={{ margin: "0px", padding: "0px" }}
+                ></hr>
+                <CRow className="p-2">
+                  <CCol md="1" sm="1" xs="1" className="text-left">
+                    &nbsp;
                   </CCol>
-                  <CCol sm={2}>
-                    <b>Cash</b>
+                  <CCol
+                    sm={7}
+                    className="text-right"
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: "bold",
+                      color: "red",
+                    }}
+                  >
+                    Balance
                   </CCol>
-                  <CCol sm={5}>
-                    <input
-                      type="text"
-                      className="form-control input-sm rounded-0"
-                      placeholder="Extra information"
-                      autocomplete="off"
+                  <CCol md="4" sm="4" xs="4" className="text-right">
+                    <span
                       style={{
-                        height: "21px",
-                        border: "none",
-                        fontSize: "13px",
+                        fontSize: "18px",
+                        fontWeight: "bold",
+                        color: "red",
                       }}
-                    />
-                  </CCol>
-                  <CCol sm={3}>
-                    <input
-                      type="number"
-                      className="form-control p-0 text-end rounded-0"
-                      autocomplete="off"
-                      value="0"
-                    />
+                    >
+                      <i className="fa fa-inr"></i> 200.00
+                    </span>
                   </CCol>
                 </CRow>
               </CCol>
@@ -207,35 +253,16 @@ const PayBillsModels = ({
             <CRow className="pt-2">
               {/* payment mode button */}
               <CCol sm={8} className="pay-mode-btn p-0">
-                <CButton type="button" color="light" tabIndex="0">
+                <CButton
+                  type="button"
+                  color={selectedPayment === 1 ? "success" : "light"}
+                  tabIndex="0"
+                  onClick={() => setPayment(1)}
+                >
                   Cash
                 </CButton>
-                <CButton type="button" color="light">
-                  HDFC QR{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  HDFC CC{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  Plutus CC{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  PayTm{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  PhonePe{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  Swiggy Dineout{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  NEFT{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  Cheque{" "}
-                </CButton>
-                <CButton type="button" color="light">
-                  Wallet{" "}
+                <CButton type="button" color="light" onclick="setPayment(26)">
+                  HDFC QR
                 </CButton>
 
                 <hr className="borders" />

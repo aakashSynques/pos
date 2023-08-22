@@ -11,15 +11,41 @@ import {
   CModalTitle,
   CFormLabel,
 } from "@coreui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+
 
 const DeliveryOnTable = ({
   selectedCustomer, // Declare the prop for selectedCustomer
   cartItems, // Declare the prop for cartItems
-  subtotal,
 }) => {
   const [visible, setVisible] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(""); // Add this line
+  const customerSearchInputRef = useRef(null); // Create a ref for the customer search input
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.altKey && event.key === "k") {
+        handleKOTBtn();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const handleKOTBtn = () => {
+    if (selectedCustomer) {
+      setVisible(!visible);
+    } else {
+      toast.error("Enter Customer Name First");
+      if (customerSearchInputRef.current) {
+        customerSearchInputRef.current.focus(); // Focus on the input element
+      }
+    }
+  };
 
   return (
     <>
@@ -31,6 +57,8 @@ const DeliveryOnTable = ({
               aria-label="Default select example"
               className="form-control rounded-0"
               style={{ width: "80px", float: "right", height: "33px" }}
+              value={selectedTable} // Set the selected value
+              onChange={(e) => setSelectedTable(e.target.value)} // Update the selected table
             >
               <option value="">-</option>
               <option value="1">1</option>
@@ -56,18 +84,19 @@ const DeliveryOnTable = ({
             </CFormSelect>
           </CCol>
           <CCol sm={6}>
-            <CButton
-              class="btn btn-info btn-sm btn-block text-left text-white w-100"
-              type="button"
-              style={{ backgroundColor: "#5bc0de" }}
-              onClick={() => setVisible(!visible)}
-            >
-              Create KOT <font size="1">[ Alt + K ]</font>
-            </CButton>
+            {cartItems.length > 0 && (
+              <CButton
+                className="btn btn-info btn-sm btn-block text-left text-white w-100"
+                type="button"
+                style={{ backgroundColor: "#5bc0de" }}
+                onClick={handleKOTBtn}
+              >
+                Create KOT <font size="1">[ Alt + K ]</font>
+              </CButton>
+            )}
           </CCol>
         </CRow>
       </CContainer>
-
       {/* Kot model */}
       <CModal
         visible={visible}
@@ -97,7 +126,7 @@ const DeliveryOnTable = ({
               </font>
             </CCol>
             <CCol sm={6}>
-              <h6 className="text-end pt-2">On Table : 3</h6>
+              <h6 className="text-end pt-2">On Table : {selectedTable}</h6>
             </CCol>
           </CRow>
 
@@ -158,8 +187,7 @@ const DeliveryOnTable = ({
             ))}
           </CRow>
           <CRow className="kot-border-top mt-2">
-            {" "}
-            <b>Note :</b>{" "}
+            <b>Note :</b>
           </CRow>
         </CModalBody>
         <CModalFooter>

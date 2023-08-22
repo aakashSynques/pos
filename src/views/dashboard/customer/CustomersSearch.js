@@ -14,7 +14,10 @@ import EditCustomerProfile from "./EditCustomerProfile";
 import CustAccountsModel from "./CustAccountsModel";
 import PayBillsModels from "../cart/billing/PayBillsModels";
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedCustomer, clearSelectedCustomer } from "../../../action/actions";
+import {
+  setSelectedCustomer,
+  clearSelectedCustomer,
+} from "../../../action/actions";
 
 const CustomersSearch = () => {
   const dispatch = useDispatch();
@@ -32,6 +35,8 @@ const CustomersSearch = () => {
   const [accountModel, setAccountModel] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1); // Initialize focusedIndex
   const customerSearchInputRef = useRef(null); // Create a ref for the customer search input
+
+  
 
   const customTooltipStyle = {
     "--cui-tooltip-bg": "var(--cui-primary)",
@@ -90,17 +95,17 @@ const CustomersSearch = () => {
       json: { ...prevCustomer.json, ...updatedData },
     }));
   };
-
+  
   // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
     setQuery(customerName);
     const selectedCustomer = customerSearchResults.find(
       (customer) => customer.value === customerName
     );
-    // setSelectedCustomer(selectedCustomer); // Local state update
     dispatch(setSelectedCustomer(selectedCustomer));
-    console.log("selectedCustomer:", selectedCustomer.json);
+    console.log("selectedCustomer:", selectedCustomer);
   };
+
   // Function to handle when the "Edit" button is clicked for a selected customer
   const handleEditCustomer = () => {
     if (selectedCustomer) {
@@ -136,7 +141,7 @@ const CustomersSearch = () => {
     dispatch(clearSelectedCustomer()); // Dispatch the action to clear selected customer
     setQuery(""); // Clear the search input data
     setFocusedIndex(-1); // Reset focused index
-    
+
     // Focus on the customer search input
     if (customerSearchInputRef.current) {
       customerSearchInputRef.current.focus();
@@ -236,7 +241,7 @@ const CustomersSearch = () => {
   return (
     <>
       <div className="customer-sarch-sec">
-        {selectedCustomer ? (
+            {selectedCustomer ? (
           <div>
             <CRow>
               <CCol sm={6}>
@@ -329,7 +334,7 @@ const CustomersSearch = () => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 ref={customerSearchInputRef} // Make sure this is correctly placed
-                />
+              />
             </CInputGroup>
             <div className="product-list-abslute" ref={ref}>
               {loading && <div style={{ background: "white" }}>Loading...</div>}

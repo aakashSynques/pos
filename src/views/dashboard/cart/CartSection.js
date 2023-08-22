@@ -408,14 +408,16 @@ const CartSection = () => {
         )}
       </div>
 
-      <div className="deliveryOnTable">
-        <hr style={{ margin: "0px" }} />
-        <KOTDeliveryOnTable
-          selectedCustomer={selectedCustomer}
-          cartItems={cartItems}
-          subtotal={getSubTotalAmount()}
-        />
-      </div>
+      {selectedDelivery === "On Table" && (
+        <>
+          <hr style={{ margin: "0px" }} />
+          <KOTDeliveryOnTable
+            selectedCustomer={selectedCustomer}
+            cartItems={cartItems}
+            subtotal={getSubTotalAmount()}
+          />
+        </>
+      )}
 
       {/* price Table   */}
       <hr style={{ margin: "0px" }} />
@@ -475,7 +477,7 @@ const CartSection = () => {
                     PAY <font size="1">[ Shift + Enter ]</font>
                   </button>
                 </div>
-                <div className="col-sm-6 font-size pl-0">
+                {/* {selectedDelivery === "On Table" && (
                   <button
                     className="btn pay-btn btn-warning"
                     type="button"
@@ -483,7 +485,20 @@ const CartSection = () => {
                   >
                     BOOKING <font size="1"></font>
                   </button>
-                </div>
+                )} */}
+
+                {selectedDelivery === "PickUp" ||
+                selectedDelivery === "Home Delivery" ? (
+                  <div className="col-sm-6 font-size pl-0">
+                    <button
+                      className="btn pay-btn btn-warning"
+                      type="button"
+                      disabled={isCartEmpty || !selectedCustomer}
+                    >
+                      BOOKING <font size="1"></font>
+                    </button>
+                  </div>
+                ) : null}
               </CRow>
             </CCol>
 
@@ -513,8 +528,6 @@ const CartSection = () => {
           </CRow>
         </CContainer>
       </div>
-
-      {/* pay bills model */}
       {/* pay bills model */}
       <PayBillsModels
         visible={paybillsModel}
