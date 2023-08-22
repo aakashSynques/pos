@@ -13,6 +13,207 @@ import {
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
+import ReactToPrint from "react-to-print";
+
+const PrintContent = React.forwardRef(({ selectedCustomer }, ref) => {
+  const selectedOutletObj = useSelector(
+    (state) => state.selectedOutlet.selectedOutlet
+  );
+  // const invoice_no = invoiceDetails && Object.keys(invoiceDetails)[0];
+ 
+
+
+
+
+  return (
+    <div ref={ref} >
+            <div className="text-center">
+              <strong style={{ fontSize: "1.5em" }}>
+                   {selectedOutletObj && selectedOutletObj.outlet_business_name}
+              </strong>
+              <br />
+              <span>
+                {selectedOutletObj && selectedOutletObj.outlet_address},{" "}
+                {selectedOutletObj && selectedOutletObj.outlet_city} -
+              </span>
+              <br />
+              <span>{selectedOutletObj && selectedOutletObj.outlet_zip}</span>
+              <p>{selectedOutletObj && selectedOutletObj.outlet_contact_no}</p>
+              <p
+                style={{
+                  borderBottomStyle: "dashed",
+                  marginTop: "1%",
+                  borderColor: "black",
+                  marginBottom: "1%",
+                  borderWidth: "1px",
+                }}
+              >
+                {/* {deliveryMode == "4" ? " BILL OF SUPPLY" : "TAX INVOICE"} */}
+                 <b>TAX INVOICE</b> 
+              </p>
+            </div>
+
+            <CContainer>
+              <CRow>
+              <CCol className="text-start">
+                    <span>Invoice#: </span>
+                    <br />
+                    <strong>BNS/I2/2324/2206</strong>
+                    <p>{new Date().toLocaleString()}</p>
+                  </CCol>
+                  <CCol className="text-end">
+                    <p>
+                      {selectedCustomer && selectedCustomer.json.customer_name}
+                      <br />
+                      {selectedCustomer && selectedCustomer.json.mobile}
+                      <br />
+                      <span className="text-start">delivery mode </span>
+                    </p>
+                  </CCol>
+                  <p
+                    style={{
+                      borderBottomStyle: "dashed",
+                      marginTop: "1%",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                      marginBottom: "6px",
+                    }}
+                  />
+              </CRow>
+              <CRow className="text-start">
+                {}
+                <CCol xs={1}>Qty</CCol>
+                <CCol xs={9} className="text-start">
+                  Discription
+                </CCol>
+                <CCol xs={2} className=" text-center">
+                  Rate
+                </CCol>
+                <p
+                  style={{
+                    borderBottomStyle: "dashed",
+                    marginTop: "1%",
+                    borderColor: "black",
+                    borderWidth: "1px",
+                  }}
+                ></p>
+              </CRow>
+
+
+              <CRow>
+                        <CCol xs={1}>1</CCol>
+                        <CCol xs={9} className="text-start">
+                          <CRow>
+                            <CCol xs={10} className=" text-start">
+                              prode name
+                            </CCol>
+                          </CRow>
+                        </CCol>
+                        <CCol xs={2} className="text-center">
+                          {/* {Number(item.prod_rate).toFixed(2)} */}
+                          200.00
+                        </CCol>
+                <p
+                  style={{
+                    borderBottomStyle: "dashed",
+                    marginTop: "1%",
+                    borderColor: "black",
+                    borderWidth: "1px",
+                  }}
+                ></p>
+              </CRow>
+
+
+              <CRow>
+                <CCol xs={3} className="text-start">
+                   <span>Item(s)</span>
+                </CCol>
+                <CCol xs={7} className="text-end ">
+                  Sub Total
+                </CCol>
+                <CCol xs={2} className="text-end ">
+                  500.00
+                  <p
+                    style={{
+                      borderBottomStyle: "dashed",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
+                  ></p>
+                </CCol>
+              </CRow>
+
+
+              <CRow>
+                <CCol xs={10} className="text-end ">
+                  {/* {cartSumUp && cartSumUp.taxsplitGST[0].taxPercent}%{" "}
+                  {cartSumUp && cartSumUp.taxsplitGST[0].taxType}  */}
+                  2.5% SGST on GST
+                </CCol>
+                <CCol xs={2} className="text-end ">
+                  {/* {Number(cartSumUp && cartSumUp.taxsplitGST[0].tax).toFixed(2)} */}
+                  7.50
+
+                 
+                </CCol>
+              </CRow>
+              <CRow>
+                <CCol xs={10} className="text-end ">
+                  {/* {cartSumUp && cartSumUp.taxsplitGST[0].taxPercent}%{" "}
+                  {cartSumUp && cartSumUp.taxsplitGST[0].taxType}  */}
+                  2.5% CGST on GST
+                </CCol>
+                <CCol xs={2} className="text-end ">
+                  {/* {Number(cartSumUp && cartSumUp.taxsplitGST[0].tax).toFixed(2)} */}
+                  7.50
+                  <p
+                    style={{
+                      borderBottomStyle: "dashed",
+                      borderColor: "black",
+                      borderWidth: "1px",
+                    }}
+                  ></p>
+                </CCol>
+               
+              </CRow>
+              <CRow>
+              <CCol xs={10} className="text-end ">
+                  <h5><b>Bill Total</b></h5> 
+                </CCol>
+                <CCol xs={2} className="text-end ">
+                  {/* {Number(cartSumUp && cartSumUp.grandTotal).toFixed(2)} */}
+                <h5><b>315.00</b></h5>  
+                </CCol>
+                <p
+                  style={{
+                    borderBottomStyle: "dashed",
+                    marginTop: "1%",
+                    borderColor: "black",
+                    borderWidth: "1px",
+                  }}
+                ></p>
+              </CRow>
+              <CRow className="persion-details">
+                  <p>Sales Person : Naveen</p>
+                  <p>Laxmi Hot Bakers Private Limited</p>
+                  <p>Laxmi Hot Bakers Private Limited</p>
+                  <p>GSTN - 123456788 </p>
+                  <p>PAN - AA2143</p>
+                  <p>Fssai- 12345678</p>
+                  <p>CIN - U123455W</p>
+                  <p>HSN - u840</p>
+
+                  <p className="text-center">Thank You , Visit Again , www.bakenshake.in</p>
+              </CRow>
+             
+
+            </CContainer>
+
+
+            
+    </div>
+  );
+});
 
 const PayBillsModels = ({
   visible,
@@ -31,9 +232,14 @@ const PayBillsModels = ({
   );
 
   const [selectedPayment, setSelectedPayment] = useState(null);
+  const [isPaymentSelected, setIsPaymentSelected] = useState(false); // Step 1
+
   const setPayment = (paymentMode) => {
     setSelectedPayment(paymentMode);
+    setIsPaymentSelected(true); // Step 2
   };
+  const printComponentRef = useRef();
+
 
   return (
     <>
@@ -173,12 +379,12 @@ const PayBillsModels = ({
                   </CCol>
                 </CRow>
                 <hr className="borders" />
-                {/* {!showAlert && (
-                  <center className="alert text-danger p-1 m-1">
-                    ** Please select the payment mode.
-                  </center>
-                )} */}
+             
 
+
+                <center className="text-danger p-1 m-1">
+            {isPaymentSelected ? null : "** Please select the payment mode."}
+          </center>
                 <CRow>
                   {selectedPayment && (
                     <>
@@ -281,18 +487,47 @@ const PayBillsModels = ({
                 </CButton>
               </CCol>
               <CCol sm={4} className="pr-1">
-                <CButton
+                {/* <CButton
                   color="success"
                   style={{ fontSize: "10px", width: "100%" }}
                 >
                   <b>FINALIZE ORDER </b>
                   <br />[ Ctrl + Enter ]
-                </CButton>
+                </CButton> */}
+                 <ReactToPrint
+  trigger={() => (
+    <CButton
+      color="success"
+      style={{ fontSize: "10px", width: "100%" }}
+    >
+      <b>FINALIZE ORDER </b>
+      <br />[ Ctrl + Enter ]
+    </CButton>
+  )}
+  content={() => printComponentRef.current}
+/>
               </CCol>
             </CRow>
           </CModalFooter>
         </CModal>
       </CContainer>
+
+
+
+      <div>
+        <PrintContent
+          ref={printComponentRef}
+          selectedCustomer={selectedCustomer}
+          // cartItems={cartItems}
+          // selectedDelivery={selectedDelivery}
+          // subtotal={subtotal}
+          // totalSGST={totalSGST}
+          // totalCGST={totalCGST}
+          // finalPayAmount={finalPayAmount}
+          // totalItem={totalItem}
+          // selectedPayment={selectedPayment}
+        />
+      </div>
     </>
   );
 };
