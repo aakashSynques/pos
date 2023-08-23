@@ -436,14 +436,14 @@ const PayBillsModels = ({
                   )}
                   content={() => printComponentRef.current}
                 />
-                <CButton
+                {/* <CButton
                   color="success"
                   style={{ fontSize: "10px", width: "100%" }}
                   onClick={finalizeOrder} // Call the finalizeOrder function
                 >
                   <b>FINALIZE ORDER </b>
                   <br />[ Ctrl + Enter ]
-                </CButton>
+                </CButton> */}
               </CCol>
             </CRow>
           </CModalFooter>
