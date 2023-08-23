@@ -158,6 +158,14 @@ const ProductsSearchBar = () => {
     dispatch(addToCart(cartItemsArray, ...cartItemData));
   };
 
+    // ... Your existing code ...
+
+
+
+
+
+
+
   // //////////////////// click outside ///////////////////////////
   const [clickedOut, setClickedOut] = useState(false);
   const ref = useRef(null);

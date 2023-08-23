@@ -17,9 +17,9 @@ import {
 } from "@coreui/react";
 import React from "react";
 import { useState } from "react";
-import Delivered from "../../invoicesj/bookingtables/Delivered";
-import Pending from "../../invoicesj/bookingtables/Pending";
-import Future from "../../invoicesj/bookingtables/Future";
+import Delivered from "../../invoices/bookingtables/Delivered";
+import Pending from "../../invoices/bookingtables/Pending";
+import Future from "../../invoices/bookingtables/Future";
 
 function PendingTabModal({
   bookingModal,

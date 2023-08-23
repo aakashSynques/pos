@@ -235,7 +235,6 @@ const CartSection = () => {
     // console.log(selectedToppings, "selectedToppings");
 
     const cartItemData = selectedToppings.map((item) => {
-      // console.log(item, "selectedToppings");
       return {
         prod_id: item.prod_id,
         prod_code: item.prod_code,
@@ -289,6 +288,8 @@ const CartSection = () => {
     setToppingModel(false); // Close the toppings model after submitting
     setSelectedToppings([]);
   };
+
+
 
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
