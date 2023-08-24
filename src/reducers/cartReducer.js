@@ -7,6 +7,7 @@ import {
   SET_TOPPING_URNO,
   SET_IS_PARCEL,
   UPDATE_CUSTOMIZED,
+  CLEAR_CART_ITEMS,
 } from "../action/actionTypes";
 
 const initialState = {
@@ -57,6 +58,12 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         cartItems: action.payload,
+      };
+
+      case CLEAR_CART_ITEMS:
+      return {
+        ...state,
+        cartItems: [], // Clear the cart items
       };
 
     default:

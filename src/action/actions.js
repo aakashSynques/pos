@@ -17,7 +17,7 @@ import {
   SET_SELECTED_CUSTOMER,
   CLEAR_SELECTED_CUSTOMER,
   SELECT_DELIVERY,
-
+  CLEAR_CART_ITEMS,
 } from "./actionTypes";
 
 // helper functions start
@@ -374,3 +374,7 @@ export const selectDelivery = (deliveryName) => {
     payload: deliveryName,
   };
 };
+
+export const clearCartItems = () => ({
+  type: CLEAR_CART_ITEMS,
+});

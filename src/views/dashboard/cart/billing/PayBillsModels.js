@@ -12,14 +12,19 @@ import {
   CFormInput,
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,  useDispatch } from "react-redux";
 import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Import the PrintContent component.
 import IPAddressData from "./IPAddressData"; // Import the IPAddressData component
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// import '../../../../utils/'
+import {
+  clearCartItems
+} from "../../../../action/actions";
+
+
+
 
 const PayBillsModels = ({
   visible,
@@ -33,6 +38,9 @@ const PayBillsModels = ({
   selectedCustomer, // Access selectedCustomer prop
   anyNotesContent, // Receive the note content
 }) => {
+  const dispatch = useDispatch();
+
+
   const selectedDelivery = useSelector(
     (state) => state.delivery.selectedDelivery
   );
@@ -88,12 +96,9 @@ const PayBillsModels = ({
     setIsPaymentSelected(true); // Step 2
   };
   const printComponentRef = useRef();
-  const [shouldPrint, setShouldPrint] = useState(false);
 
   const finalizeOrder = async () => {
     try {
-      setSubmissionInProgress(true); // Start the submission process
-
       const token = localStorage.getItem("pos_token");
       const url = "http://posapi.q4hosting.com/api/sales/finalizeSales";
       const headers = {
@@ -119,7 +124,9 @@ const PayBillsModels = ({
       if (!response.ok) {
         toast.success("Order finalized successfully!", {
           position: toast.POSITION.TOP_RIGHT,
-        });
+        }); 
+        dispatch(clearCartItems());
+        console.log('cler',clearCartItems())       
         const responseData = await response.json(); // Parse the error response
         console.error("Error Response Data:", responseData);
         throw new Error("Network response was not ok");
@@ -127,13 +134,10 @@ const PayBillsModels = ({
 
       const responseData = await response.json();
       console.log("Response:", responseData);
-      setSubmissionInProgress(false); // Submission process completed
+      printComponentRef.current = true;
       onClose();
-      // setApiSubmissionSuccess(true);
-      // setShouldPrint(true);
     } catch (error) {
       console.error("Error:", error);
-      setSubmissionInProgress(false); // Submission process completed (with error)
     }
   };
 
@@ -144,13 +148,6 @@ const PayBillsModels = ({
   else if (selectedDelivery == "PickUp") { deliveryId = 3 }
   else { deliveryId = 4 } console.log("id", deliveryId)
 
-  console.log("id", deliveryId)
-  useEffect(() => {
-    if (shouldPrint) {
-      // If shouldPrint is true, trigger printing
-      printComponentRef.current.print();
-    }
-  }, [shouldPrint]);
 
   const selectedCustomersJson =
     selectedCustomer && selectedCustomer.json
@@ -453,7 +450,46 @@ const PayBillsModels = ({
                 </CButton>
               </CCol>
               <CCol sm={4} className="pr-1">
-                {/* <CButton
+              <ReactToPrint
+  trigger={() => (
+    <CButton
+      color="success"
+      style={{ fontSize: "10px", width: "100%" }}
+      disabled={submissionInProgress}
+            onClick={() => finalizeOrder()} // Call the finalizeOrder function
+
+    >
+      {submissionInProgress ? (
+        <>
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          <span className="sr-only">Loading...</span>
+        </>
+      ) : (
+        <>
+          <b>FINALIZE ORDER</b>
+          <br />[ Ctrl + Enter ]
+        </>
+      )}
+      <ToastContainer />
+    </CButton>
+  )}
+  content={() => printComponentRef.current}
+  onBeforePrint={() => {
+    setSubmissionInProgress(true); // Set submission in progress
+    finalizeOrder(); // Call your submission function
+  }}
+  onAfterPrint={() => {
+    // Handle any post-printing logic here
+    setSubmissionInProgress(false); // Reset submission state if needed
+  }}
+/>
+
+                                
+          {/* <CButton
                   color="success"
                   style={{ fontSize: "10px", width: "100%" }}
                   onClick={finalizeOrder}
@@ -476,9 +512,8 @@ const PayBillsModels = ({
                   )}
                   <ToastContainer />
                 </CButton> */}
-
                                 
-                <ReactToPrint
+                                {/* <ReactToPrint
                   trigger={() => (
                     <CButton
                       color="success"
@@ -490,7 +525,7 @@ const PayBillsModels = ({
                     </CButton>
                   )}
                   content={() => printComponentRef.current} // Pass the ref of the PrintContent component
-                />
+                /> */}
               </CCol>
             </CRow>
           </CModalFooter>
@@ -498,6 +533,9 @@ const PayBillsModels = ({
       </CContainer>
 
       <IPAddressData ref={ipAddressComponentRef} />
+      {/* {printComponentRef.current && (
+        <PrintComponent cartSumUp={cartSumUp} />
+      )} */}
 
       <div className="d-none">
         <PrintContent
