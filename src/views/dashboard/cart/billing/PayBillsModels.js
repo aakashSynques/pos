@@ -16,6 +16,8 @@ import { useSelector } from "react-redux";
 import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Import the PrintContent component.
 import IPAddressData from "./IPAddressData"; // Import the IPAddressData component
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // import '../../../../utils/'
 
 const PayBillsModels = ({
@@ -36,7 +38,12 @@ const PayBillsModels = ({
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
+  console.log("selected outlet", selectedOutletId);
 
+  const selectedOutletObj = useSelector(
+    (state) => state.selectedOutlet.selectedOutlet
+  );
+  console.log("selectedOutletObj:", selectedOutletObj && selectedOutletObj.eby);
 
   const ipAddressComponentRef = useRef(); // Create a ref to access the IPAddressData component
   const publicIp = ipAddressComponentRef.current?.getPublicIp(); // Access the getPublicIp function
@@ -48,10 +55,30 @@ const PayBillsModels = ({
       setUser(JSON.parse(storedUser));
     }
   }, []);
-
+  console.log("login user", user);
 
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isPaymentSelected, setIsPaymentSelected] = useState(false); // Step 1
+  const [isPaymentSelected, setIsPaymentSelected] = useState(false);
+  const [payAmountValue, setPayAmountValue] = useState(""); // Add payAmount state
+  const handlePayAmountKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setPayAmountValue(e.target.value);
+    }
+  };
+  // console.log("pay amount", payAmountValue);
+
+  const taxableAmount = subtotal; // The total amount before taxes
+  const sgstRate = 0.025; // SGST tax rate (2.5%)
+  const cgstRate = 0.025; // CGST tax rate (2.5%)
+  const sgstAmount = taxableAmount * sgstRate; // Calculate SGST amount
+  const cgstAmount = taxableAmount * cgstRate; // Calculate CGST amount
+  const alltax = sgstAmount + cgstAmount;
+  console.log("all tax", alltax);
+  const resetPayment = () => {
+    setSelectedPayment(null);
+    setIsPaymentSelected(false);
+    setPayAmountValue("");
+  };
 
   const setPayment = (paymentMode) => {
     setSelectedPayment(paymentMode);
@@ -61,7 +88,6 @@ const PayBillsModels = ({
 
   const finalizeOrder = async () => {
     try {
-      console.log("Starting finalizeOrder function");
       const token = localStorage.getItem("pos_token");
       const url = "http://posapi.q4hosting.com/api/sales/finalizeSales";
       const headers = {
@@ -69,8 +95,8 @@ const PayBillsModels = ({
         "Content-Type": "application/json",
       };
       const requestBody = {
-        productsInCart: cartItems[0], // Fill with actual cart items
-        selectedCustomerJson: selectedCustomer, // Fill with selected customer data
+        productsInCart: [cartItems[0]], // Fill with actual cart items
+        selectedCustomerJson: selectedCustomersJson, // Fill with selected customer data
         cartSumUp: cartSumUp, // Fill with cart summary data
         machine_id: 0,
         machine_mode: 0,
@@ -79,72 +105,81 @@ const PayBillsModels = ({
         psid: 0,
         dkotids: "",
       };
-      console.log("Before API call");
       const response = await fetch(url, {
         method: "POST",
         headers,
         body: JSON.stringify(requestBody),
       });
       if (!response.ok) {
+        toast.success("Order finalized successfully!", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        const responseData = await response.json(); // Parse the error response
+        console.error("Error Response Data:", responseData);
         throw new Error("Network response was not ok");
       }
+
       const responseData = await response.json();
       console.log("Response:", responseData);
+      onClose();
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  // const selectedCustomersJson = {
-  //   cust_id: selectedCustomer.json.cust_id,
-  //   cust_type_id: selectedCustomer.json.cust_type_id,
-  //   cust_type_name: selectedCustomer.json.cust_type_name,
-  //   customer_name: selectedCustomer.json.customer_name,
-  //   email: selectedCustomer.json.email,
-  //   mobile: selectedCustomer.json.mobile,
-  //   alt_mobile: selectedCustomer.json.alt_mobile,
-  //   address: selectedCustomer.json.address,
-  //   pincode: selectedCustomer.json.pincode,
-  //   extra_note: selectedCustomer.json.extra_note,
-  //   pan_no: selectedCustomer.json.pan_no,
-  //   gst_no: selectedCustomer.json.gst_no,
-  //   eat: selectedCustomer.json.eat,
-  //   user_name: selectedCustomer.json.user_name,
-  // };
-  // console.log("select cust", selectedCustomersJson);
-  // console.log(selectedCustomer)
+  const selectedCustomersJson =
+    selectedCustomer && selectedCustomer.json
+      ? {
+          cust_id: selectedCustomer.json.cust_id,
+          cust_type_id: selectedCustomer.json.cust_type_id,
+          cust_type_name: selectedCustomer.json.cust_type_name,
+          customer_name: selectedCustomer.json.customer_name,
+          email: selectedCustomer.json.email,
+          mobile: selectedCustomer.json.mobile,
+          alt_mobile: selectedCustomer.json.alt_mobile,
+          address: selectedCustomer.json.address,
+          pincode: selectedCustomer.json.pincode,
+          extra_note: selectedCustomer.json.extra_note,
+          pan_no: selectedCustomer.json.pan_no,
+          gst_no: selectedCustomer.json.gst_no,
+          eat: selectedCustomer.json.eat,
+          user_name: selectedCustomer.json.user_name,
+        }
+      : null;
+
+  console.log("select cust", selectedCustomersJson);
 
   const cartSumUp = {
-    invoice_id: "",
+    invoice_id: 0,
     invoice_no: "",
     items: totalItem.toString(), // The number of items in the cart
     subTotal: subtotal.toString(),
-    discountPercent: "",
-    discount: "",
+    discountPercent: 0,
+    discount: 0,
     discountType: "",
-    deliveryCharges: "",
-    tax: '',
+    deliveryCharges: 0,
+    tax: alltax,
     taxsplitGST: [
       {
         taxType: "SGST",
-        tax: totalSGST.toString(),
-        taxPercent: "",
+        tax: sgstAmount.toFixed(2), // Convert to fixed decimal places if needed
+        taxPercent: sgstRate * 100,
       },
       {
         taxType: "CGST",
-        tax: totalCGST.toString(),
-        taxPercent: "",
+        tax: cgstAmount.toFixed(2),
+        taxPercent: cgstRate * 100,
       },
       {
         taxType: "IGST",
-        tax: "",
-        taxPercent: "",
+        tax: 0,
+        taxPercent: 0,
       },
     ],
-    roundoff: "",
-    grandTotal: finalPayAmount.toString(),
+    roundoff: 0,
+    grandTotal: finalPayAmount.toFixed(2),
     outlet_id: selectedOutletId,
-    deliveryMode: "",
+    deliveryMode: 1,
     deliveryTableNo: "",
     deliveryDate: "",
     deliveryTime: "",
@@ -154,21 +189,23 @@ const PayBillsModels = ({
     deliveryModeDetails: selectedPayment,
     note: "",
     discountNote: "",
-    eby: "",
-    // salesUser: {
-    //   user_id: user.user_id,
-    //   user_name: user.user_name,
-    //   user_mobile: user.user_mobile,
-    //   user_email: user.user_email,
-    // },
+    eby: selectedOutletObj && selectedOutletObj.eby,
+    salesUser: user
+      ? {
+          user_id: user.user_id,
+          user_name: user.user_name,
+          user_mobile: user.user_mobile,
+          user_email: user.user_email,
+        }
+      : null,
     Ip: publicIp,
     Browser: window.navigator.userAgent,
     ZSU_order_no: "",
     payDetails: [
       {
-        payMode: "", // Fill in the payment mode
+        payMode: selectedPayment, // Fill in the payment mode
         payExtraInfo: "",
-        payAmount: "", // Fill in the payment amount
+        payAmount: payAmountValue, // Fill in the payment amount
       },
     ],
   };
@@ -322,7 +359,10 @@ const PayBillsModels = ({
                   {selectedPayment && (
                     <>
                       <CCol sm={1}>
-                        <CButton className="btn-invisible p-0">
+                        <CButton
+                          className="btn-invisible p-0"
+                          onClick={() => resetPayment()}
+                        >
                           <i className="fa fa-trash fa-xs"></i>
                         </CButton>
                       </CCol>
@@ -332,22 +372,17 @@ const PayBillsModels = ({
                       <CCol sm={5}>
                         <input
                           type="text"
-                          className="form-control input-sm rounded-0"
+                          className="form-control input-sm rounded-0 extra-info"
                           placeholder="Extra information"
-                          autocomplete="off"
-                          style={{
-                            height: "21px",
-                            border: "none",
-                            fontSize: "13px",
-                          }}
                         />
                       </CCol>
                       <CCol sm={3} className="text-right">
                         <input
                           type="number"
-                          maxlength="6"
+                          value={payAmountValue}
                           className="form-control p-0 text-end rounded-0"
-                          autocomplete="off"
+                          onChange={(e) => setPayAmountValue(e.target.value)} // Update payAmount state
+                          onKeyDown={handlePayAmountKeyDown} // Handle Enter key press
                         />
                       </CCol>
                     </>
@@ -358,33 +393,6 @@ const PayBillsModels = ({
                   className="mt-2"
                   style={{ margin: "0px", padding: "0px" }}
                 ></hr>
-                {/* <CRow className="p-2">
-                  <CCol md="1" sm="1" xs="1" className="text-left">
-                    &nbsp;
-                  </CCol>
-                  <CCol
-                    sm={7}
-                    className="text-right"
-                    style={{
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      color: "red",
-                    }}
-                  >
-                    Balance
-                  </CCol>
-                  <CCol md="4" sm="4" xs="4" className="text-right">
-                    <span
-                      style={{
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                        color: "red",
-                      }}
-                    >
-                      <i className="fa fa-inr"></i> 200.00
-                    </span>
-                  </CCol>
-                </CRow> */}
               </CCol>
             </CRow>
           </CModalBody>
@@ -420,30 +428,33 @@ const PayBillsModels = ({
                 </CButton>
               </CCol>
               <CCol sm={4} className="pr-1">
-                <ReactToPrint
-                  trigger={() => (
-                    <CButton
-                      color="success"
-                      style={{ fontSize: "10px", width: "100%" }}
-                      onClick={() => {
-                        finalizeOrder();
-                        console.log('click');
-                      }}
-                    >
-                      <b>FINALIZE ORDER </b>
-                      <br />[ Ctrl + Enter ]
-                    </CButton>
-                  )}
-                  content={() => printComponentRef.current}
-                />
-                {/* <CButton
+                <CButton
                   color="success"
                   style={{ fontSize: "10px", width: "100%" }}
                   onClick={finalizeOrder} // Call the finalizeOrder function
                 >
                   <b>FINALIZE ORDER </b>
                   <br />[ Ctrl + Enter ]
-                </CButton> */}
+                  <ToastContainer />
+                </CButton>
+              
+                
+                {/* <ReactToPrint
+                  trigger={() => (
+                    <CButton
+                      color="success"
+                      style={{ fontSize: "10px", width: "100%" }}
+                      onClick={finalizeOrder}
+                    >
+                      <b>FINALIZE ORDER </b>
+                      <br />[ Ctrl + Enter ]
+                      <ToastContainer />
+                    </CButton>
+                  )}
+                  content={() => printComponentRef.current} // Pass the ref of the PrintContent component
+                /> */}
+
+                
               </CCol>
             </CRow>
           </CModalFooter>

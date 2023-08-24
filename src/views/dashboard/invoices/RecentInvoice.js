@@ -23,54 +23,19 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import RecentPrintModal from "./RecentPrintModal";
 import RecentTabModal from "./RecentTabModal";
+import useFetch from "../../../custom hooks/useFetch";
 // import { setPrototypeOf } from "core-js/core/object";
 
 const RecentInvoice = () => {
   const [booking, setBooking] = useState(false);
-  const [recentBooking, setRecentBooking] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [networkError, setNetworkError] = useState(false);
+ 
   const [printBooking, setPrintBooking] = useState(false);
 
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
 
-  const getAllRecentInvoices = async () => {
-    try {
-      const token = localStorage.getItem("pos_token");
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      setLoading(true);
-      const response = await axios.post(
-        "http://posapi.q4hosting.com/api/order/recent",
-        { outlet_id },
-        { headers }
-      );
-      // console.log(response.data.recentOrders);
-      setRecentBooking(response.data.recentOrders);
-      setLoading(false);
-      setNetworkError(false);
-    } catch (err) {
-      console.log(err);
-      if (err.response.data.message == "No Recent Orders Found.") {
-        console.log("No Returned Orders Found.");
-        setNetworkError(true);
-        setLoading(false);
-      } else if (err.response.data.message == "Outlet Id Required.") {
-        setLoading(true);
-        console.log(err);
-      } else {
-        console.log(err);
-        setNetworkError(true);
-        setLoading(false);
-      }
-    }
-  };
-  useEffect(() => {
-    getAllRecentInvoices();
-  }, [outlet_id]);
+  const  { recentBooking, loading, networkError }=useFetch("http://posapi.q4hosting.com/api/order/recent",outlet_id)
 
   const [invoiceDetails, setInvoiceDetails] = useState();
 
