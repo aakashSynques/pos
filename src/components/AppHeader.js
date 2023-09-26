@@ -17,6 +17,7 @@ import { cilBell, cilEnvelopeOpen, cilList, cilMenu } from "@coreui/icons";
 // import { AppBreadcrumb } from "./index";
 import { AppHeaderDropdown } from "./header/index";
 import logos from "../assets/brand/logon.png";
+import NotificationDropDwon from "./header/NotificationDropDwon";
 
 const AppHeader = () => {
   const dispatch = useDispatch();
@@ -41,11 +42,11 @@ const AppHeader = () => {
             </CNavLink>
           </CNavItem>
         </CHeaderNav>
-        <CHeaderNav>
+        {/* <CHeaderNav>
           <CNavItem>
             <CNavLink href="#">
-              {/* <CIcon icon={cilBell} size="lg" /> */}
-              {/* togle */}
+              <CIcon icon={cilBell} size="lg" />
+              togle
             </CNavLink>
           </CNavItem>
           <CNavItem>
@@ -58,7 +59,12 @@ const AppHeader = () => {
               <CIcon icon={cilEnvelopeOpen} size="lg" />
             </CNavLink>
           </CNavItem>
+        </CHeaderNav> */}
+
+        <CHeaderNav className="ms-3">
+          <NotificationDropDwon />
         </CHeaderNav>
+
         <CHeaderNav className="ms-3">
           <AppHeaderDropdown />
         </CHeaderNav>

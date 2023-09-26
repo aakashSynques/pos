@@ -24,23 +24,29 @@ import RazorPay from "./recentsale/RazorePay";
 import Zometo from "./recentsale/Zometo";
 import Swiggy from "./recentsale/Swiggy";
 import ReturnBIll from "./recentsale/ReturnBIll";
+import { useSelector } from "react-redux";
 
-function RecentTabModal({ booking, setBooking, recentBooking }) {
+function RecentTabModal({ booking, setBooking }) {
   const [activeKey, setActiveKey] = useState(1);
+
+  const recentBooking = useSelector(
+    (state) => state.recentBooking.recentBookings
+  );
+
 
   // counter salesd Notification
   const getCountersale = () => {
     let countersaleLength = [];
-
-    recentBooking.forEach(({ sales_json }) => {
+    
+    recentBooking && recentBooking.forEach(({ sales_json }) => {
       try {
         // const sales_json = JSON.parse(sales_json);
 
         if (sales_json.cartSumUp.deliveryMode) {
           const deliveryMode = sales_json.cartSumUp.deliveryMode;
-          if (deliveryMode.length > 0) {
-            const counerTab = deliveryMode == "1" ? deliveryMode : null;
-            countersaleLength.push(counerTab);
+          if (deliveryMode > 0) {
+            const counterTab = deliveryMode == "1" ? deliveryMode : null;
+            countersaleLength.push(counterTab);
           }
         }
       } catch (error) {
@@ -53,6 +59,9 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
   };
   const counterSaleArray = getCountersale();
 
+
+
+
   // Pick Up Notification
   const getPickUp = () => {
     let pickUpLength = [];
@@ -61,7 +70,7 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
       try {
         if (sales_json.cartSumUp.deliveryMode) {
           const deliveryMode = sales_json.cartSumUp.deliveryMode;
-          if (deliveryMode.length > 0) {
+          if (deliveryMode > 0) {
             const pickUpTab = deliveryMode == "3" ? deliveryMode : null;
             pickUpLength.push(pickUpTab);
           }
@@ -85,7 +94,7 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
       try {
         if (sales_json.cartSumUp.deliveryMode) {
           const deliveryMode = sales_json.cartSumUp.deliveryMode;
-          if (deliveryMode.length > 0) {
+          if (deliveryMode > 0) {
             const homeDeliveryTab = deliveryMode == "4" ? deliveryMode : null;
             HomeDeliveryLength.push(homeDeliveryTab);
           }
@@ -110,7 +119,7 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
 
         if (sales_json.cartSumUp.payDetails) {
           const payDetails = sales_json.cartSumUp.payDetails;
-          if (payDetails.length > 0) {
+          if (payDetails > 0) {
             const payMode =
               payDetails[0].payMode == "24" ? payDetails[0] : null;
             razorPayLength.push(payMode);
@@ -133,7 +142,7 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
       try {
         if (sales_json.selectedCustomerJson.customer_name) {
           const deliveryMode = sales_json.selectedCustomerJson.customer_name;
-          if (deliveryMode.length > 0) {
+          if (deliveryMode > 0) {
             const zomatoTab =
               deliveryMode.slice(0, 6) == "ZOMATO" ? deliveryMode : null;
             zomatoLength.push(zomatoTab);
@@ -158,7 +167,7 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
       try {
         if (sales_json.selectedCustomerJson.customer_name) {
           const deliveryMode = sales_json.selectedCustomerJson.customer_name;
-          if (deliveryMode.length > 0) {
+          if (deliveryMode > 0) {
             const zomatoTab =
               deliveryMode.slice(0, 6) == "SWIGGY" ? deliveryMode : null;
             swiggyLength.push(zomatoTab);
@@ -343,7 +352,7 @@ function RecentTabModal({ booking, setBooking, recentBooking }) {
           </CTabContent>
         </CModalBody>
         <CModalFooter>
-          <CButton color="secondary" onClick={() => setVisible(false)}>
+          <CButton color="secondary" onClick={() => setBooking(false)}>
             Close
           </CButton>
         </CModalFooter>

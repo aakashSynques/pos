@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import {
   CCardHeader,
@@ -21,22 +21,30 @@ import {
   CCol,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
-function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
+function RecentPrintModal({
+  printBooking,
+  setPrintBooking,
+  invoiceDetails,
+  salesid,
+  setSalesid,
+}) {
   const [isVisible, setIsVisible] = useState(false);
   const componentRef = useRef();
+  const iframeRef = useRef(null);
 
-  const handleClick = () => {
-    setIsVisible(!isVisible);
-  };
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
   );
+  const recentBooking = useSelector(
+    (state) => state.recentBooking.recentBookings
+  );
+  const randomValue = Math.random(); // Generate a random value
 
   const invoice_no = invoiceDetails && Object.keys(invoiceDetails)[0];
   const cartSumUp = invoiceDetails && invoiceDetails[invoice_no].cartSumUp;
-  console.log(invoiceDetails, "38 invoice");
-  console.log(isVisible);
+
   const productsInCart =
     invoiceDetails && invoiceDetails[invoice_no].productsInCart;
   const selectedCustomerJson =
@@ -48,6 +56,30 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
       ? cartSumUp && cartSumUp.payDetails[0].payMode
       : undefined;
 
+  const [iframeOpen, setIframeOpen] = useState(false);
+  const [url, setUrl] = useState(null);
+  const handlePrint = (e) => {
+    if (salesid) {
+      setPrintBooking(!true);
+      setIframeOpen(!true);
+      setUrl(
+        `http://pos.q4hosting.com/posinvolce/printSales/${salesid}/NOKOT?random=${randomValue}`
+      );
+      fetch(
+        `http://pos.q4hosting.com/posinvolce/printSales/${salesid}/NOKOT?random=${randomValue}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          //  body: formBody,
+        }
+      ).catch((error) => {
+        console.error("something wrong:", error);
+      });
+    }
+  };
+
   return (
     <>
       <CModal
@@ -55,7 +87,7 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
         visible={printBooking}
         onClose={() => setPrintBooking(false)}
       >
-        <CModalBody ref={componentRef}>
+        <CModalBody>
           <CTabContent className="text-center">
             <div>
               <strong style={{ fontSize: "1.5em" }}>
@@ -82,7 +114,7 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
               </p>
             </div>
             <CContainer>
-              <CRow xs={2}>
+              <CRow>
                 <React.Fragment>
                   <CCol className="text-start">
                     <span>Invoice#:</span>
@@ -100,10 +132,8 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                       <span className="text-start">
                         {deliveryMode == "1" ? (
                           <strong
-                            className="status-btn"
                             style={{
-                              fontWeight: "bold",
-                              fontSize: "1.1em",
+                              fontSize: "13px!important",
                               padding: "2px",
                             }}
                           >
@@ -112,10 +142,8 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                           </strong>
                         ) : deliveryMode == "2" ? (
                           <strong
-                            className="status-btn"
                             style={{
-                              fontWeight: "bold",
-                              fontSize: "1em",
+                              fontSize: "13px!important",
                               padding: "2px",
                             }}
                           >
@@ -124,10 +152,8 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                           </strong>
                         ) : deliveryMode == "3" ? (
                           <strong
-                            className="status-btn"
                             style={{
-                              fontWeight: "bold",
-                              fontSize: "1em",
+                              fontSize: "13px!important",
                               padding: "2px",
                             }}
                           >
@@ -136,10 +162,8 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                           </strong>
                         ) : deliveryMode == "4" ? (
                           <strong
-                            className="status-btn"
                             style={{
-                              fontWeight: "bold",
-                              fontSize: "1em",
+                              fontSize: "13px!important",
                               padding: "2px",
                             }}
                           >
@@ -181,54 +205,82 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
 
               <CRow>
                 {productsInCart &&
-                  productsInCart.map((item) => {
+                  productsInCart.map((item, index) => {
                     return (
-                      <React.Fragment>
-                        <CCol xs={1}>{item.prod_qty}</CCol>
-                        <CCol xs={9} className="text-start">
-                          <CRow>
-                            <CCol xs={10} className=" text-start">
-                              {item.prod_name}
-                            </CCol>
-                            <CCol xs={2} className="text-end ">
-                              {item.is_parcel == "0" ? (
-                                <strong
-                                  style={{
-                                    fontSize: "1.1em",
-                                    padding: "2px",
-                                  }}
-                                ></strong>
-                              ) : item.is_parcel == "1" ? (
-                                <strong
-                                  className="status-btn"
-                                  style={{
-                                    fontWeight: "bold",
-                                    fontSize: "1em",
-                                    padding: "2px",
-                                    color: "gray",
-                                  }}
-                                >
-                                  (Parcel)
-                                </strong>
-                              ) : null}
-                            </CCol>
-                          </CRow>
+                      <React.Fragment key={index}>
+                        <CCol xs={1} className="pt-2">
+                          {item.prod_qty}
                         </CCol>
-                        <CCol xs={2} className="text-center">
+                        <CCol xs={9} className="text-start pt-2">
+                          {item.prod_Customized_status == 1 ? (
+                            <>
+                              <b>
+                                {item.customized.flavor_name &&
+                                item.customized.shape_name &&
+                                item.customized.choice_name &&
+                                item.customized.size_name
+                                  ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
+                                  : item.prod_name}
+                              </b>{" "}
+                              <br />
+                              <small>
+                                <strong>Message on Cake:</strong>{" "}
+                                <span>{item.customized.message_on_cake}</span>{" "}
+                                <br />
+                                <strong>Message on Card:</strong>{" "}
+                                <span>{item.customized.message_on_cake}</span>
+                              </small>
+                            </>
+                          ) : (
+                            <b>{item.prod_name}</b>
+                          )}
+                          <br />
+
+                          <small
+                            className="pull-right"
+                            style={{
+                              position: "relative",
+                              fontSize: "10px",
+                              top: "-10px",
+                            }}
+                          >
+                            {item.is_parcel === 1 && <font>Parcel &nbsp;</font>}
+                            {item.is_complementary === 1 && (
+                              <font>Complementary &nbsp;</font>
+                            )}
+                          </small>
+                          <small>
+                            {item.is_note === 1 && (
+                              <>
+                                <strong>Product Note:</strong>{" "}
+                                <span>{item.is_prod_note}</span>
+                              </>
+                            )}{" "}
+                            <br />
+                            {item.is_complementary === 1 && (
+                              <>
+                                <strong>Complementry Note:</strong>{" "}
+                                <span>{item.is_complementary_note}</span>
+                              </>
+                            )}
+                          </small>
+                        </CCol>
+                        <CCol xs={2} className="text-center pt-2">
                           {Number(item.prod_rate).toFixed(2)}
                         </CCol>
                       </React.Fragment>
                     );
                   })}
-                <p
-                  style={{
-                    borderBottomStyle: "dashed",
-                    marginTop: "1%",
-                    borderColor: "black",
-                    borderWidth: "1px",
-                  }}
-                ></p>
               </CRow>
+
+              <p
+                style={{
+                  borderBottomStyle: "dashed",
+                  marginTop: "1%",
+                  borderColor: "black",
+                  borderWidth: "1px",
+                }}
+              ></p>
 
               <CRow>
                 <CCol xs={3} className="text-start">
@@ -392,10 +444,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                         <CCol xs={10} className="text-end">
                           Paid By{" "}
                           <span className="text-start">
-                            {p.payMode === "1" ? (
+                            {p.payMode == "1" ? (
                               <strong
                                 style={{
-                                  fontWeight: "bold",
                                   fontSize: "1.1em",
                                   padding: "2px",
                                 }}
@@ -403,10 +454,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                                 Cash
                                 <br />
                               </strong>
-                            ) : p.payMode === "4" ? (
+                            ) : p.payMode == "4" ? (
                               <strong
                                 style={{
-                                  fontWeight: "bold",
                                   fontSize: "1em",
                                   padding: "2px",
                                 }}
@@ -414,10 +464,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                                 PayTm
                                 <br />
                               </strong>
-                            ) : p.payMode === "6" ? (
+                            ) : p.payMode == "6" ? (
                               <strong
                                 style={{
-                                  fontWeight: "bold",
                                   fontSize: "1em",
                                   padding: "2px",
                                 }}
@@ -425,10 +474,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                                 Wallet
                                 <br />
                               </strong>
-                            ) : p.payMode === "24" ? (
+                            ) : p.payMode == "24" ? (
                               <strong
                                 style={{
-                                  fontWeight: "bold",
                                   fontSize: "1em",
                                   padding: "2px",
                                 }}
@@ -436,10 +484,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                                 Rzp
                                 <br />
                               </strong>
-                            ) : p.payMode === "25" ? (
+                            ) : p.payMode == "25" ? (
                               <strong
                                 style={{
-                                  fontWeight: "bold",
                                   fontSize: "1em",
                                   padding: "2px",
                                 }}
@@ -447,10 +494,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                                 HDFC CC*
                                 <br />
                               </strong>
-                            ) : p.payMode === "26" ? (
+                            ) : p.payMode == "26" ? (
                               <strong
                                 style={{
-                                  fontWeight: "bold",
                                   fontSize: "1em",
                                   padding: "2px",
                                 }}
@@ -469,7 +515,7 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
               </CRow>
               {cartSumUp && cartSumUp.deliveryMode && (
                 <CRow>
-                  {deliveryMode === "3" && (
+                  {deliveryMode == "3" && (
                     <p
                       style={{
                         borderBottomStyle: "dashed",
@@ -488,9 +534,9 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                         padding: "2px",
                       }}
                     >
-                      {deliveryMode === "3" ? "Pick Up:" : ""}
+                      {deliveryMode == "3" ? "Pick Up:" : ""}
                     </span>
-                    {deliveryMode === "3" ? (
+                    {deliveryMode == "3" ? (
                       <span>
                         {cartSumUp && cartSumUp.deliveryDate}{" "}
                         {cartSumUp && cartSumUp.deliveryTime}
@@ -499,7 +545,7 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                       ""
                     )}
                   </CCol>
-                  {deliveryMode === "3" ? (
+                  {deliveryMode == "3" ? (
                     <p
                       style={{
                         borderBottomStyle: "dashed",
@@ -527,24 +573,14 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                   )}
                 </CCol>
               </CRow>
-
-              <CRow>
-                <CCol className="text-center ">
-                  {isVisible ? (
-                    <strong>Thanks Visit Again</strong>
-                  ) : (
-                    <strong>Error</strong>
-                  )}
-                </CCol>
-              </CRow>
             </CContainer>
           </CTabContent>
         </CModalBody>
         <CModalFooter>
           <CContainer>
-            <CRow xs={2}>
+            <CRow>
               <CCol>
-                <ReactToPrint
+                {/* <ReactToPrint
                   trigger={() => (
                     <CButton
                       style={{ background: "#26b99a", border: "none" }}
@@ -554,13 +590,25 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                     </CButton>
                   )}
                   content={() => componentRef.current}
-                />
+                /> */}
+                <CButton
+                  style={{ background: "#26b99a", border: "none" }}
+                  onClick={() => {
+                    handlePrint();
+                    setIframeOpen(!true);
+                  }}
+                >
+                  <i className="fa fa-print"></i> {""}Print
+                </CButton>
               </CCol>
 
               <CCol className="text-end">
                 <CButton
                   color="secondary"
-                  onClick={() => setPrintBooking(false)}
+                  onClick={() => {
+                    setPrintBooking(!true);
+                    setIframeOpen(true);
+                  }}
                 >
                   Close
                 </CButton>
@@ -569,6 +617,17 @@ function RecentPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
           </CContainer>
         </CModalFooter>
       </CModal>
+      {printBooking || iframeOpen ? null : (
+        <>
+          <iframe
+            ref={iframeRef}
+            src={url}
+            width="1"
+            height="1"
+            style={{ visibility: "hidden" }}
+          ></iframe>
+        </>
+      )}
     </>
   );
 }

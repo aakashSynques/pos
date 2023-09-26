@@ -15,7 +15,7 @@ import {
        <table className="table table-bordered booking-or-table">
         <thead className="thead-light">
           <tr style={{ background: "#909090", color: "#ffffff" }}>
-            <th width="12%">Book#</th>
+            <th width="12%">Book# </th>
             <th width="12%">Delivery Mode</th>
             <th width="15%">Customer Name</th>
             <th width="20%">Receiver Name</th>

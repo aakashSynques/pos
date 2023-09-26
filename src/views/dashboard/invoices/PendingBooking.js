@@ -23,12 +23,18 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
+import PendingPrintModal from "./pendingComponent/PendingPrintModal";
+import PendingTabModal from "./pendingComponent/PendingTabModal";
+import { fetch } from "../../../utils";
 
 const PendingBooking = () => {
-  const [booking, setBooking] = useState(false);
+  const [bookingModal, setBookingModal] = useState(false);
+  const [invoiceDetails, setInvoiceDetails] = useState();
   const [activeKey, setActiveKey] = useState(1);
   const [pendingBooking, setPendingBooking] = useState([]);
-  // console.log(pendingBooking, "32");
+  const [printBooking, setPrintBooking] = useState(false);
+  const [booking, setBooking] = useState(false);
+
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
 
@@ -39,22 +45,25 @@ const PendingBooking = () => {
   const getAllPendingBookings = async () => {
     try {
       const token = localStorage.getItem("pos_token");
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = {
+        outlet_id
+      }
       setLoading(true);
-      const response = await axios.post(
-        "http://posapi.q4hosting.com/api/order/pending",
-        { outlet_id },
-        { headers }
+      const response = await fetch(
+        "/api/order/pending",
+        "POST",
+        body,
+        headers
       );
+
       setPendingBooking(response.data.get_pending_booking);
       setLoading(false);
       setNetworkError(false);
     } catch (err) {
       console.log(err);
       if (err.response.data.message == "No pending Booking Orders Found.") {
-        console.log("No pending Booking Orders Found.");
+        // console.log("No pending Booking Orders Found.");
         setNetworkError(true);
         setLoading(false);
       } else if (err.response.data.message == "Outlet Id Required.") {
@@ -67,10 +76,17 @@ const PendingBooking = () => {
       }
     }
   };
+
   useEffect(() => {
     getAllPendingBookings();
   }, [outlet_id]);
 
+  
+  
+  const clickPendingInvoiceLink = (booking_no, booking_json, booking_id) => {
+    setPrintBooking(!printBooking);
+    setInvoiceDetails({ [booking_no]: booking_json, booking_id });
+  };
   return (
     <>
       <CCard className="invoice-card">
@@ -78,7 +94,7 @@ const PendingBooking = () => {
           Pending Booking(s)
           <CLink
             className="text-primary pull-right"
-            onClick={() => setBooking(!booking)}
+            onClick={() => setBookingModal(!bookingModal)}
           >
             <i className="fa fa-external-link fa-xs"></i>
           </CLink>
@@ -86,7 +102,7 @@ const PendingBooking = () => {
         {networkError === true && (
           <CCardBody style={{ display: "flex" }}>
             <div>
-              <medium className="text-danger">No Pending Invoices..</medium>
+              <div className="text-danger medium-text" style={{fontSize: "12px"}}>No Pending Invoices..</div>
             </div>
           </CCardBody>
         )}
@@ -99,31 +115,37 @@ const PendingBooking = () => {
               style={{ marginTop: "1%", marginRight: "2%" }}
             />
 
-            <div>
-              <medium className="text-danger">
+            <div className="text-danger medium-text" style={{fontSize: "12px"}}>
                 Loading Pending Invoices..
-              </medium>
-            </div>
+              </div>
           </CCardBody>
         )}
         {loading === false && networkError === false && (
           <div className="pending-booking">
             <table width="100%" className="table table-bordered ongoing">
               <tbody>
-                {/* {console.log(pendingBooking, "98")}  */}
                 {pendingBooking
                   .slice(0, 10)
-                  .map(({ booking_json, booking_no }) => {
+                  .map(({ booking_json, booking_no, booking_id }) => {
                     return (
-                      <tr>
-                        <td style={{ width: "65%" }}>
-                          <Link to="" className="text-primary text-link">
+                      <tr key={booking_no}>
+                        <td style={{ width: "75%" }}>
+                          <Link
+                            to=""
+                            className="text-primary text-link" style={{fontSize: "12px"}}
+                            onClick={() =>
+                              clickPendingInvoiceLink(
+                                booking_no,
+                                booking_json,
+                                booking_id
+                              )
+                            }
+                          >
                             {booking_no}
                             <br />
                           </Link>
-                          <small className="text-sm" style={{ fontSize: "px" }}>
-                            {booking_json.selectedCustomerJson.customer_name}
-                            <br />({booking_json.selectedCustomerJson.mobile})
+                          <small className="text-sm">
+                            {booking_json.selectedCustomerJson.customer_name} {""} <span style={{ fontSize: "8px" }}>({booking_json.selectedCustomerJson.mobile})</span>
                           </small>
                         </td>
                         <td>
@@ -174,7 +196,7 @@ const PendingBooking = () => {
                               className="status-btn"
                               style={{
                                 fontWeight: "bold",
-                                fontSize: "1em",
+                                fontSize: "10px",
                                 color: "white",
                                 backgroundColor: "#d9534f",
                                 height: "2%",
@@ -182,13 +204,18 @@ const PendingBooking = () => {
                                 padding: "0px 3px 0px 3px",
                               }}
                             >
-                              <small>Home Delivery</small>
+                            Home Delivery
                             </strong>
                           ) : null}
                           <br />
-                          <font>{booking_json.cartSumUp.deliveryDate}</font>
-                          <br />
-                          <font>{booking_json.cartSumUp.deliveryTime}</font>
+                          <p style={{
+                            lineHeight: "12px",
+                            marginBottom: "0"
+                          }}>{booking_json.cartSumUp.deliveryDate}</p>
+                          <p style={{
+                            lineHeight: "12px",
+                            marginBottom: "0"
+                          }}>{booking_json.cartSumUp.deliveryTime}</p>
                         </td>
                       </tr>
                     );
@@ -199,70 +226,19 @@ const PendingBooking = () => {
         )}
       </CCard>{" "}
       {/* booking order model */}
-      <CModal size="xl" visible={booking} onClose={() => setBooking(false)}>
-        <CModalHeader onClose={() => setBooking(false)}>
-          <CModalTitle>Booking Orders</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <CNav variant="pills" role="tablist">
-            <CNavItem>
-              <CNavLink
-                href="#!"
-                active={activeKey === 1}
-                onClick={() => setActiveKey(1)}
-              >
-                Today's Pending Delivery <span className="badge"> 20</span>
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                href="#!"
-                active={activeKey === 2}
-                onClick={() => setActiveKey(2)}
-              >
-                Today's Delivered Booking <span className="badge"> 0</span>
-              </CNavLink>
-            </CNavItem>
-            <CNavItem>
-              <CNavLink
-                href="#!"
-                active={activeKey === 3}
-                onClick={() => setActiveKey(3)}
-              >
-                Future Booking(s) <span className="badge"> 8</span>
-              </CNavLink>
-            </CNavItem>
-          </CNav>
-          <CTabContent>
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="home-tab"
-              visible={activeKey === 1}
-            >
-              <Pending />
-            </CTabPane>
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="profile-tab"
-              visible={activeKey === 2}
-            >
-              <Delivered />
-            </CTabPane>
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="contact-tab"
-              visible={activeKey === 3}
-            >
-              <Future />
-            </CTabPane>
-          </CTabContent>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setVisible(false)}>
-            Close
-          </CButton>
-        </CModalFooter>
-      </CModal>
+      {/* booking order model */}
+      <PendingTabModal
+        bookingModal={bookingModal}
+        setBookingModal={setBookingModal}
+        printBooking={printBooking}
+        pendingBooking={pendingBooking}
+      />
+      {/* Print booking order model */}
+      <PendingPrintModal
+        printBooking={printBooking}
+        setPrintBooking={setPrintBooking}
+        invoiceDetails={invoiceDetails}
+      />
     </>
   );
 };

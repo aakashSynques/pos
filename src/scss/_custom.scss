@@ -207,9 +207,9 @@ td {
   font-size: 11px !important;
 }
 .status-btn {
-  font-size: 8px;
-  padding: 1px 8px;
-  border-radius: 5px;
+  font-size: 9px !important;
+  padding: 2px 3px !important;
+  border-radius: 2px !important;
 }
 .pending-booking {
   th {
@@ -224,8 +224,9 @@ td {
     font-size: 11px !important;
   }
   th {
-    background-color: $background-color_6 !important;
-    font-size: 13px;
+    font-size: 12px;
+    background: #909090 !important;
+    color: rgb(255, 255, 255) !important;
   }
 }
 tr {
@@ -719,15 +720,139 @@ tr {
 
 .product-list.focused {
   background: #fff5b1e3 !important;
-}.kot-border-top{
-border-top: 1px dotted #efefef;
 }
-.btn-close{
-  font-size: 11px!important;
-}.persion-details p{
+
+.kot-border-top {
+  border-top: 1px dotted #efefef;
+}
+.btn-close {
+  font-size: 11px !important;
+}
+.persion-details p {
   line-height: 5px;
-}.extra-info{
-  height: 21px!important;
-  border: none!important;
-  font-size: 13px!important;
 }
+.extra-info {
+  height: 21px !important;
+  border: none !important;
+  font-size: 13px !important;
+}
+
+.medium-text {
+  font-size: medium;
+}
+.blink_me {
+  font-size: 8px !important;
+  font-weight: normal;
+  line-height: 10px;
+  padding: 2px 6px;
+  position: absolute;
+  right: 1px;
+  top: -3px;
+  background: #e74c3c !important;
+}
+.noti-bg {
+  background: #f7f7f7;
+  padding: 2px 20px;
+  color: rgb(90, 115, 142);
+  font-size: 15px;
+}
+.cust-ac-model {
+  overflow-x: hidden;
+  overflow-y: auto;
+  border-left: 1px solid rgb(191, 197, 202);
+  height: 550px;
+}
+.cust-ac-model .nav-pills .nav-link {
+  background: #f5f7fa;
+  color: black;
+  font-size: 12px;
+  border: 1px solid #dddddd;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  padding: 5px 13px;
+  border-radius: 3px;
+}
+.font-size-2 {
+  font-size: 13px !important;
+}
+.light-outlet2:hover {
+  background: rgb(224 142 26) !important;
+}
+.light-outlet3:hover {
+  background: rgb(237 49 44) !important;
+}
+.dueAmt-style {
+  padding: 2px 0px;
+  background: #fda7a7;
+  color: #840000;
+  font-size: 15px;
+  font-weight: bold;
+}
+.collection-table-style tbody tr {
+  line-height: 14px;
+  font-size: 13px !important;
+}
+.collection-table-style tbody tr td {
+  font-size: 13px !important;
+}
+.collection-table-style tbody tr th {
+  font-size: 14px !important;
+  font-weight: bold;
+}
+.mode-2.mode-2 tbody tr td {
+  padding: 4px 3px !important;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+.mode-2 .newth {
+  padding: 3px !important;
+}
+.table-titlse-style {
+  font-size: 13px;
+  padding: 3px 4px;
+  line-height: 15px;
+}
+
+@media (min-width: 992px) {
+  .closing-table .modal-lg{
+    --bs-modal-width: 980px !important;
+  }
+}
+.custom-suggestion {
+  padding: 2px 5px;
+  font-size: 1.0em;
+  white-space: nowrap;
+  overflow: hidden;
+  border: 1px dashed #efefef;
+  color: #000000;
+  cursor: pointer; 
+  width: 100%;
+  
+  //  position: absolute;
+  // z-index: 99;
+  // background: white;
+  // font-size: 13px;
+
+}
+
+.custom-suggestion:hover {
+  background: #ffffc0;
+}
+.react-autosuggest__suggestions-container--open ul {
+  list-style-type: none!important;
+  padding-left: 0;
+}
+.react-autosuggest__suggestions-container--open{
+  position: absolute!important;
+  z-index: 99!important;
+  background: white!important;
+  font-size: 12px!important;
+  width: 30%!important;
+  list-style-type: none!important;
+}
+
+#react-autowhatever-1 ul {
+  list-style-type: none;
+  padding-left: 10px;
+}
+

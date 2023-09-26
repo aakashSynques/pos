@@ -21,7 +21,6 @@ const IPAddressData = React.forwardRef((props, ref) => { // Forward the ref
     } catch (error) {
       console.error('Error fetching public IP address:', error);
       }
-    console.log('public ip', publicIp)
   };
 
   // Expose the getPublicIp function using the forwarded ref

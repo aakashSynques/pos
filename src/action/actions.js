@@ -3,6 +3,7 @@ import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
   SET_CART_QTY,
+  SET_NEW_CART,
   SET_COMPLEMENTARY_NOTE,
   SET_PRODUCT_NOTE,
   SET_TOPPING_URNO,
@@ -18,18 +19,28 @@ import {
   CLEAR_SELECTED_CUSTOMER,
   SELECT_DELIVERY,
   CLEAR_CART_ITEMS,
+  SET_RECENT_BOOKINGS,
+  SET_SUBMITTED_PICKUP_DATE_TIME,
+  SET_ALL_PRODUCTS,
+  SET_INPUT_FIELD_FOCUS,
+  SET_INPUT_FIELD_BLUR,
+  SET_CUSTOMER_ACCOUNT_JSON,
+  SET_CART_SUM_UP,
+  SET_SELECTED_CUSTOMER_JSON,
+  UPDATE_TOTAL_CASH,
+  UPDATE_PAY_MODE_TOTALS,
 } from "./actionTypes";
 
 // helper functions start
 
 const addCartItem = (cartItemsArray, cartItem) => {
-  console.log(cartItem);
   const existingCartItem =
     cartItemsArray.length > 0 &&
     cartItemsArray.find(
       (item) =>
         item.prod_id === cartItem.prod_id && Array.isArray(item.customized)
     );
+  // console.log("existingCartItem: ", existingCartItem);
 
   if (existingCartItem) {
     return cartItemsArray.map((item) =>
@@ -38,12 +49,11 @@ const addCartItem = (cartItemsArray, cartItem) => {
         : item
     );
   }
-  console.log(cartItemsArray, ...cartItemsArray, "28");
   return [...cartItemsArray, { ...cartItem, prod_qty: 1 }];
 };
 
 const setQuantity = (cartItemsArray, productId, quantity) => {
-  if (quantity === "0" || quantity == "") {
+  if (quantity == 0 || quantity == "") {
     // If quantity is 0 or empty, remove the product from the cart
     const filteredItems = cartItemsArray.filter(
       (item) => item.prod_id !== productId
@@ -63,6 +73,8 @@ const setQuantity = (cartItemsArray, productId, quantity) => {
     return updatedItems;
   }
 };
+
+
 const removeCartItem = (cartItemsArray, productUrno) => {
   const newFilteredArray = cartItemsArray.filter(
     (item) => item.associated_prod_urno !== productUrno
@@ -74,12 +86,10 @@ const selectedOutletData = (outletId, allOutlets) => {
   const selectedOutlet = allOutlets.find(
     (outlet) => outlet.outlet_id === outletId
   );
-  // console.log(selectedOutlet, "142");
   return selectedOutlet;
 };
 
 const setIsNote = (cartItemsArray, productId, visibleNote) => {
-  console.log(visibleNote);
   const updatedItem = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
@@ -109,7 +119,6 @@ const setProdNote = (cartItemsArray, productId, productNote) => {
         }
       : item
   );
-  console.log(updatedItems);
   return updatedItems;
 };
 
@@ -126,7 +135,6 @@ const setCompNote = (cartItemsArray, productId, complentaryNote) => {
 };
 
 const setIsCompNote = (cartItemsArray, productId, visibleComplentary) => {
-  console.log(visibleComplentary);
   const updatedItem = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
@@ -176,11 +184,16 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
       ...cartItem,
     };
   });
-  let toppingsWithInfo = selectedToppings.map((toppingObj) => ({
-    ...toppingObj,
-    prod_qty: 1,
-    associated_prod_urno: productUrno,
-  }));
+
+  // console.log("selectedToppings: ", selectedToppings);
+  let toppingsWithInfo = selectedToppings.map(
+    (toppingObj) =>
+      toppingObj.prod_rate != 0 && {
+        ...toppingObj,
+        prod_qty: 1,
+        associated_prod_urno: productUrno,
+      }
+  );
   cartWithNewToppings.push(...toppingsWithInfo);
   cartWithNewToppings = cartWithNewToppings.map((item) =>
     item.urno === productUrno
@@ -212,7 +225,6 @@ const clearProdToppings = (cartItemsArray, productUrno) => {
 };
 
 const setUpdateCustomize = (cartItemsArray, productId, customjsonData) => {
-  console.log(productId);
   const updatedCartItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
@@ -221,9 +233,6 @@ const setUpdateCustomize = (cartItemsArray, productId, customjsonData) => {
         }
       : item
   );
-  console.log("custom json data", customjsonData);
-  console.log("updated item", updatedCartItems);
-
   return updatedCartItems;
 };
 
@@ -242,10 +251,6 @@ const setClearCustomization = (cartItemsArray, productId) => {
 
 // helper functions end
 
-export const setSelectedCustomer = (customerData) => ({
-  type: SET_SELECTED_CUSTOMER,
-  payload: customerData,
-});
 export const clearSelectedCustomer = () => ({
   type: CLEAR_SELECTED_CUSTOMER,
 });
@@ -253,6 +258,11 @@ export const clearSelectedCustomer = () => ({
 export const addToCart = (cartItemsArray, cartItem) => ({
   type: ADD_TO_CART,
   payload: addCartItem(cartItemsArray, cartItem),
+});
+
+export const setNewCart = (newCart) => ({
+  type: SET_NEW_CART,
+  payload: newCart,
 });
 
 export const setCartQty = (cartItemsArray, productId, quantity) => ({
@@ -377,4 +387,61 @@ export const selectDelivery = (deliveryName) => {
 
 export const clearCartItems = () => ({
   type: CLEAR_CART_ITEMS,
+});
+
+export const setSubmittedPickUpDateTime = (date, time) => {
+  return {
+    type: SET_SUBMITTED_PICKUP_DATE_TIME,
+    payload: { date, time },
+  };
+};
+
+export const setRecentBookings = (recentBookings) => {
+  return { type: SET_RECENT_BOOKINGS, payload: recentBookings };
+};
+
+export const setAllProducts = (products) => {
+  return { type: SET_ALL_PRODUCTS, payload: products };
+};
+
+export const setInputFocused = () => {
+  return {
+    type: SET_INPUT_FIELD_FOCUS,
+  };
+};
+
+export const setOnBlur = () => {
+  return {
+    type: SET_INPUT_FIELD_BLUR,
+  };
+};
+
+export const setSelectedCustomer = (customerData) => ({
+  type: SET_SELECTED_CUSTOMER,
+  payload: customerData,
+});
+
+export const setCustomerAccountJson = (customerAccJson) => ({
+  type: SET_CUSTOMER_ACCOUNT_JSON,
+  payload: customerAccJson,
+});
+
+export const setCartSumUp = (cartSumUp) => ({
+  type: SET_CART_SUM_UP,
+  payload: cartSumUp,
+});
+export const setSelectedCustomerJson = (customerJson) => ({
+  type: SET_SELECTED_CUSTOMER_JSON,
+  payload: customerJson,
+});
+
+
+export const updateTotalCash = (totalCash) => ({
+  type: UPDATE_TOTAL_CASH,
+  payload: totalCash,
+});
+
+export const updatePayModeTotalsAction = (payModeTotals) => ({
+    type: UPDATE_PAY_MODE_TOTALS,
+    payload: payModeTotals,
 });

@@ -1,7 +1,5 @@
-import { CCol, CContainer, CNavItem, CRow } from "@coreui/react";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { CCol, CContainer, CRow } from "@coreui/react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import RecentPrintModal from "../RecentPrintModal";
 
@@ -14,6 +12,8 @@ const CounterSale = ({ recentBooking }) => {
     setPrintBooking(!printBooking);
     setInvoiceDetails({ [invoice_no]: sales_json });
   };
+  
+
   return (
     <>
       <table className="table table-bordered booking-or-table">
@@ -48,7 +48,7 @@ const CounterSale = ({ recentBooking }) => {
               const devileryCharge = sales_json.cartSumUp.devileryCharges;
 
               const roundoff = sales_json.cartSumUp.roundoff;
-              if (deliveryMode === "1") {
+              if (deliveryMode == "1") {
                 return (
                   <tr key={salesid}>
                     <td>{salesid}</td>
@@ -71,7 +71,7 @@ const CounterSale = ({ recentBooking }) => {
                       {sales_json.cartSumUp.items}
                     </td>
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -79,14 +79,14 @@ const CounterSale = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.subTotal).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {discount && Number(discount) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {discount && Number(discount) !== 0
                         ? Number(discount).toFixed(2)
@@ -94,9 +94,9 @@ const CounterSale = ({ recentBooking }) => {
                     </td>
                     <td className="text-end">
                       {devileryCharge && Number(devileryCharge) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {devileryCharge && Number(devileryCharge) !== 0
                         ? Number(devileryCharge).toFixed(2)
@@ -104,7 +104,7 @@ const CounterSale = ({ recentBooking }) => {
                     </td>
 
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -112,14 +112,14 @@ const CounterSale = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.tax).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {roundoff && Number(roundoff) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {roundoff && Number(roundoff) !== 0
                         ? Number(roundoff).toFixed(2)
@@ -143,7 +143,7 @@ const CounterSale = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1.1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -156,7 +156,7 @@ const CounterSale = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -170,7 +170,7 @@ const CounterSale = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -183,7 +183,7 @@ const CounterSale = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#1a82c3",
@@ -196,7 +196,7 @@ const CounterSale = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -214,11 +214,11 @@ const CounterSale = ({ recentBooking }) => {
                           <CCol className="text-end" style={{}}>
                             {sales_json.cartSumUp.grandTotal &&
                               Number(sales_json.cartSumUp.grandTotal) !== 0 && (
-                                <bold>
+                                <b>
                                   <span style={{ paddingRight: "3px" }}>
                                     &#8377;
                                   </span>
-                                </bold>
+                                </b>
                               )}
                             {sales_json.cartSumUp.grandTotal &&
                             Number(sales_json.cartSumUp.grandTotal) !== 0

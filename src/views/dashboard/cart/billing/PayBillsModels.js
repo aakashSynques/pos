@@ -12,19 +12,19 @@ import {
   CFormInput,
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector,  useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Import the PrintContent component.
 import IPAddressData from "./IPAddressData"; // Import the IPAddressData component
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import io from "socket.io-client";
 import {
-  clearCartItems
+  clearCartItems,
+  clearSelectedCustomer,
+  setCartSumUp,
+  setSelectedCustomerJson,
 } from "../../../../action/actions";
-
-
-
 
 const PayBillsModels = ({
   visible,
@@ -38,22 +38,33 @@ const PayBillsModels = ({
   selectedCustomer, // Access selectedCustomer prop
   anyNotesContent, // Receive the note content
 }) => {
-  const dispatch = useDispatch();
+  const [socket, setSocket] = useState(null);
+  const componentRef = useRef();
 
+  const handlePrint = () => {
+    if (componentRef.current) {
+      componentRef.current.onPrint();
+    }
+  };
+
+  useEffect(() => {
+    // Connect to the Socket.IO server
+    const newSocket = io.connect("http://posapi.q4hosting.com"); // Replace with your server URL
+    setSocket(newSocket);
+  }, []);
+  const dispatch = useDispatch();
 
   const selectedDelivery = useSelector(
     (state) => state.delivery.selectedDelivery
   );
-  console.log("delivery", selectedDelivery);
+
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-  console.log("selected outlet", selectedOutletId);
 
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
   );
-  console.log("selectedOutletObj:", selectedOutletObj && selectedOutletObj.eby);
 
   const ipAddressComponentRef = useRef(); // Create a ref to access the IPAddressData component
   const publicIp = ipAddressComponentRef.current?.getPublicIp(); // Access the getPublicIp function
@@ -65,50 +76,80 @@ const PayBillsModels = ({
       setUser(JSON.parse(storedUser));
     }
   }, []);
-  console.log("login user", user);
 
   const [selectedPayment, setSelectedPayment] = useState(null);
-  const [isPaymentSelected, setIsPaymentSelected] = useState(false);
-  const [payAmountValue, setPayAmountValue] = useState(""); // Add payAmount state
-  const [submissionInProgress, setSubmissionInProgress] = useState(false);
-  const handlePayAmountKeyDown = (e) => {
-    if (e.key === "Enter") {
-      setPayAmountValue(e.target.value);
-    }
-  };
-  // console.log("pay amount", payAmountValue);
 
+  const [submissionInProgress, setSubmissionInProgress] = useState(false);
+  const [selectedPayments, setSelectedPayments] = useState([]);
+  const [extrainfo, setExtrainfo] = useState(""); // Define extrainfo state
+  const paymentAmountInputRef = useRef(null);
   const taxableAmount = subtotal; // The total amount before taxes
   const sgstRate = 0.025; // SGST tax rate (2.5%)
   const cgstRate = 0.025; // CGST tax rate (2.5%)
   const sgstAmount = taxableAmount * sgstRate; // Calculate SGST amount
   const cgstAmount = taxableAmount * cgstRate; // Calculate CGST amount
   const alltax = sgstAmount + cgstAmount;
-  console.log("all tax", alltax);
-  const resetPayment = () => {
-    setSelectedPayment(null);
-    setIsPaymentSelected(false);
-    setPayAmountValue("");
-  };
+
+  const [paymentAmounts, setPaymentAmounts] = useState({});
 
   const setPayment = (paymentMode) => {
-    setSelectedPayment(paymentMode);
-    setIsPaymentSelected(true); // Step 2
+    if (selectedPayments.includes(paymentMode)) {
+      setSelectedPayments(
+        selectedPayments.filter((mode) => mode !== paymentMode)
+      );
+      // Remove the payment amount for this mode
+      setPaymentAmounts((prevAmounts) => {
+        const updatedAmounts = { ...prevAmounts };
+        delete updatedAmounts[paymentMode];
+        return updatedAmounts;
+      });
+    } else {
+      setSelectedPayments([...selectedPayments, paymentMode]);
+    }
   };
-  const printComponentRef = useRef();
+  useEffect(() => {
+    if (selectedPayments.length > 0 && paymentAmountInputRef.current) {
+      paymentAmountInputRef.current.focus();
+    }
+  }, [selectedPayments]);
+
+  const getPaymentModeName = (paymentModeId) => {
+    switch (paymentModeId) {
+      case 1:
+        return "Cash";
+      case 4:
+        return "PayTm";
+      case 5:
+        return "NEFT ";
+      case 16:
+        return "Cheque ";
+
+      case 25:
+        return "HDFC CC ";
+      case 26:
+        return "HDFC QR";
+      case 27:
+        return "Swiggy Dineout";
+
+      default:
+        return "Unknown";
+    }
+  };
 
   const finalizeOrder = async () => {
     try {
+      setSubmissionInProgress(true);
       const token = localStorage.getItem("pos_token");
       const url = "http://posapi.q4hosting.com/api/sales/finalizeSales";
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       };
+
       const requestBody = {
-        productsInCart: [cartItems[0]], // Fill with actual cart items
-        selectedCustomerJson: selectedCustomersJson, // Fill with selected customer data
-        cartSumUp: cartSumUp, // Fill with cart summary data
+        productsInCart: cartItems,
+        selectedCustomerJson: selectedCustomersJson,
+        cartSumUp: cartSumUp,
         machine_id: 0,
         machine_mode: 0,
         machine_amount: 0,
@@ -121,33 +162,46 @@ const PayBillsModels = ({
         headers,
         body: JSON.stringify(requestBody),
       });
+
+      const responseData = await response.json(); // Parse the error response
+      if (responseData.dataPost.salesid) {
+        setUrl(
+          `http://pos.q4hosting.com/posinvolce/printSales/${responseData.dataPost.salesid}/NOKOT?random=${randomValue}`
+        );
+      }
       if (!response.ok) {
-        toast.success("Order finalized successfully!", {
-          position: toast.POSITION.TOP_RIGHT,
-        }); 
-        dispatch(clearCartItems());
-        console.log('cler',clearCartItems())       
-        const responseData = await response.json(); // Parse the error response
         console.error("Error Response Data:", responseData);
         throw new Error("Network response was not ok");
       }
-
-      const responseData = await response.json();
-      console.log("Response:", responseData);
-      printComponentRef.current = true;
-      onClose();
+      dispatch(clearCartItems());
+      dispatch(clearSelectedCustomer());
+      // printComponentRef.current = true;
+      resetPaymentState();
+      await onClose();
+      await socket.emit("add-order", responseData);
+      // printComponentRef.current = {
+      //   invoice_id: responseData.dataPost.invoice_id,
+      //   invoice_no: responseData.dataPost.invoice_no,
+      // };
+      // handlePrint();
+      // const invoiceId = responseData.dataPost.invoice_id;
+      setSubmissionInProgress(false);
     } catch (error) {
       console.error("Error:", error);
+      setSubmissionInProgress(false);
     }
   };
 
-
   let deliveryId;
-  if (selectedDelivery == "Counter Sale")  { deliveryId = 1 }
-  else if (selectedDelivery == "On Table") { deliveryId = 2 }
-  else if (selectedDelivery == "PickUp") { deliveryId = 3 }
-  else { deliveryId = 4 } console.log("id", deliveryId)
-
+  if (selectedDelivery == "Counter Sale") {
+    deliveryId = 1;
+  } else if (selectedDelivery == "On Table") {
+    deliveryId = 2;
+  } else if (selectedDelivery == "PickUp") {
+    deliveryId = 3;
+  } else {
+    deliveryId = 4;
+  }
 
   const selectedCustomersJson =
     selectedCustomer && selectedCustomer.json
@@ -169,17 +223,15 @@ const PayBillsModels = ({
         }
       : null;
 
-  console.log("select cust", selectedCustomersJson);
-
   const cartSumUp = {
     invoice_id: 0,
     invoice_no: "",
     items: totalItem.toString(), // The number of items in the cart
     subTotal: subtotal.toString(),
-    discountPercent: 0,
-    discount: 0,
+    discountPercent: "0",
+    discount: "0",
     discountType: "",
-    deliveryCharges: 0,
+    devileryCharges: "0",
     tax: alltax,
     taxsplitGST: [
       {
@@ -223,15 +275,70 @@ const PayBillsModels = ({
     Ip: publicIp,
     Browser: window.navigator.userAgent,
     ZSU_order_no: "",
-    payDetails: [
-      {
-        payMode: selectedPayment, // Fill in the payment mode
-        payExtraInfo: "",
-        payAmount: payAmountValue, // Fill in the payment amount
-      },
-    ],
+
+    payDetails: selectedPayments.map((paymentMode) => ({
+      payMode: paymentMode,
+      payExtraInfo: extrainfo,
+      payAmount: paymentAmounts[paymentMode] || 0, // Use the value from paymentAmounts
+    })),
   };
-  console.log("cartsumup", cartSumUp);
+
+  dispatch(setCartSumUp(cartSumUp));
+  dispatch(setSelectedCustomerJson(selectedCustomersJson));
+
+  const iframeRef = useRef(null);
+  const [url, setUrl] = useState(null);
+  const randomValue = Math.random(); // Generate a random value
+
+  const handleRemovePaymentMode = (paymentMode) => {
+    setSelectedPayments((prevSelectedPayments) =>
+      prevSelectedPayments.filter((mode) => mode !== paymentMode)
+    );
+
+    setPaymentAmounts((prevAmounts) => {
+      const updatedAmounts = { ...prevAmounts };
+      delete updatedAmounts[paymentMode];
+      return updatedAmounts;
+    });
+  };
+
+  const resetPaymentState = () => {
+    setSelectedPayments([]);
+    setPaymentAmounts({});
+  };
+
+  const [remainingBalance, setRemainingBalance] = useState(finalPayAmount);
+  const handlePaymentAmountKeyDown = (e, paymentMode) => {
+    if (e.key === "Enter") {
+      const updatedPaymentAmounts = {
+        ...paymentAmounts,
+        [paymentMode]: parseFloat(e.target.value) || 0,
+      };
+      setPaymentAmounts(updatedPaymentAmounts);
+      const paymentAmountSum = Object.values(updatedPaymentAmounts).reduce(
+        (sum, amount) => sum + parseFloat(amount || 0),
+        0
+      );
+      const updatedRemainingBalance = finalPayAmount - paymentAmountSum;
+      setRemainingBalance(updatedRemainingBalance);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === "Enter") {
+        if (selectedPayments.length > 0) {
+          finalizeOrder();
+        } else {
+          toast.error("Please select at least one payment mode.");
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedPayments]);
 
   return (
     <>
@@ -274,48 +381,74 @@ const PayBillsModels = ({
                 <CCol sm={2} xs={2} className="text-right">
                   <b>Amount</b>
                 </CCol>
-              </CRow>
+               </CRow>
 
               <CRow className="pt-2 pb-2">
                 {cartItems.map((item) => (
                   <>
                     <CCol sm={7} xs={7}>
-                      <b>{item.prod_name}</b>
-                      {item.is_parcel === 1 && (
-                        <font size="1" className="text-primary pull-right">
-                          Parcel &nbsp;
-                        </font>
+                      {item.prod_Customized_status == 1 ? (
+                        <>
+                          <b>
+                            {item.customized.flavor_name &&
+                            item.customized.shape_name &&
+                            item.customized.choice_name &&
+                            item.customized.size_name
+                              ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
+                              : item.prod_name}
+                          </b>{" "}
+                          <br />
+                          <small className="pull-left">
+                            <strong>Message on Cake:</strong>{" "}
+                            <span>{item.customized.message_on_cake}</span>{" "}
+                            <br />
+                            <strong>Message on Card:</strong>{" "}
+                            <span>{item.customized.message_on_cake}</span>
+                          </small>
+                          <br />
+                        </>
+                      ) : (
+                        <b>{item.prod_name}</b>
                       )}
 
-                      {item.is_complementary === 1 && (
-                        <font size="1" className="text-primary pull-right">
-                          Complementary &nbsp;
-                        </font>
-                      )}
-                      <br />
-                      {item.is_note === 1 && (
-                        <small className="text-danger">
-                          Note : {item.is_prod_note}, &nbsp;
-                        </small>
-                      )}
-                      {item.is_complementary === 1 && (
-                        <small
-                          className="text-danger"
-                          style={{ fontSize: "10px" }}
-                        >
-                          Compli: {item.is_complementary_note}, &nbsp;
-                        </small>
-                      )}
+                      <small>
+                        {item.is_parcel === 1 && (
+                          <font size="1" className="text-primary pull-right">
+                            Parcel &nbsp;
+                          </font>
+                        )}
+
+                        {item.is_complementary === 1 && (
+                          <font size="1" className="text-primary pull-right">
+                            Complementary &nbsp;
+                          </font>
+                        )}
+                      </small>
+
+                      <br />  
+                      <small
+                        className="text-danger"
+                        style={{ fontSize: "10px" }}
+                      >
+                        {item.is_note === 1 && (
+                          <>Note : {item.is_prod_note}, &nbsp;</>
+                        )}
+
+                        {item.is_complementary === 1 && (
+                          <>{item.is_complementary_note}, &nbsp;</>
+                        )}
+                      </small>
+
                     </CCol>
 
                     <CCol sm={1} xs={1} className="text-center">
                       {item.prod_qty}
                     </CCol>
                     <CCol sm={2} xs={2} className="text-center">
-                      <i className="fa fa-inr"></i> {item.prod_rate}
+                      <i className="fa fa-inr"></i> {item.prod_rate.toFixed(2)}
                     </CCol>
                     <CCol sm={2} xs={2} className="text-right">
-                      <i className="fa fa-inr"></i> {item.prod_rate}
+                      <i className="fa fa-inr"></i> {item.prod_rate.toFixed(2)}
                     </CCol>
                   </>
                 ))}
@@ -326,7 +459,7 @@ const PayBillsModels = ({
               <CCol sm={5}>
                 <b>Delivery Mode</b> <br />
                 <div>{selectedDelivery}</div>
-                <b>DateTime : </b> <div>{new Date().toLocaleString()}</div>
+                {/* <b>DateTime : </b> <div>{new Date().toLocaleString()}</div> */}
                 <b>Note</b>
               </CCol>
 
@@ -340,20 +473,20 @@ const PayBillsModels = ({
                     {totalItem} Item(s)
                   </CCol>
                   <CCol sm={4} className="text-right">
-                    <i className="fa fa-inr"></i> {subtotal}
+                    <i className="fa fa-inr"></i> {subtotal.toFixed(2)}
                   </CCol>
                 </CRow>
 
                 <CRow className="pt-1">
                   <CCol sm={7}>Tax GST (2.5% SGST) </CCol>
                   <CCol sm={5} className="text-right">
-                    <i className="fa fa-inr"></i> {totalSGST}
+                    <i className="fa fa-inr"></i> {totalSGST.toFixed(2)}
                   </CCol>
                 </CRow>
                 <CRow className="pt-1">
                   <CCol sm={7}>Tax GST (2.5% CGST)</CCol>
                   <CCol sm={5} className="text-right">
-                    <i className="fa fa-inr"></i> {totalCGST}
+                    <i className="fa fa-inr"></i> {totalCGST.toFixed(2)}
                   </CCol>
                 </CRow>
 
@@ -366,73 +499,170 @@ const PayBillsModels = ({
                   </CCol>
                   <CCol sm={5} className="text-right">
                     <b style={{ color: "#26B99A" }}>
-                      <i className="fa fa-inr"></i> {finalPayAmount}
+                      <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
                     </b>
                   </CCol>
                 </CRow>
-                <hr className="borders" />
 
-                <center className="text-danger p-1 m-1">
-                  {isPaymentSelected
-                    ? null
-                    : "** Please select the payment mode."}
-                </center>
-                <CRow>
-                  {selectedPayment && (
-                    <>
-                      <CCol sm={1}>
-                        <CButton
-                          className="btn-invisible p-0"
-                          onClick={() => resetPayment()}
-                        >
-                          <i className="fa fa-trash fa-xs"></i>
-                        </CButton>
-                      </CCol>
-                      <CCol sm={3}>
-                        <b>{selectedPayment === 1 ? "Cash" : ""}</b>
-                      </CCol>
-                      <CCol sm={5}>
-                        <input
-                          type="text"
-                          className="form-control input-sm rounded-0 extra-info"
-                          placeholder="Extra information"
-                        />
-                      </CCol>
-                      <CCol sm={3} className="text-right">
-                        <input
-                          type="number"
-                          value={payAmountValue}
-                          className="form-control p-0 text-end rounded-0"
-                          onChange={(e) => setPayAmountValue(e.target.value)} // Update payAmount state
-                          onKeyDown={handlePayAmountKeyDown} // Handle Enter key press
-                        />
-                      </CCol>
-                    </>
-                  )}
+                <CRow className="dueAmt-style">
+                  <CCol sm={8} className="text-right">
+                    <label>
+                      <input type="checkbox" /> Previous OverDue
+                    </label>
+                  </CCol>
+                  <CCol sm={4} className="text-right">
+                    <i className="fa fa-inr"></i>
+                  </CCol>
                 </CRow>
 
-                <hr
-                  className="mt-2"
-                  style={{ margin: "0px", padding: "0px" }}
-                ></hr>
+                <hr className="borders" />
+                {selectedPayments.length === 0 && (
+                  <center className="text-danger p-1 m-1">
+                    "**Please select the payment mode."
+                  </center>
+                )}
+                <CRow>
+                  {selectedPayments.length > 0 &&
+                    selectedPayments.map((paymentMode) => (
+                      <>
+                        <CCol sm={1}>
+                          {" "}
+                          <CButton
+                            className="btn-invisible p-0"
+                            onClick={() => handleRemovePaymentMode(paymentMode)}
+                          >
+                            <i className="fa fa-trash fa-xs"></i>
+                          </CButton>
+                        </CCol>
+                        <CCol sm={3}>
+                          <strong>{getPaymentModeName(paymentMode)}</strong>
+                        </CCol>
+                        <CCol sm={5}>
+                          <input
+                            type="text"
+                            className="form-control input-sm rounded-0 extra-info"
+                            placeholder="Extra information"
+                            value={extrainfo}
+                            onChange={(e) => setExtrainfo(e.target.value)}
+                          />
+                        </CCol>
+                        <CCol sm={3} style={{ margin: "2px 0" }}>
+                          {/* <input
+                            type="number"
+                            ref={paymentAmountInputRef}
+                            value={paymentAmounts[paymentMode] || ""}
+                            className="form-control p-0 text-end rounded-0"
+                            onChange={(e) =>
+                              setPaymentAmounts({
+                                ...paymentAmounts,
+                                [paymentMode]: e.target.value,
+                              })
+                            }
+                            onKeyDown={handlePayAmountKeyDown} 
+                          /> */}
+                          <input
+                            type="number"
+                            ref={paymentAmountInputRef}
+                            value={paymentAmounts[paymentMode] || ""}
+                            className="form-control p-0 text-end rounded-0"
+                            onChange={(e) =>
+                              setPaymentAmounts({
+                                ...paymentAmounts,
+                                [paymentMode]: e.target.value,
+                              })
+                            }
+                            onKeyDown={(e) =>
+                              handlePaymentAmountKeyDown(e, paymentMode)
+                            }
+                          />
+                        </CCol>
+                      </>
+                    ))}
+                </CRow>
+                <hr className="mt-2 m-0 p-0" />
+                {selectedPayments.length > 0 && (
+                  <CRow className="text-end pt-2">
+                    <CCol sm={8}>
+                      <h5 style={{ color: "red" }}>
+                        <b>Balance</b>
+                      </h5>
+                    </CCol>
+                    <CCol sm={4}>
+                      {remainingBalance === 0 ? (
+                        <h5 style={{ color: "red" }}>
+                          <i className="fa fa-inr"></i>{" "}
+                          <b>{finalPayAmount.toFixed(2)}</b>
+                        </h5>
+                      ) : (
+                        <h5 style={{ color: "red" }}>
+                          <i className="fa fa-inr"></i>{" "}
+                          <b>{remainingBalance.toFixed(2)}</b>
+                        </h5>
+                      )}
+                    </CCol>
+                  </CRow>
+                )}
               </CCol>
             </CRow>
           </CModalBody>
+
           <CModalFooter style={{ display: "block" }} className="p-0">
             <CRow className="pt-2">
-              {/* payment mode button */}
               <CCol sm={8} className="pay-mode-btn p-0">
                 <CButton
                   type="button"
-                  color={selectedPayment === 1 ? "success" : "light"}
-                  tabIndex="0"
+                  color={selectedPayments.includes(1) ? "success" : "light"}
                   onClick={() => setPayment(1)}
                 >
                   Cash
                 </CButton>
-                <CButton type="button" color="light" onclick="setPayment(26)">
+                <CButton
+                  type="button"
+                  color={selectedPayments.includes(26) ? "success" : "light"}
+                  onClick={() => setPayment(26)}
+                >
                   HDFC QR
                 </CButton>
+
+                <CButton
+                  type="button"
+                  color={selectedPayments.includes(25) ? "success" : "light"}
+                  onClick={() => setPayment(25)}
+                >
+                  HDFC CC
+                </CButton>
+
+                <CButton
+                  type="button"
+                  color={selectedPayments.includes(4) ? "success" : "light"}
+                  onClick={() => setPayment(4)}
+                >
+                  PayTm
+                </CButton>
+
+                <CButton
+                  type="button"
+                  color={selectedPayments.includes(27) ? "success" : "light"}
+                  onClick={() => setPayment(27)}
+                >
+                  Swiggy Dineout
+                </CButton>
+                <CButton
+                  type="button"
+                  color={selectedPayments.includes(5) ? "success" : "light"}
+                  onClick={() => setPayment(5)}
+                >
+                  NEFT
+                </CButton>
+                <CButton
+                  type="button"
+                  color={selectedPayments.includes(16) ? "success" : "light"}
+                  onClick={() => setPayment(16)}
+                >
+                  Cheque
+                </CButton>
+
+                {/* Add more payment buttons as needed */}
 
                 <hr className="borders" />
                 <CButton type="button" color="light">
@@ -450,50 +680,11 @@ const PayBillsModels = ({
                 </CButton>
               </CCol>
               <CCol sm={4} className="pr-1">
-              <ReactToPrint
-  trigger={() => (
-    <CButton
-      color="success"
-      style={{ fontSize: "10px", width: "100%" }}
-      disabled={submissionInProgress}
-            onClick={() => finalizeOrder()} // Call the finalizeOrder function
-
-    >
-      {submissionInProgress ? (
-        <>
-          <span
-            className="spinner-border spinner-border-sm"
-            role="status"
-            aria-hidden="true"
-          ></span>
-          <span className="sr-only">Loading...</span>
-        </>
-      ) : (
-        <>
-          <b>FINALIZE ORDER</b>
-          <br />[ Ctrl + Enter ]
-        </>
-      )}
-      <ToastContainer />
-    </CButton>
-  )}
-  content={() => printComponentRef.current}
-  onBeforePrint={() => {
-    setSubmissionInProgress(true); // Set submission in progress
-    finalizeOrder(); // Call your submission function
-  }}
-  onAfterPrint={() => {
-    // Handle any post-printing logic here
-    setSubmissionInProgress(false); // Reset submission state if needed
-  }}
-/>
-
-                                
-          {/* <CButton
+                <CButton
                   color="success"
                   style={{ fontSize: "10px", width: "100%" }}
-                  onClick={finalizeOrder}
-                  disabled={submissionInProgress} // Disable the button while submission is in progress
+                  disabled={!selectedPayments.length || submissionInProgress}
+                  onClick={() => finalizeOrder()}
                 >
                   {submissionInProgress ? (
                     <>
@@ -511,21 +702,7 @@ const PayBillsModels = ({
                     </>
                   )}
                   <ToastContainer />
-                </CButton> */}
-                                
-                                {/* <ReactToPrint
-                  trigger={() => (
-                    <CButton
-                      color="success"
-                      style={{ fontSize: "10px", width: "100%" }}
-                      onClick={() => finalizeOrder()} // Call the finalizeOrder function 
-                   >
-                      <b>FINALIZE ORDER </b>
-                      <br />[ Ctrl + Enter ]
-                    </CButton>
-                  )}
-                  content={() => printComponentRef.current} // Pass the ref of the PrintContent component
-                /> */}
+                </CButton>
               </CCol>
             </CRow>
           </CModalFooter>
@@ -533,13 +710,10 @@ const PayBillsModels = ({
       </CContainer>
 
       <IPAddressData ref={ipAddressComponentRef} />
-      {/* {printComponentRef.current && (
-        <PrintComponent cartSumUp={cartSumUp} />
-      )} */}
 
       <div className="d-none">
         <PrintContent
-          ref={printComponentRef}
+          ref={componentRef}
           selectedCustomer={selectedCustomer}
           selectedDelivery={selectedDelivery}
           cartItems={cartItems}
@@ -549,8 +723,14 @@ const PayBillsModels = ({
           finalPayAmount={finalPayAmount}
         />
       </div>
+      <iframe
+        ref={iframeRef}
+        src={url}
+        width="1"
+        height="1"
+        style={{ visibility: "hidden" }}
+      ></iframe>
     </>
   );
 };
-
 export default PayBillsModels;

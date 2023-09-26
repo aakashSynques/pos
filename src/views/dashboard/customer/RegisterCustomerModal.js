@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setSelectedCustomer } from "../../../action/actions";
+
+
 
 import {
   CModal,
@@ -16,10 +20,18 @@ import {
   CForm,
 } from "@coreui/react";
 
-const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
+const RegisterCustomerModal = ({
+  visible,
+  onClose,
+  onSuccess,
+  searchQuery,
+}) => {
+  const dispatch = useDispatch();
+
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [customerData, setCustomerData] = useState({
+  const [registerCustomerData, setRegisterCustomerData] = useState({
     rnc_type: "",
     rnc_full_name: "",
     rnc_mobile_no: "",
@@ -32,16 +44,40 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
     rnc_gst_no: "",
   });
 
+  useEffect(() => {
+    if (searchQuery) {
+      if (!isNaN(searchQuery)) {
+        setRegisterCustomerData({
+          ...registerCustomerData,
+          rnc_mobile_no: searchQuery,
+        });
+      } else {
+        setRegisterCustomerData({
+          ...registerCustomerData,
+          rnc_full_name: searchQuery,
+        });
+      }
+    }
+  }, [searchQuery]);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setCustomerData({
-      ...customerData,
+
+    if (
+      (name === "rnc_mobile_no" && value.length > 10) ||
+      (name === "rnc_alt_mobile_no" && value.length > 10)
+    ) {
+      return;
+    }
+
+    setRegisterCustomerData({
+      ...registerCustomerData,
       [name]: value,
     });
   };
 
   const resetForm = () => {
-    setCustomerData({
+    setRegisterCustomerData({
       rnc_type: "",
       rnc_full_name: "",
       rnc_mobile_no: "",
@@ -55,6 +91,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
     });
     setError(null);
   };
+
   const handleRegisterNewCustomer = async () => {
     try {
       setLoading(true); // Set loading to true while submitting
@@ -65,33 +102,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json", // Set the content type to JSON
       };
-      const requestBody = JSON.stringify(customerData);
-      // Prepare the request body with the customer data
-      // const requestBody = JSON.stringify({
-      //   // rnc_type: customerData.accountType,
-      //   // rnc_full_name: customerData.fullName,
-      //   // rnc_mobile_no: customerData.mobileNo,
-      //   // rnc_email: customerData.email,
-      //   // rnc_address: customerData.address,
-      //   // rnc_pincode: customerData.pincode,
-      //   // rnc_extra_note: customerData.extraNote,
-      //   // rnc_alt_mobile_no: customerData.altMobileNo,
-      //   // rnc_pan_no: customerData.panNo,
-      //   // rnc_gst_no: customerData.rnc_gst_no
-      //   rnc_type: customerData.accountType,
-      //   rnc_full_name: customerData.fullName,
-      //   rnc_mobile_no: customerData.mobileNo,
-      //   ...(customerData.email && { rnc_email: customerData.email }),
-      //   ...(customerData.address && { rnc_address: customerData.address }),
-      //   ...(customerData.pincode && { rnc_pincode: customerData.pincode }),
-      //   ...(customerData.extraNote && { rnc_extra_note: customerData.extraNote }),
-      //   ...(customerData.altMobileNo && { rnc_alt_mobile_no: customerData.altMobileNo }),
-      //   ...(customerData.panNo && { rnc_pan_no: customerData.panNo }),
-      //   ...(customerData.rnc_gst_no && { rnc_gst_no: customerData.rnc_gst_no }),
-      // });
-      // console.log(requestBody)
-
-      // Make the API call
+      const requestBody = JSON.stringify(registerCustomerData);
       const response = await fetch(
         "http://posapi.q4hosting.com/api/customers/add",
         {
@@ -101,19 +112,15 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
         }
       );
 
+      const responseData = await response.json();
+      dispatch(setSelectedCustomer(responseData)); // Use the actual customer data from the response
+
       // Check if the request was successful
-      if (response.ok) {
-        const responseData = await response.json();
-        // alert("Customer registered successfully!");
-        console.log("Response data:", responseData);
-        onClose(); // Close the modal on successful registration
-        onSuccess(responseData); // Call the handleRegisterSuccess function here
+      if (responseData.ok) {
+        onClose();
         toast.success("Customer Registered Successfully!");
-
      
-
-        // Reset the form input fields to their initial values
-        setCustomerData({
+         setRegisterCustomerData({
           rnc_type: "",
           rnc_full_name: "",
           rnc_mobile_no: "",
@@ -123,22 +130,21 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
           rnc_extra_note: "",
           rnc_alt_mobile_no: "",
           rnc_pan_no: "",
-          rnc_gst_no: "",
+          rnc_gst_no: "",           
         });
         setError(null); // Reset the error state
-      } else {
-        // Handle the case where the API returns an error
-        const responseData = await response.json();
+
+     } else {
         setError("Failed to register customer: " + responseData.message);
-        // alert("Failed to register customer: " + responseData.message);
       }
+
     } catch (error) {
       setError("Failed to register customer.");
-      // alert("Failed to register customer. Please try again later.");
     } finally {
       setLoading(false); // Set loading back to false after submission attempt
     }
   };
+
 
   return (
     <CModal
@@ -165,9 +171,9 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
               aria-label="Default select example"
               name="rnc_type"
               onChange={handleInputChange}
-              value={customerData.rnc_type}
+              value={registerCustomerData.rnc_type}
             >
-              <option>------</option>
+              <option style={{ fontSize: "13px" }}>--select customer type--</option>
               <option value="1">Customer</option>
               <option value="4">Employee (BNS)</option>
             </CFormSelect>
@@ -178,8 +184,9 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
               <i className="fa fa-user"></i>
             </CInputGroupText>
             <CFormInput
+              // style={{ textTransform: "uppercase" }}
               name="rnc_full_name"
-              value={customerData.rnc_full_name}
+              value={registerCustomerData.rnc_full_name}
               placeholder="Full Name"
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
@@ -195,11 +202,12 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
             <CFormInput
               type="number"
               name="rnc_mobile_no"
-              value={customerData.rnc_mobile_no}
+              value={registerCustomerData.rnc_mobile_no}
               placeholder="Mobile No."
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
               onChange={handleInputChange}
+              maxLength="10"
             />
           </CInputGroup>
 
@@ -210,9 +218,9 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
             </CInputGroupText>
             <CFormInput
               type="number"
-              min={10}
+              maxLength="10"
               name="rnc_alt_mobile_no"
-              value={customerData.rnc_alt_mobile_no}
+              value={registerCustomerData.rnc_alt_mobile_no}
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
               placeholder="Alternative Mobile No."
@@ -228,7 +236,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
             <CFormInput
               type="email"
               name="rnc_email"
-              value={customerData.rnc_email}
+              value={registerCustomerData.rnc_email}
               aria-label="Sizing example input"
               placeholder="Email"
               aria-describedby="inputGroup-sizing-sm"
@@ -243,7 +251,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
             </CInputGroupText>
             <CFormTextarea
               name="rnc_address"
-              value={customerData.rnc_address}
+              value={registerCustomerData.rnc_address}
               id="floatingTextarea"
               placeholder="Full Address"
               onChange={handleInputChange}
@@ -257,7 +265,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
             </CInputGroupText>
             <CFormInput
               name="rnc_pincode"
-              value={customerData.rnc_pincode}
+              value={registerCustomerData.rnc_pincode}
               placeholder="Pincode"
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
@@ -272,7 +280,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
             </CInputGroupText>
             <CFormInput
               name="rnc_extra_note"
-              value={customerData.rnc_extra_note}
+              value={registerCustomerData.rnc_extra_note}
               placeholder="Extra Note"
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
@@ -286,7 +294,7 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
               <i className="fa fa-credit-card"></i>
             </CInputGroupText>
             <CFormInput
-              value={customerData.rnc_pan_no}
+              value={registerCustomerData.rnc_pan_no}
               name="rnc_pan_no"
               aria-label="Sizing example input"
               placeholder="PAN No."
@@ -315,3 +323,8 @@ const RegisterCustomerModal = ({ visible, onClose, onSuccess }) => {
 };
 
 export default RegisterCustomerModal;
+
+
+
+
+

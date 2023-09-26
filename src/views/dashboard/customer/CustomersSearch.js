@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
 import {
   CInputGroup,
   CFormInput,
@@ -12,12 +11,19 @@ import { fetch } from "../../../utils";
 import RegisterCustomerModal from "./RegisterCustomerModal";
 import EditCustomerProfile from "./EditCustomerProfile";
 import CustAccountsModel from "./CustAccountsModel";
-import PayBillsModels from "../cart/billing/PayBillsModels";
 import { useSelector, useDispatch } from "react-redux";
 import {
   setSelectedCustomer,
   clearSelectedCustomer,
+  setInputFocused,
+  setOnBlur,
+  setCustomerAccountJson,
+  clearSearchQuery,
 } from "../../../action/actions";
+import { toast } from "react-toastify";
+import axios from "axios";
+import PendingOrders from "./PendingOrders";
+import ClearSaleBtn from "../buttons/ClearSaleBtn";
 
 const CustomersSearch = () => {
   const dispatch = useDispatch();
@@ -33,21 +39,27 @@ const CustomersSearch = () => {
   const [addNewCustomer, setAddNewCustomer] = useState(false);
   const [editCustomerModel, setEditCustomerModel] = useState(false);
   const [accountModel, setAccountModel] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(-1); // Initialize focusedIndex
+  const [focusedIndex, setFocusedIndex] = useState(0); // Initialize focusedIndex
   const customerSearchInputRef = useRef(null); // Create a ref for the customer search input
+  const [walkingCustomerData, setWalkingCustomerData] = useState(null);
 
-  
+  const [handleWalkingClicked, sethandleWalkingClicked] = useState(false); // walk in button
+  const buttonRef = useRef(null); // walk in button
+  const isInputFocused = useSelector((state) => state.inputFocus.isInputFocus);
 
   const customTooltipStyle = {
     "--cui-tooltip-bg": "var(--cui-primary)",
   };
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      getProductSearch();
-    }, 100); // Debounce API call by 100ms
+  const selectedOutletId = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
 
-    return () => clearTimeout(delayDebounceFn);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      getProductSearch();
+    }, 1000);
+    return () => clearTimeout(timeoutId);
   }, [query]);
 
   const getProductSearch = async () => {
@@ -78,6 +90,8 @@ const CustomersSearch = () => {
       );
       setCustomerSearchResults(response.data.suggestions);
       // Cache the results for the current query
+      console.log("cust res", response.data.suggestions);
+
       setCache((prevCache) => ({
         ...prevCache,
         [query]: response.data.suggestions,
@@ -89,13 +103,13 @@ const CustomersSearch = () => {
     }
   };
 
-  const handleUpdateCustomerData = (updatedData) => {
-    setSelectedCustomer((prevCustomer) => ({
-      ...prevCustomer,
-      json: { ...prevCustomer.json, ...updatedData },
-    }));
-  };
-  
+  // const handleUpdateCustomerData = (updatedData) => {
+  //   setSelectedCustomer((prevCustomer) => ({
+  //     ...prevCustomer,
+  //     json: { ...prevCustomer.json, ...updatedData },
+  //   }));
+  // };
+
   // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
     setQuery(customerName);
@@ -103,25 +117,34 @@ const CustomersSearch = () => {
       (customer) => customer.value === customerName
     );
     dispatch(setSelectedCustomer(selectedCustomer));
-    console.log("selectedCustomer:", selectedCustomer);
   };
 
-  // Function to handle when the "Edit" button is clicked for a selected customer
   const handleEditCustomer = () => {
-    if (selectedCustomer) {
-      setEditCustomerModel(true);
+    if (!selectedCustomer || !selectedCustomer.json) {
+      return;
     }
-  };
-  // Function to handle when the "Edit" button is clicked for a selected customer
-  const handleAccountModel = () => {
-    if (selectedCustomer) {
-      setAccountModel(true);
+    if (
+      selectedCustomer?.json?.cust_type_id === 4 ||
+      selectedCustomer?.json?.cust_type_id === 6 ||
+      selectedCustomer?.json?.cust_type_id === 2
+    ) {
+      toast.error(
+        "Can't edit details of this customer. List registered non-editable Customer!",
+        {
+          autoClose: 3000,
+        }
+      );
+    } else {
+      setEditCustomerModel(true);
     }
   };
 
   const MAX_RESULTS = 1000; // Limit the number of search results displayed
   const displayedItems = useMemo(() => {
-    if (query === "") return customerSearchResults.slice(0, MAX_RESULTS);
+    if (query === "") {
+      setLoading(false);
+      return customerSearchResults.slice(0, MAX_RESULTS);
+    }
 
     return customerSearchResults
       .filter(
@@ -148,6 +171,58 @@ const CustomersSearch = () => {
     }
   };
 
+  // Function to handle when the shift + A key button is clicked for a selected customer
+  const handleAccountModel = () => {
+    if (!selectedCustomer) {
+      return;
+    } else {
+      setAccountModel(true);
+    }
+  };
+  useEffect(() => {
+    const handleEscKeyPress = (event) => {
+      if (accountModel && event.key === "Escape") {
+        setAccountModel(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscKeyPress);
+    };
+  }, [accountModel, setAccountModel]);
+
+  useEffect(() => {
+    const handleShortcutKeyPressCustomer = (event) => {
+      if (event.shiftKey && event.key === "A") {
+        setAccountModel(true);
+        if (selectedCustomer) {
+          handleAccountModel();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleShortcutKeyPressCustomer);
+
+    return () => {
+      window.removeEventListener("keydown", handleShortcutKeyPressCustomer);
+    };
+  }, [isInputFocused]);
+
+  // Function to handle when the "Edit" button is clicked for a selected customer
+  useEffect(() => {
+    const handleShortcutKeyPressCustomerEdit = (event) => {
+      if (event.shiftKey && event.key === "E") {
+        handleEditCustomer();
+      }
+    };
+    window.addEventListener("keydown", handleShortcutKeyPressCustomerEdit);
+    return () => {
+      window.removeEventListener("keydown", handleShortcutKeyPressCustomerEdit);
+    };
+  }, [isInputFocused, selectedCustomer]);
+
   useEffect(() => {
     const handleShortcutKeyPressCustomer = (event) => {
       if (event.shiftKey) {
@@ -159,18 +234,6 @@ const CustomersSearch = () => {
             );
             if (searchInput) {
               searchInput.focus();
-            }
-            break;
-          case "E":
-            event.preventDefault();
-            if (selectedCustomer) {
-              handleEditCustomer();
-            }
-            break;
-          case "A":
-            event.preventDefault();
-            if (selectedCustomer) {
-              setAccountModel(true);
             }
             break;
           default:
@@ -228,7 +291,39 @@ const CustomersSearch = () => {
           ? 0
           : Math.min(prevIndex + 1, displayedItems.length - 1)
       );
-    } else if (event.key === "Enter") {
+    } else if (event.key === "Tab" && displayedItems.length > -1) {
+      event.preventDefault();
+      if (focusedIndex !== -1) {
+        const selectedCustomer = displayedItems[focusedIndex];
+        handleSelectCustomer(selectedCustomer.value);
+        setFocusedIndex(-1); // Reset focus after selection
+      } else if (selectedCustomer) {
+        event.preventDefault();
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Tab") {
+        handleTabKeyPress(event);
+      } else {
+        handleArrowKeyPress(event);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [focusedIndex]);
+
+  const handleTabKeyPress = (event) => {
+    if (
+      (event.key === "Tab" || event.key === "Enter") &&
+      displayedItems.length > 0
+    ) {
       event.preventDefault();
       if (focusedIndex !== -1) {
         const selectedCustomer = displayedItems[focusedIndex];
@@ -238,30 +333,150 @@ const CustomersSearch = () => {
     }
   };
 
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (customerSearchResults.length === 0 && query.trim() !== "") {
+        setAddNewCustomer(true);
+      }
+    }, 20000);
+
+    return () => clearTimeout(timeoutId);
+  }, [query, customerSearchResults]);
+
+  const clearSearchQuery = () => {
+    setQuery("");
+  };
+
+  // Function to handle walk in API
+  const handleWalkingCustomer = async () => {
+    try {
+      const token = localStorage.getItem("pos_token");
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = {
+        outlet_id: selectedOutletId,
+      };
+      const response = await fetch(
+        "/api/customers/new-walk-in-customer",
+        "post",
+        body,
+        headers
+      );
+      if (response && response.data && response.data.cust_win_json) {
+        const walkingCustomerData = response.data.cust_win_json;
+        setWalkingCustomerData(walkingCustomerData);
+        // setQuery(walkingCustomerData.customer_name);
+        const walkingSelectedCustomer = {
+          ...selectedCustomer,
+          json: walkingCustomerData,
+        };
+        dispatch(setSelectedCustomer(walkingSelectedCustomer));
+        // console.log("walking customer", setSelectedCustomer());
+      } else {
+        toast.error("Failed to retrieve walking customer data");
+      }
+    } catch (err) {
+      console.error("Error retrieving walking customer data:", err);
+      toast.error("An error occurred while fetching walking customer data.");
+    }
+  };
+  // Function to handle when the shift + W walk in button is clicked for a selectedId
+
+  const handleWalking = () => {
+    handleWalkingCustomer();
+  };
+  useEffect(() => {
+    const handleShortcutKeyPressWalking = (event) => {
+      if (!isInputFocused && event.shiftKey && event.key === "W") {
+        event.preventDefault();
+        if (!selectedCustomer) {
+          handleWalking();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleShortcutKeyPressWalking);
+
+    return () => {
+      window.removeEventListener("keydown", handleShortcutKeyPressWalking);
+    };
+  }, [isInputFocused, selectedCustomer, handleWalking]);
+
+  const handleInputFocus = () => {
+    dispatch(setInputFocused());
+  };
+
+  const handleInputBlur = () => {
+    dispatch(setOnBlur());
+  };
+
+  useEffect(() => {
+    setFocusedIndex(0); // Set focusedIndex to 0 when the search results change
+  }, [customerSearchResults]);
+
+  // ============customer account api=================
+  const customer_id = selectedCustomer && selectedCustomer.json.cust_id;
+  const getAllAccountData = async () => {
+    try {
+      const token = localStorage.getItem("pos_token");
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = {
+        cust_id: customer_id,
+      };
+      const response = await fetch(
+        "/api/customers/getCustomerAccount",
+        "post",
+        body,
+        headers
+      );
+
+      dispatch(setCustomerAccountJson(response.data.cust_acc_json));
+      // console.log('custAccountData', setCustomerAccountJson)
+    } catch (err) {
+      console.error("Error ", err);
+    }
+  };
+  useEffect(() => {
+    if (customer_id && customer_id) {
+      getAllAccountData();
+    }
+  }, [customer_id && customer_id]);
+
   return (
     <>
       <div className="customer-sarch-sec">
-            {selectedCustomer ? (
+        {selectedCustomer ? (
           <div>
             <CRow>
               <CCol sm={6}>
                 <div className="cust-name">
                   <b>
                     {selectedCustomer.json.customer_name}
-                    <i
-                      className="fa fa-info-circle text-primary pl-2"
-                      title="EXTRA NOTE"
-                    ></i>
+                    {selectedCustomer.json.extra_note && (
+                      <i
+                        className="fa fa-info-circle text-primary pl-2"
+                        title={selectedCustomer.json.extra_note}
+                        style={{ paddingLeft: "5px" }}
+                      ></i>
+                    )}
                   </b>
                 </div>
                 <div>
-                  <label className="cust-label">
+                  <label
+                    className={`cust-label ${
+                      selectedCustomer.json.cust_type_id === 4
+                        ? "bg-danger"
+                        : selectedCustomer.json.cust_type_id === 6
+                        ? "bg-success"
+                        : selectedCustomer.json.cust_type_id === 2
+                        ? "bg-primary"
+                        : "bg-grey"
+                    }`}
+                  >
                     {selectedCustomer.json.cust_type_name} Account
                   </label>{" "}
                   - {selectedCustomer.json.mobile}
                 </div>
               </CCol>
-
               {/* customer Edit and update */}
               <CCol sm={6}>
                 <div className="text-right" style={{ float: "right" }}>
@@ -274,8 +489,7 @@ const CustomersSearch = () => {
                     >
                       <button
                         onClick={handleAccountModel}
-                        style={{ "border-radius": "2px" }}
-                        className="btn btn-xs btn-warning rounded-left"
+                        className="btn btn-xs btn-warning rounded-left rounded-1"
                         title=""
                         data-toggle="tooltip"
                         data-html="true"
@@ -308,7 +522,7 @@ const CustomersSearch = () => {
                       placement="top"
                     >
                       <button
-                        style={{ "border-radius": "2px" }}
+                        style={{ borderRadius: "2px" }}
                         className="btn btn-xs btn-danger"
                         title=""
                         data-toggle="tooltip"
@@ -332,8 +546,13 @@ const CustomersSearch = () => {
                 type="text"
                 placeholder="Search Customer Name [Shift + C]"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                ref={customerSearchInputRef} // Make sure this is correctly placed
+                onChange={(e) => {
+                  setLoading(true);
+                  setQuery(e.target.value);
+                }}
+                onFocus={handleInputFocus}
+                onBlur={handleInputBlur}
+                ref={customerSearchInputRef}
               />
             </CInputGroup>
             <div className="product-list-abslute" ref={ref}>
@@ -361,7 +580,7 @@ const CustomersSearch = () => {
                           tabIndex={0}
                           aria-selected={
                             index === focusedIndex ? "true" : "false"
-                          } // Add this line
+                          }
                         >
                           <div>
                             <b>{customer.value}</b>
@@ -387,29 +606,45 @@ const CustomersSearch = () => {
                 </div>
               )}
             </div>
-            <CButton
-              color="info"
-              className="text-white mt-1 rounded-1"
-              style={{ backgroundColor: "#5bc0de" }}
+            <CTooltip
+              content="Walk-In Customer [Shift + W]"
+              placement="top"
+              style={customTooltipStyle}
             >
-              Walk-IN{" "}
-              <span className="badge" color="info">
-                0
-              </span>
-            </CButton>
+              <CButton
+                color="info"
+                className="text-white mt-1 rounded-1"
+                style={{ backgroundColor: "#5bc0de" }}
+                onClick={() => {
+                  sethandleWalkingClicked(true);
+                  handleWalking();
+                }}
+                ref={buttonRef}
+              >
+                Walk-IN{" "}
+                <span className="badge" color="info">
+                  0
+                </span>
+              </CButton>
+            </CTooltip>
           </>
         )}
 
-        {/* register new customer model */}
-        <CustAccountsModel
-          visible={accountModel}
-          onClose={() => setAccountModel(false)}
-        />
+        {selectedCustomer && (
+          <CustAccountsModel
+            accountModel={accountModel}
+            setAccountModel={setAccountModel}
+            selectedCustomer={selectedCustomer}
+          />
+        )}
 
-        {/* register new customer model */}
         <RegisterCustomerModal
           visible={addNewCustomer}
-          onClose={() => setAddNewCustomer(false)}
+          onClose={() => {
+            setAddNewCustomer(false);
+            clearSearchQuery(); // Call the clearSearchQuery function here
+          }}
+          searchQuery={query} // Pass the search query
         />
 
         {/* Edit customer model */}
@@ -418,8 +653,6 @@ const CustomersSearch = () => {
             visible={editCustomerModel}
             onClose={() => setEditCustomerModel(false)}
             customerData={selectedCustomer.json}
-            onUpdate={handleUpdateCustomerData}
-            setSelectedCustomer={setSelectedCustomer} // Pass setSelectedCustomers here
           />
         )}
       </div>

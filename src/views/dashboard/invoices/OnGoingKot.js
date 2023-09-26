@@ -25,7 +25,7 @@ const OnGoingKot = () => {
   return (
     <>
       <CCard className="invoice-card">
-        <CCardHeader className="invoice-card" >
+        <CCardHeader className="invoice-card">
           OnGoing KOT(s)
           <CLink
             className="text-primary pull-right"
@@ -96,7 +96,7 @@ const OnGoingKot = () => {
         </CModalBody>
 
         <CModalFooter>
-          <CButton color="secondary" onClose={() => setReturns(false)}>
+          <CButton color="secondary" onClick={() => setReturns(false)}>
             Close
           </CButton>
         </CModalFooter>

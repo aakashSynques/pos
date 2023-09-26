@@ -15,7 +15,7 @@ const InvoicesListBox = () => {
           <CRow>
             {/* Recent Invice section */}
             <CCol md="6" sm="6" xs="12" className="p-10">
-              {/* <RecentInvoice /> */}
+              <RecentInvoice />
               {/* </CCol> */}
 
               {/* Recent Return Invoice(s) section */}
@@ -24,7 +24,6 @@ const InvoicesListBox = () => {
               {/* </CCol> */}
 
               {/* Total Punched Invoice(s) section */}
-              {/* <CCol md="6" sm="6" xs="12" className="p-10"> */}
               <TotalPunchedInvoice />
             </CCol>
 

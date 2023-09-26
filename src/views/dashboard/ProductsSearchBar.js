@@ -2,9 +2,10 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
 import { useDispatch, useSelector, connect } from "react-redux";
-import { addToCart } from "../../action/actions"; // Import the addToCart action
+import { addToCart, setAllProducts } from "../../action/actions"; // Import the addToCart action
 import { ToastContainer, toast } from "react-toastify";
 import classnames from "classnames";
+
 
 // Determine the text color class based on the value of prod_sign
 const getTextColorClass = (prod_sign) => {
@@ -22,31 +23,31 @@ const ProductsSearchBar = () => {
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-  // console.log(selectedOutletId)
+  const allProds = useSelector((state) => state.allProducts);
+
   const getProductSearch = async () => {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/products/all", "get", null, headers);
       setProductSearch(response.data.prodAllList);
-      // console.log(response.data.prodAllList);
+      dispatch(setAllProducts(response.data.prodAllList));
+ 
     } catch (err) {
       console.log(err);
     } finally {
     }
   };
-
   useEffect(() => {
     getProductSearch();
   }, []);
 
-  // console.log(productSearch, "allprods");
 
   // product search state
   const filteredItems = useMemo(() => {
     const outletId = selectedOutletId;
     if (query === "") return productSearch;
-    const filterProduct = productSearch.filter((p) => {
+    const filterProduct =productSearch && productSearch.filter((p) => {
       const outletData = p.rate_chart?.[outletId]?.[0];
       return outletData && outletData.stock_availability > 0;
     });
@@ -59,7 +60,6 @@ const ProductsSearchBar = () => {
     return filterSearchProduct;
   }, [query, selectedOutletId, productSearch]);
 
-  // console.log(filteredItems);
   // groud by category heads
   const groupedItems = useMemo(() => {
     const grouped = {};
@@ -85,7 +85,6 @@ const ProductsSearchBar = () => {
     return "prod rate";
   };
 
-  // console.log(filteredItems);
 
   // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
   function generateUniqueNumber() {
@@ -99,7 +98,6 @@ const ProductsSearchBar = () => {
   // Dispatch the addToCart action with the product and its prod_price
   const handleAddToCart = (productId) => {
     const outletId = selectedOutletId.toString();
-    console.log(outletId);
     const selectedProductForCart = filteredItems.filter(
       (item) => item.prod_id === productId
     );
@@ -143,7 +141,7 @@ const ProductsSearchBar = () => {
       prod_qty: item.prod_qty,
       prod_discount: item.prod_discount,
       prod_discount_offered: item.prod_discount_offered,
-      total_amount: item.prod_rate,
+      total_amount: getPriceForOutlet(item),
       KOT_pick: 0,
       KOT_ready: 0,
       KOT_dispatch: 0,
@@ -154,15 +152,12 @@ const ProductsSearchBar = () => {
       // customized: item.customized,
       customized: [],
     }));
-    
+
+    console.log('cart item deta', cartItemData)
     dispatch(addToCart(cartItemsArray, ...cartItemData));
   };
 
     // ... Your existing code ...
-
-
-
-
 
 
 
@@ -205,20 +200,43 @@ const ProductsSearchBar = () => {
       document.removeEventListener("keydown", handleShortcutKeyPress);
     };
   }, []);
-
-  // Function to check for special characters in the input
   const isInputValid = (inputValue) => {
     const specialCharactersRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
     return !specialCharactersRegex.test(inputValue);
   };
 
+
+
+  const [focusedItemIndex, setFocusedItemIndex] = useState(0);
+  const handleArrowNavigation = (event) => {
+    if (filteredItems.length === 0) return;
+    if (event.key === "ArrowUp" && focusedItemIndex > 0) {
+      setFocusedItemIndex(focusedItemIndex - 1);
+    } else if (
+      event.key === "ArrowDown" &&
+      focusedItemIndex < filteredItems.length - 1
+    ) { 
+      setFocusedItemIndex(focusedItemIndex + 1);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("keydown", handleArrowNavigation);
+    return () => {
+      document.removeEventListener("keydown", handleArrowNavigation);
+    };
+  }, [focusedItemIndex, filteredItems]);
+
+ 
+
+
+
   return (
     <div>
       <CInputGroup className="change-focus">
         <CFormInput
+          autoComplete="off"
           id="product-search-input" // Add an id to the input element for referencing
           type="text"
-          // autocomplete="off"
           placeholder="Search Product Code OR Name... [Shift + P]"
           value={query}
           // onChange={(e) => setQuery(e.target.value)}
@@ -230,6 +248,7 @@ const ProductsSearchBar = () => {
             } else {
               console.log(err);
             }
+
           }}
         />
       </CInputGroup>
@@ -246,10 +265,10 @@ const ProductsSearchBar = () => {
               </div>
               {products
                 .filter((product) => getPriceForOutlet(product) !== 0) // Exclude products with prod_rate equal to 0
-                .map((product) => (
-                  <div className="product-list">
+                .map((product, index) => (
+                  <div className={`product-list ${focusedItemIndex === index ? "focused" : ""}`} key={product.prod_id}>
                     <button
-                      key={product.prod_id}
+                      // key={product.prod_id}
                       onClick={() => {
                         handleAddToCart(product.prod_id);
                         setQuery("");

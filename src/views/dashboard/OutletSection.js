@@ -1,81 +1,4 @@
-// import {
-//   CButton,
-// } from "@coreui/react";
-// import React from "react";
-// import AssignOutLet from "../outlet/AssignOutLet";
-// import DeliveryModeModal from "../outlet/DeliveryModeModal";
-
-// const OutletOptions = ({ outletName }) => {
-//   return (
-//     <>
-//       <div className="outlet-btn">
-//         <AssignOutLet />
-//         {/* <DeliveryModeModal /> */}
-//         <br /> 
-//         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-//           <b>New Sale</b>
-//           <p>[Shift + N]</p>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-//           <b>Save Sale</b>
-//           <p>[Shift + S]</p>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-//           <b>Panding Sale(s)</b>
-//           <p>[Shift + L]</p>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-//           <b>Pending KOT(s)</b>
-//           <p>[Shift + K]</p>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-//           <b>Recent Sale(s)</b>
-//           <p>[Shift + R]</p>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-//           <b>Booking Sale</b>
-//           <p>[Shift + B]</p>
-//         </CButton>
-//         <CButton
-//           className="light-outlet"
-//           style={{ background: "#fff", color: "#000" }}
-//         >
-//           <b>Collection Status</b>
-//         </CButton>
-//         <CButton
-//           className="light-outlet"
-//           style={{ background: "#fff", color: "#000" }}
-//         >
-//           <b>Expenses/Purchase Status</b>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#d9534f" }}>
-//           <b>Clear Sale</b>
-//           <p>[Shift + Delete]</p>
-//         </CButton>
-//         <CButton className="light-outlet" style={{ background: "#d9534f" }}>
-//           <b>Discard Sale</b>
-//           <p>[Shift + Ctrl + Delete]</p>
-//         </CButton>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default OutletOptions;
-
-
-
-
-import {
-  CContainer,
-  CRow,
-  CCol,
-  CCardHeader,
-  CLink,
-  CCardBody,
-  CCard,
-  CButton,
-} from "@coreui/react";
+import { CButton } from "@coreui/react";
 import React from "react";
 import AssignOutLet from "../outlet/AssignOutLet";
 import { useState } from "react";
@@ -86,16 +9,21 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import RecentTabModal from "./invoices/RecentTabModal";
-// import OnGoingTabModal from "./invoices/OnGoingKotModel/OnGoingTabModal";
-import CollectioStatusModal from "./collectionComponent/CollectioStatusModal";
+import PendingSaleModal from "./buttons/PendingSaleBtn/PendingSaleModal";
+import OnGoingTabModal from "./invoices/OnGoingKotModel/OnGoingTabModal";
+import CollectioStatusModal from "./buttons/collectionStatusBtn/CollectioStatusModal";
+import SaveSale from "./buttons/saveSale/SaveSale";
+import ClearSaleBtn from "./buttons/ClearSaleBtn";
+import { fetch } from "../../utils";
+
+// import { setInputFocused } from "../../action/actions";
 
 const OutletOptions = ({ outletName }) => {
   const [booking, setBooking] = useState(false);
-  const [recentBooking, setRecentBooking] = useState([]);
-
   const [bookingModal, setBookingModal] = useState(false);
   const [pendingBooking, setPendingBooking] = useState([]);
 
+  const [pendingButtonModal, setPendingButtonModal] = useState(false);
   const [kotModal, setKotModal] = useState(false);
   const [collectionModal, setCollectionModal] = useState(false);
 
@@ -103,80 +31,169 @@ const OutletOptions = ({ outletName }) => {
 
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
+  const isInputFocused = useSelector((state) => state.inputFocus.isInputFocus);
 
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
 
-  const getAllRecentInvoices = async () => {
+  const recentBooking = useSelector(
+    (state) => state.recentBooking.recentBookings
+  );
+
+  const getAllPendingBookings = async () => {
     try {
+      // const token = localStorage.getItem("pos_token");
+      // const headers = {
+      //   Authorization: `Bearer ${token}`,
+      // };
+      // setLoading(true);
+      // const response = await axios.post(
+      //   "http://posapi.q4hosting.com/api/order/pending",
+
+      //   { outlet_id },
+      //   { headers }
+      // );
+
       const token = localStorage.getItem("pos_token");
-      const headers = {
-        Authorization: `Bearer ${token}`,
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = {
+        outlet_id,
       };
       setLoading(true);
-      const response = await axios.post(
-        "http://posapi.q4hosting.com/api/order/recent",
-        { outlet_id },
-        { headers }
-      );
-      // console.log(response, "52 recent");
-      setRecentBooking(response.data.recentOrders);
+      const response = await fetch("/api/order/pending", "POST", body, headers);
+
+      setPendingBooking(response.data.get_pending_booking);
       setLoading(false);
       setNetworkError(false);
     } catch (err) {
-      console.log(err);
-      if (err.response.data.message == "No Recent Orders Found.") {
-        console.log("No Returned Orders Found.");
+      if (err.response.data.message == "No pending Booking Orders Found.") {
         setNetworkError(true);
         setLoading(false);
       } else if (err.response.data.message == "Outlet Id Required.") {
         setLoading(true);
-        console.log(err);
       } else {
-        console.log(err);
         setNetworkError(true);
         setLoading(false);
       }
     }
   };
 
-  const getAllPendingBookings = async () => {
-    try {
-      const token = localStorage.getItem("pos_token");
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      setLoading(true);
-      const response = await axios.post(
-        "http://posapi.q4hosting.com/api/order/pending",
-        { outlet_id },
-        { headers }
-      );
-      setPendingBooking(response.data.get_pending_booking);
-      // console.log(response);
-      setLoading(false);
-      setNetworkError(false);
-    } catch (err) {
-      console.log(err);
-      if (err.response.data.message == "No pending Booking Orders Found.") {
-        console.log("No pending Booking Orders Found.");
-        setNetworkError(true);
-        setLoading(false);
-      } else if (err.response.data.message == "Outlet Id Required.") {
-        setLoading(true);
-        console.log(err);
-      } else {
-        console.log(err);
-        setNetworkError(true);
-        setLoading(false);
-      }
-    }
-  };
   useEffect(() => {
-    getAllRecentInvoices();
+    // getAllRecentInvoices();
     getAllPendingBookings();
   }, [outlet_id]);
+
+  const getTodayRecentSale = () => {
+    let todayRecentLength = [];
+    recentBooking &&
+      recentBooking.forEach(({ sales_json }) => {
+        try {
+          if (sales_json.cartSumUp.deliveryMode) {
+            const deliveryMode = sales_json.cartSumUp.deliveryMode;
+            if (deliveryMode > 0) {
+              const pickUpTab = deliveryMode ? deliveryMode : null;
+              todayRecentLength.push(pickUpTab);
+            }
+          }
+        } catch (error) {
+          console.error("Error parsing sales_json:", error);
+        }
+      });
+    const filteredTodayDelivery = todayRecentLength.filter(Boolean);
+    return filteredTodayDelivery; // Return the array of payMode values
+  };
+
+  const todayRecentDelivery = getTodayRecentSale();
+
+  const getTodayPendingDelivery = () => {
+    let todayPendingLength = [];
+
+    pendingBooking.forEach(({ booking_json }) => {
+      try {
+        if (booking_json.cartSumUp.deliveryMode) {
+          const deliveryMode = booking_json.cartSumUp.deliveryMode;
+          if (deliveryMode.length > 0) {
+            const pickUpTab = deliveryMode ? deliveryMode : null;
+            todayPendingLength.push(pickUpTab);
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing booking_json:", error);
+      }
+    });
+
+    const filteredTodayDelivery = todayPendingLength.filter(Boolean);
+
+    return filteredTodayDelivery; // Return the array of payMode values
+  };
+  const todayDelivery = getTodayPendingDelivery();
+
+  useEffect(() => {
+    const handleKeyDownPendingSales = (event) => {
+      if (!isInputFocused) {
+        if (event.shiftKey && event.key === "L") {
+          setPendingButtonModal(true);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDownPendingSales);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDownPendingSales);
+    };
+  }, [isInputFocused]);
+
+  useEffect(() => {
+    const handleKeyDownPendingKot = (event) => {
+      if (!isInputFocused) {
+        if (event.shiftKey && event.key === "K") {
+          setKotModal(true);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDownPendingKot);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDownPendingKot);
+    };
+  }, [isInputFocused]);
+
+  useEffect(() => {
+    const handleKeyDownCounterSale = (event) => {
+      if (!isInputFocused) {
+        if (event.shiftKey && event.key === "R") {
+          setBooking(true);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDownCounterSale);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDownCounterSale);
+    };
+  }, [isInputFocused]);
+
+  useEffect(() => {
+    const handleKeyDownBookingSale = (event) => {
+      if (!isInputFocused) {
+        if (event.shiftKey && event.key === "B") {
+          setBookingModal(true);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDownBookingSale);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDownBookingSale);
+    };
+  }, [isInputFocused]);
+
+  // dispatch(clearCartItems());
+  // dispatch(clearSelectedCustomer());
 
   return (
     <>
@@ -187,61 +204,131 @@ const OutletOptions = ({ outletName }) => {
           <b>New Sale</b>
           <p>[Shift + N]</p>
         </CButton>
-        <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-          <b>Save Sale</b>
-          <p>[Shift + S]</p>
-        </CButton>
-        <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-          <b>Panding Sale(s)</b>
+
+        {/* save sale button componet */}
+        <SaveSale />
+
+        <CButton
+          className="light-outlet light-outlet2"
+          style={{ background: "#f0ad4e" }}
+          onClick={() => setPendingButtonModal(!pendingButtonModal)}
+        >
+          <b>Pending Sale(s)</b>
+          <span
+            className="badge"
+            style={{
+              padding: "4px",
+              marginLeft: "4%",
+              borderRadius: "50px",
+              fontWeight: "900",
+              fontSize: "12px",
+              color: "#f0ad4e",
+              backgroundColor: "white",
+            }}
+          ></span>
           <p>[Shift + L]</p>
         </CButton>
+
         <CButton
           className="light-outlet"
           style={{ background: "#f0ad4e" }}
           onClick={() => setKotModal(!kotModal)}
         >
           <b>Pending KOT(s)</b>
+          <span
+            className="badge"
+            style={{
+              padding: "4px",
+              marginLeft: "4%",
+              borderRadius: "50px",
+              fontWeight: "900",
+              fontSize: "12px",
+              color: "#f0ad4e",
+              backgroundColor: "white",
+            }}
+          ></span>
           <p>[Shift + K]</p>
         </CButton>
+
         <CButton
           className="light-outlet"
           style={{ background: "#f0ad4e" }}
           onClick={() => setBooking(!booking)}
         >
           <b>Recent Sale(s)</b>
+          <span
+            className="badge"
+            style={{
+              padding: "4px",
+              marginLeft: "4%",
+              borderRadius: "50px",
+              fontWeight: "900",
+              fontSize: "12px",
+              color: "#f0ad4e",
+              backgroundColor: "white",
+            }}
+          >
+            {" "}
+            {todayRecentDelivery.length}
+          </span>
           <p>[Shift + R]</p>
         </CButton>
+
         <CButton
           className="light-outlet"
           style={{ background: "#f0ad4e" }}
           onClick={() => setBookingModal(!bookingModal)}
         >
           <b>Booking Sale</b>
+          <span
+            className="badge"
+            style={{
+              padding: "4px",
+              marginLeft: "4%",
+              borderRadius: "50px",
+              fontWeight: "900",
+              fontSize: "12px",
+              color: "#f0ad4e",
+              backgroundColor: "white",
+            }}
+          >
+            {" "}
+            {todayDelivery.length}
+          </span>
           <p>[Shift + B]</p>
         </CButton>
+
         <CButton
           className="white-outlet"
           onClick={() => setCollectionModal(!collectionModal)}
         >
           <b>Collection Status</b>
         </CButton>
+
         <CButton className="white-outlet">
           <b>Expenses/Purchase Status</b>
         </CButton>
-        <CButton className="light-outlet" style={{ background: "#d9534f" }}>
-          <b>Clear Sale</b>
-          <p>[Shift + Delete]</p>
-        </CButton>
+
+        {/* claer sale component    */}
+        <ClearSaleBtn />
+
         <CButton className="light-outlet" style={{ background: "#d9534f" }}>
           <b>Discard Sale</b>
           <p>[Shift + Ctrl + Delete]</p>
         </CButton>
       </div>
+
+      <PendingSaleModal
+        pendingButtonModal={pendingButtonModal}
+        setPendingButtonModal={setPendingButtonModal}
+      />
+
       <RecentTabModal
         booking={booking}
         setBooking={setBooking}
         recentBooking={recentBooking}
       />
+      <OnGoingTabModal kotModal={kotModal} setKotModal={setKotModal} />
       <PendingTabModal
         bookingModal={bookingModal}
         setBookingModal={setBookingModal}

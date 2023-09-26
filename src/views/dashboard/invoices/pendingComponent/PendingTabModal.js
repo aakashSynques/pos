@@ -121,7 +121,7 @@ function PendingTabModal({
           </CTabContent>
         </CModalBody>
         <CModalFooter>
-          <CButton color="secondary" onClick={() => setVisible(false)}>
+          <CButton color="secondary" onClick={() => setBookingModal(false)}>
             Close
           </CButton>
         </CModalFooter>

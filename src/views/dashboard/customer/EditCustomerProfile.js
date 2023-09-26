@@ -1,5 +1,7 @@
 import { ToastContainer, toast } from "react-toastify"; // Import toast and ToastContainer
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedCustomer } from "../../../action/actions";
 import {
   CModal,
   CModalHeader,
@@ -18,8 +20,10 @@ const EditCustomerProfile = ({
   visible,
   onClose,
   customerData: initialData,
-  setSelectedCustomer, // Receive the prop here
 }) => {
+  const dispatch = useDispatch();
+  const selectedCustomer = useSelector((state) => state.selectedCustomer); // Get the selected customer from Redux store
+
   const [customerData, setCustomerData] = useState(initialData);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null); // Add state for success message
@@ -47,7 +51,6 @@ const EditCustomerProfile = ({
       };
 
       const requestBody = JSON.stringify({
-        // Update the fields as needed for the API
         cust_id: customerData.cust_id, // Include the customer ID in the request body
         rnc_type: customerData.cust_type_id,
         rnc_full_name: customerData.customer_name,
@@ -59,9 +62,6 @@ const EditCustomerProfile = ({
         rnc_pincode: customerData.pincode,
         rnc_pan_no: customerData.pan_no,
         rnc_gst_no: customerData.gst_no,
-
-        // rnc_pan_no: customerData.pan_no !== null ? customerData.pan_no : undefined, // Exclude if null
-        // rnc_pincode: customerData.pincode !== null ? customerData.pincode : undefined, // Exclude if null
       });
 
       const response = await fetch(
@@ -69,37 +69,25 @@ const EditCustomerProfile = ({
         {
           method: "PUT",
           headers,
+          
           body: requestBody,
         }
       );
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Response data:", responseData);
+        const updatedCustomerData = responseData.cust_json; // Assuming that the API response contains the updated customer data
+        setCustomerData(updatedCustomerData);
+        const editSelectCust = {
+          ...selectedCustomer,
+          json: updatedCustomerData,
+        };
+        dispatch(setSelectedCustomer(editSelectCust));
         onClose();
         setErrorMessage(null); // Clear any previous error message
-        setSuccessMessage("Wait Saving Details.."); // Set success message
+        setSuccessMessage("Customer Details Updated Successfully!"); // Set success message
         toast.success("Customer Details Updated Successfully!");
-
-        // Set the updated customer name in the selectedCustomer state
-        setSelectedCustomer((prevCustomer) => ({
-          ...prevCustomer,
-          json: {
-            ...prevCustomer.json,
-            customer_name: customerData.customer_name, // Update the customer name
-            cust_type_id: customerData.cust_type_id,
-            mobile: customerData.mobile,
-            email: customerData.email,
-            address: customerData.address,
-            extra_note: customerData.extra_note,
-            alt_mobile: customerData.alt_mobile,
-            pincode: customerData.pincode,
-            pan_no: customerData.pan_no,
-            gst_no: customerData.gst_no,
-          },
-        }));
       } else {
-        const responseData = await response.json();
         setErrorMessage("An error occurred while updating customer details.");
         setSuccessMessage(null); // Clear success message if there was an error
       }
@@ -215,22 +203,6 @@ const EditCustomerProfile = ({
             onChange={handleInputChange}
           ></CFormTextarea>
         </CInputGroup>
-
-        {/* Enter Pin code */}
-        {/* <CInputGroup size="sm" className="mb-2">
-          <CInputGroupText id="inputGroup-sizing-sm">
-            <i className="fa fa-map-marker"></i>
-          </CInputGroupText>
-          <CFormInput
-            name="pincode"
-            value={customerData.pincode}
-            placeholder="Pincode"
-            aria-label="Sizing example input"
-            aria-describedby="inputGroup-sizing-sm"
-            onChange={handleInputChange}
-          />
-        </CInputGroup> */}
-
         <CInputGroup size="sm" className="mb-2">
           <CInputGroupText id="inputGroup-sizing-sm">
             <i className="fa fa-map-marker"></i>

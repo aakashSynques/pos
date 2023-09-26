@@ -15,18 +15,13 @@ import {
   setOutletList,
   setSelectedOutletId,
   setSelectedOutletData,
-  selectDelivery 
+  selectDelivery,
+  setNewCart,
 } from "../../action/actions";
 import { BallTriangle } from "react-loader-spinner";
 
 // Assuming you have action creators setOutletList and setDeliveryList in action/actions.js
-const AssignOutLet = ({ setSelectedOutletId}) => {
-  // const [loading, setLoading] = useState(true);
-  // const [outletmodel, setOutletmodel] = useState(true);
-  // const [selectedOutlet, setSelectedOutlet] = useState(null);
-  // const [outletListdata, setOutletListdata] = useState([]);
-  // const [networkError, setNetworkError] = useState(false);
-
+const AssignOutLet = ({ setSelectedOutletId }) => {
   const [loading, setLoading] = useState(true);
   const [outletmodel, setOutletmodel] = useState(true);
   const [selectedOutlet, setSelectedOutlet] = useState(null);
@@ -34,20 +29,104 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
   const [networkError, setNetworkError] = useState(false);
   const [deliverymodel, setDeliverymodel] = useState(false); // Add this state
 
-
   const dispatch = useDispatch();
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
+  const outletAllList = useSelector((state) => state.outlets);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const allProducts = useSelector((state) => state.allProducts.allProducts);
+  // console.log(cartItems, "cartItems; allProducts:", allProducts);
+
+  const getPriceForOutlet = (product) => {
+    const outletId = selectedOutletId.toString();
+    if (product.rate_chart && product.rate_chart[outletId]) {
+      const rateForOutlet = product.rate_chart[outletId][0];
+      if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
+        return rateForOutlet.prod_rate;
+      }
+    }
+    return "prod rate";
+  };
+  function generateUniqueNumber() {
+    // const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    // return random4Digit.toString(); // Convert to string
+    const timestamp = new Date().getTime();
+    const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
+    return `${timestamp.toString() + randomString}`;
+  }
 
   const handleSelectOutlet = (outlet) => {
     setSelectedOutlet(outlet);
     setSelectedOutletId(outlet.outlet_id);
     setOutletmodel(false); // Close the outlet model
     setDeliverymodel(true); // Open the delivery model
+
+    // cartItem manipulation START
+    const matchingProducts = allProducts.filter((product) => {
+      return cartItems.some((cartItem) => cartItem.prod_id === product.prod_id);
+    });
+    // console.log(matchingProducts, ": matchingProducts");
+
+    let newCart = matchingProducts
+      .map((item) =>
+        item.rate_chart[selectedOutletId][0].stock_availability === 1
+          ? {
+              prod_id: item.prod_id,
+              prod_code: item.prod_code,
+              prod_sign: item.prod_sign,
+              prod_name: item.prod_name,
+              prod_description: item.prod_description,
+              prod_rate: getPriceForOutlet(item),
+              category_id: item.category_id,
+              prod_KOT_status: item.prod_KOT_status,
+              prod_Parcel_status: item.prod_Parcel_status,
+              prod_Discount_status: item.prod_Discount_status,
+              prod_Complementary_status: item.prod_Complementary_status,
+              prod_Toppings_status: item.prod_Toppings_status,
+              prod_Customized_status: item.prod_Customized_status,
+              prod_Delivery_heads: item.prod_Delivery_heads,
+              prod_image: item.prod_image,
+              prod_Recommended: item.prod_Recommended,
+              prod_OnlineListing: item.prod_OnlineListing,
+              prod_TagsGroups: item.prod_TagsGroups,
+              prod_DeActive: item.prod_DeActive,
+              status: item.status,
+              eby: item.eby,
+              eat: item.eat,
+              recipe_outcome_value: item.recipe_outcome_value,
+              recipe_outcome_unit: item.recipe_outcome_unit,
+              stock_status: item.stock_status,
+              stock_current_value: item.stock_current_value,
+              LHB_prod_id: item.LHB_prod_id,
+              category_name: item.category_name,
+              category_heads: item.category_heads,
+              recipeCount: item.recipeCount,
+              is_parcel: 0,
+              is_complementary: 0,
+              is_complementary_note: "",
+              is_note: 0,
+              is_prod_note: "",
+              prod_qty: item.prod_qty,
+              prod_discount: item.prod_discount,
+              prod_discount_offered: item.prod_discount_offered,
+              total_amount: item.prod_rate,
+              KOT_pick: 0,
+              KOT_ready: 0,
+              KOT_dispatch: 0,
+              urno: generateUniqueNumber(),
+              associated_prod_urno: null,
+              toppings: [],
+              customized: [],
+            }
+          : null
+      )
+      .filter(Boolean);
+    // newCart = newCart.filter(Boolean);
+    // console.log("cart with available products : ", newCart);
+    dispatch(setNewCart(newCart));
+    // cartItem manipulation END
   };
-
-
 
   const getOutletListdata = async () => {
     try {
@@ -61,12 +140,12 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
         headers
       );
       setOutletListdata(response.data.allAssignedOutlets);
-      // console.log(response.data.allAssignedOutlets);
+      dispatch(setOutletList(response.data.allAssignedOutlets));
       setLoading(false);
       setNetworkError(false); // Reset networkError state if the request succeeds
       dispatch(setSelectedOutletData(selectedOutletId, outletListdata));
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       setLoading(false);
       setNetworkError(true); // Set networkError state to true if there is a network error
     }
@@ -79,7 +158,7 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
     const handleKeyPressOutlet = (e) => {
       if (e.key === "F1") {
         e.preventDefault(); // Prevent default browser behavior
-        toggleOutletModal();
+        setOutletmodel(true);
       }
     };
     // Attach the event listener when the component mounts
@@ -88,15 +167,16 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
     return () => {
       window.removeEventListener("keydown", handleKeyPressOutlet);
     };
-  }, []); 
-
+  }, []);
 
 
 
   // delivery mode model
   const [deliveryListdata, setDeliveryListdata] = useState([]);
-  
-  const selectedDelivery = useSelector((state) => state.delivery.selectedDelivery);
+
+  const selectedDelivery = useSelector(
+    (state) => state.delivery.selectedDelivery
+  );
   const handleSelectDelivery = (delivery) => {
     dispatch(selectDelivery(delivery)); // Dispatch the action with the selected delivery
     setDeliverymodel(false);
@@ -111,8 +191,7 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
         null,
         headers
       );
-      setDeliveryListdata(response.data.delivery_heads);
-      console.log('delivery mode', response.data.delivery_heads)
+      setDeliveryListdata(response.data.delivery_heads.slice(1));
     } catch (err) {
       console.log(err);
     }
@@ -134,9 +213,6 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
     };
   }, []);
 
-
-
-  
   return (
     <>
       {/* outlet model */}
@@ -199,54 +275,46 @@ const AssignOutLet = ({ setSelectedOutletId}) => {
         </CModalBody>
       </CModal>
 
- 
-
-
-{/* delivery mode model */}
-<div>
-<CButton
+      {/* delivery mode model */}
+      <div>
+        <CButton
           className="gray-outlet"
           onClick={() => setDeliverymodel(!deliverymodel)}
         >
-        <b>DELIVERY - [F2]</b> <br />
-        <div>
-          <p style={{ color: "#09a30e" }}>{selectedDelivery}</p>
-        </div>
-      </CButton>
-      <CModal
+          <b>DELIVERY - [F2]</b> <br />
+          <div>
+            <p style={{ color: "#09a30e" }}>{selectedDelivery}</p>
+          </div>
+        </CButton>
+        <CModal
           size="sm"
           visible={deliverymodel}
           className="outletmodelform"
           backdrop="static"
         >
-        <CModalHeader>
-          <CModalTitle>Delivery Mode</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          {Array.isArray(deliveryListdata) &&
-            deliveryListdata.map((delivery) => (
-                           
+          <CModalHeader>
+            <CModalTitle>Delivery Mode</CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            {Array.isArray(deliveryListdata) &&
+              deliveryListdata.map((delivery) => (
                 <CButton
-                className={`btn btn-block location-btn w-100 ${
-                  selectedDelivery === delivery ? "selected-outlet" : ""
-                }`}
-                key={delivery}
-                onClick={() => handleSelectDelivery(delivery)}
-              >
-              
-                <div>
-                  <h3 className="mb-0" style={{ fontWeight: "bold" }}>
-                    {delivery}
-                  </h3>
-                </div>
-              </CButton>
-            ))}
-        </CModalBody>
-      </CModal>
-</div>
-
-
-
+                  className={`btn btn-block location-btn w-100 ${
+                    selectedDelivery === delivery ? "selected-outlet" : ""
+                  }`}
+                  key={delivery}
+                  onClick={() => handleSelectDelivery(delivery)}
+                >
+                  <div>
+                    <h3 className="mb-0" style={{ fontWeight: "bold" }}>
+                      {delivery}
+                    </h3>
+                  </div>
+                </CButton>
+              ))}
+          </CModalBody>
+        </CModal>
+      </div>
     </>
   );
 };

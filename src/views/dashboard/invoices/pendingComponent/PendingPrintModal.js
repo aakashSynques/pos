@@ -1,35 +1,24 @@
 import React, { useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
 import {
-  CCardHeader,
-  CLink,
-  CCardBody,
-  CCard,
   CModal,
-  CModalHeader,
   CModalFooter,
-  CModalTitle,
   CModalBody,
-  CNavItem,
-  CNav,
-  CNavLink,
   CTabContent,
-  CTabPane,
   CButton,
   CContainer,
   CRow,
   CCol,
 } from "@coreui/react";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 
 function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
   const [isVisible, setIsVisible] = useState(false);
-  const componentRef = useRef();
+  const iframeRef = useRef(null);
 
-  const handleClick = () => {
-    setIsVisible(!isVisible);
-  };
+  // const handleClick = () => {
+  //   setIsVisible(!isVisible);
+  // };
 
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
@@ -37,12 +26,12 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
 
   const booking_no = invoiceDetails && Object.keys(invoiceDetails)[0];
   const cartSumUp = invoiceDetails && invoiceDetails[booking_no].cartSumUp;
-  // console.log(invoiceDetails, "38 invoice");
 
   const productsInCart =
     invoiceDetails && invoiceDetails[booking_no].productsInCart;
   const selectedCustomerJson =
     invoiceDetails && invoiceDetails[booking_no].selectedCustomerJson;
+  const booking_id = invoiceDetails && invoiceDetails.booking_id;
 
   const deliveryMode = cartSumUp && cartSumUp.deliveryMode;
   const payModes =
@@ -55,7 +44,32 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
     selectedCustomerJson && selectedCustomerJson.gst_no
       ? selectedCustomerJson && selectedCustomerJson.gst_no
       : undefined;
+  const randomValue = Math.random(); // Generate a random value
 
+  const [iframeOpen, setIframeOpen] = useState(false);
+  const [url, setUrl] = useState(null);
+  const handlePrint = () => {
+    if (booking_id) {
+      setPrintBooking(!true);
+      setIframeOpen(!true);
+
+      setUrl(
+        `http://pos.q4hosting.com/posinvolce/printBooking/${booking_id}/NOKOT?random=${randomValue}`
+      );
+      fetch(
+        `http://pos.q4hosting.com/posinvolce/printBooking/${booking_id}/NOKOT?random=${randomValue}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          //  body: formBody,
+        }
+      ).catch((error) => {
+        console.error("something wrong:", error);
+      });
+    }
+  };
   return (
     <>
       <CModal
@@ -63,7 +77,7 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
         visible={printBooking}
         onClose={() => setPrintBooking(false)}
       >
-        <div ref={componentRef}>
+        <div>
           <CModalBody>
             <CTabContent className="text-center">
               <div>
@@ -93,7 +107,7 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                 </p>
               </div>
               <CContainer>
-                <CRow xs={2}>
+                <CRow>
                   <React.Fragment>
                     <CCol className="text-start">
                       <span>Booking#:</span>
@@ -201,7 +215,7 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
                   {productsInCart &&
                     productsInCart.map((item) => {
                       return (
-                        <React.Fragment>
+                        <React.Fragment key={item}>
                           <CCol xs={1}>{item.prod_qty}</CCol>
                           <CCol xs={11} className="text-start">
                             <CRow>
@@ -583,45 +597,31 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
               </CContainer>
             </CTabContent>
           </CModalBody>
-          {/* 
-          {isVisible ? (
-            <CCardBody>
-              <CTabContent>
-                <CContainer>
-                  <CRow>
-                    <CCol className="text-center">
-                      <strong>Thanks Visit Again</strong>
-                    </CCol>
-                  </CRow>
-                </CContainer>
-              </CTabContent>
-            </CCardBody>
-          ) : (
-            "hasib"
-          )} */}
         </div>
 
         <CModalFooter>
           <CContainer>
-            <CRow xs={2}>
+            <CRow>
               <CCol>
-                <ReactToPrint
-                  trigger={() => (
-                    <CButton
-                      style={{ background: "#26b99a", border: "none" }}
-                      onClick={handleClick}
-                    >
-                      <i className="fa fa-print"></i> {""}Print
-                    </CButton>
-                  )}
-                  content={() => componentRef.current}
-                />
+                <CButton
+                  style={{ background: "#26b99a", border: "none" }}
+                  onClick={() => {
+                    handlePrint();
+                    setIframeOpen(!true);
+                  }}
+                >
+                  <i className="fa fa-print"></i> {""}Print
+                </CButton>
               </CCol>
 
               <CCol className="text-end">
                 <CButton
                   color="secondary"
-                  onClick={() => setPrintBooking(false)}
+                  // onClick={() => setPrintBooking(false)}
+                  onClick={() => {
+                    setPrintBooking(!true);
+                    setIframeOpen(true);
+                  }}
                 >
                   Close
                 </CButton>
@@ -630,6 +630,17 @@ function PendingPrintModal({ printBooking, setPrintBooking, invoiceDetails }) {
           </CContainer>
         </CModalFooter>
       </CModal>
+      {printBooking || iframeOpen ? null : (
+        <>
+          <iframe
+            ref={iframeRef}
+            src={url}
+            width="1"
+            height="1"
+            style={{ visibility: "hidden" }}
+          ></iframe>
+        </>
+      )}
     </>
   );
 }

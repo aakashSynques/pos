@@ -26,11 +26,11 @@ const TokenMiddleware = ({ children }) => {
           authorization: `Bearer ${token}`,
         },
       })
+        
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          // console.log(data);
           if (!data.ok) {
             setIsLoading(false);
             setIsTokenValid(false);
@@ -38,11 +38,8 @@ const TokenMiddleware = ({ children }) => {
             setIsLoading(false);
             setIsTokenValid(true);
             const { tokenData } = data;
-            // console.log(tokenData);
             const userInfo = tokenData[0];
-            // // Store the user information in local storage
             localStorage.setItem("user", JSON.stringify(userInfo));
-            // // Set the user information in Redux store using the setUser action
             dispatch(setUser(userInfo));
           }
         })

@@ -68,7 +68,7 @@ useEffect(() => {
       if (outlet_id) {
         getAllRecentInvoices();
       }
-    }, 20000);
+    }, 10000);
     return () => {
       clearInterval(intervalId);
     };

@@ -96,7 +96,6 @@ const CustomizeModel = ({
   });
 
   const handleFormSubmit = () => {
-    console.log(productId);
     const customjsonData = {
       choice_id: formData.choice_id,
       choice_name: formData.choice_name,

@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { CCol, CContainer, CRow } from "@coreui/react";
 
 const OnTable = ({ recentBooking }) => {
-  // console.log(recentBooking, "6");
   return (
     <>
       <table className="table table-bordered booking-or-table">
@@ -43,8 +42,8 @@ const OnTable = ({ recentBooking }) => {
                 : undefined;
 
               if (
-                (deliveryMode === "2" && payModes === undefined) ||
-                (deliveryMode === "2" && payModes !== "24")
+                (deliveryMode == "2" && payModes === undefined) ||
+                (deliveryMode == "2" && payModes != "24")
               ) {
                 return (
                   <tr key={salesid}>
@@ -58,7 +57,7 @@ const OnTable = ({ recentBooking }) => {
                       <strong
                         className="status-btn"
                         style={{
-                          fontWeight: "bold",
+                          fontWeight: "b",
                           fontSize: "1em",
                           color: "white",
                           backgroundColor: "#f0ad4e",
@@ -68,9 +67,9 @@ const OnTable = ({ recentBooking }) => {
                         }}
                       >
                         Table#{" "}
-                        <medium style={{ color: "black" }}>
+                        <div className="medium-text" style={{ color: "black" }}>
                           {sales_json.cartSumUp.deliveryTableNo}
-                        </medium>
+                        </div>
                       </strong>
                     </td>
                     <td>
@@ -81,7 +80,7 @@ const OnTable = ({ recentBooking }) => {
                       {sales_json.cartSumUp.items}
                     </td>
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -89,14 +88,14 @@ const OnTable = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.subTotal).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {discount && Number(discount) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {discount && Number(discount) !== 0
                         ? Number(discount).toFixed(2)
@@ -104,16 +103,16 @@ const OnTable = ({ recentBooking }) => {
                     </td>
                     <td className="text-end">
                       {devileryCharge && Number(devileryCharge) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {devileryCharge && Number(devileryCharge) !== 0
                         ? Number(devileryCharge).toFixed(2)
                         : " "}
                     </td>
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -121,14 +120,14 @@ const OnTable = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.tax).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {roundoff && Number(roundoff) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {roundoff && Number(roundoff) !== 0
                         ? Number(roundoff).toFixed(2)
@@ -152,7 +151,7 @@ const OnTable = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1.1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -165,7 +164,7 @@ const OnTable = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -179,7 +178,7 @@ const OnTable = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -192,7 +191,7 @@ const OnTable = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#1a82c3",
@@ -205,7 +204,7 @@ const OnTable = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -223,11 +222,11 @@ const OnTable = ({ recentBooking }) => {
                           <CCol className="text-end" style={{}}>
                             {sales_json.cartSumUp.grandTotal &&
                               Number(sales_json.cartSumUp.grandTotal) !== 0 && (
-                                <bold>
+                                <b>
                                   <span style={{ paddingRight: "3px" }}>
                                     &#8377;
                                   </span>
-                                </bold>
+                                </b>
                               )}
                             {sales_json.cartSumUp.grandTotal &&
                             Number(sales_json.cartSumUp.grandTotal) !== 0
@@ -261,7 +260,6 @@ const OnTable = ({ recentBooking }) => {
                 return null; // Return null for rows that don't match the condition
               }
             } catch (error) {
-              // console.error("Error parsing sales_json:", error);
               return null;
             }
           })}

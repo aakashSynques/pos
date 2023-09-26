@@ -19,6 +19,7 @@ import { fetch } from "../../utils";
 import { useDispatch } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,8 +37,7 @@ const Login = () => {
       return;
     }
     setLoading(true); // Set loading to true while the login request is being processed
-    setError(null); // Clear any previous error messages
-
+    setError("Wait, checking your details.");
     try {
       const response = await fetch("/api/user/login", "post", {
         email,
@@ -69,8 +69,16 @@ const Login = () => {
         setError("Login failed. Please check your credentials.");
       }
     } catch (err) {
-      console.log(err);
-      setError("An error occurred. Please try again later.");
+      // if (err) {
+      //   setError(err.response.data.message);
+      // } else {
+      //   setError("An error occurred. Please try again later.");
+      // }
+      if (err && err.response && err.response.data) {
+        setError(err.response.data.message);
+      } else {
+        setError("An error occurred. Please try again later.");
+      }
       toast.error("Login Failed!", {
         position: "top-right",
         autoClose: 1000, // Auto close the notification after 1 seconds
@@ -88,7 +96,7 @@ const Login = () => {
   // verify token
   const verifyToken = async (token) => {
     try {
-      const response = await fetch("api/user/token-info", "post", null, {
+      const response = await fetch("/api/user/token-info", "post", null, {
         Authorization: `Bearer ${token}`,
       });
       if (response.status === 200) {
@@ -99,7 +107,6 @@ const Login = () => {
         // Set the user information in Redux store using the setUser action
         dispatch(setUser(userInfo));
         // Example: Display the user's name
-        console.log(`Welcome, ${userInfo.user_name}!`);
         // Example: Redirect to a specific page based on user role
         if (userInfo.role === "user_name") {
           navigate("");
@@ -108,13 +115,13 @@ const Login = () => {
         }
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
   };
 
   return (
     <div className="align-items-center login-bg" style={{ marginTop: "10%" }}>
-      <ToastContainer /> {/* Keep only one ToastContainer at the root */}
+         <ToastContainer /> {/* Keep only one ToastContainer at the root */}
       <div className="container-fluid">
         <CRow className="justify-content-center">
           <CCol md={4}>
@@ -173,8 +180,11 @@ const Login = () => {
                         </CButton>
                       </CCol>
                       <CCol xs={6} className="text-right">
-                        <CButton color="link" className="forgot-btn text-secondary ">
-                        Lost your password?
+                        <CButton
+                          color="link"
+                          className="forgot-btn text-secondary "
+                        >
+                          Lost your password?
                         </CButton>
                       </CCol>
                     </CRow>

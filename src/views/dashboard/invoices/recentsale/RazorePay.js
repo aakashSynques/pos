@@ -45,11 +45,10 @@ const RazorPay = ({ recentBooking }) => {
               const roundoff = sales_json.cartSumUp.roundoff;
 
               const payModes = sales_json.cartSumUp.payDetails[0].payMode;
-              // console.log(payModes)
 
               if (
-                (deliveryMode === "1" && payModes == "24") ||
-                (deliveryMode === "2" && payModes == "24")
+                (deliveryMode == "1" && payModes == "24") ||
+                (deliveryMode == "2" && payModes == "24")
               ) {
                 return (
                   <tr key={salesid}>
@@ -64,7 +63,7 @@ const RazorPay = ({ recentBooking }) => {
                       <strong
                         className="status-btn"
                         style={{
-                          fontWeight: "bold",
+                          fontWeight: "b",
                           fontSize: "1em",
                           color: "white",
                           backgroundColor: "#f0ad4e",
@@ -74,9 +73,9 @@ const RazorPay = ({ recentBooking }) => {
                         }}
                       >
                         Table#{" "}
-                        <medium style={{ color: "black" }}>
+                        <div className="medium-text" style={{ color: "black" }}>
                           {sales_json.cartSumUp.deliveryTableNo}
-                        </medium>
+                        </div>
                       </strong>
                     </td>
                     <td style={{ width: "9%" }}>
@@ -84,7 +83,7 @@ const RazorPay = ({ recentBooking }) => {
                         <strong
                           className="status-btn"
                           style={{
-                            fontWeight: "bold",
+                            fontWeight: "b",
                             fontSize: "1em",
                             color: "white",
                             backgroundColor: "#f0ad4e",
@@ -105,7 +104,7 @@ const RazorPay = ({ recentBooking }) => {
                       {sales_json.cartSumUp.items}
                     </td>
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -113,14 +112,14 @@ const RazorPay = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.subTotal).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {discount && Number(discount) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {discount && Number(discount) !== 0
                         ? Number(discount).toFixed(2)
@@ -128,9 +127,9 @@ const RazorPay = ({ recentBooking }) => {
                     </td>
                     <td className="text-end">
                       {devileryCharge && Number(devileryCharge) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {devileryCharge && Number(devileryCharge) !== 0
                         ? Number(devileryCharge).toFixed(2)
@@ -138,7 +137,7 @@ const RazorPay = ({ recentBooking }) => {
                     </td>
 
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -146,14 +145,14 @@ const RazorPay = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.tax).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {roundoff && Number(roundoff) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {roundoff && Number(roundoff) !== 0
                         ? Number(roundoff).toFixed(2)
@@ -177,7 +176,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1.1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -190,7 +189,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -203,7 +202,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -217,7 +216,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#1a82c3",
@@ -230,7 +229,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -248,11 +247,11 @@ const RazorPay = ({ recentBooking }) => {
                           <CCol className="text-end">
                             {sales_json.cartSumUp.grandTotal &&
                               Number(sales_json.cartSumUp.grandTotal) !== 0 && (
-                                <bold>
+                                <b>
                                   <span style={{ paddingRight: "3px" }}>
                                     &#8377;
                                   </span>
-                                </bold>
+                                </b>
                               )}
                             {sales_json.cartSumUp.grandTotal &&
                             Number(sales_json.cartSumUp.grandTotal) !== 0
@@ -286,7 +285,6 @@ const RazorPay = ({ recentBooking }) => {
                 return null; // Return null for rows that don't match the condition
               }
             } catch (error) {
-              // console.error("Error parsing sales_json:", error);
               return null;
             }
           })}
@@ -304,12 +302,11 @@ const RazorPay = ({ recentBooking }) => {
               const roundoff = sales_json.cartSumUp.roundoff;
 
               const payModes = sales_json.cartSumUp.payDetails[0].payMode;
-              // console.log(payModes)
 
               if (
-                (deliveryMode === "1" && payModes == "24") ||
-                (deliveryMode === "3" && payModes == "24") ||
-                (deliveryMode === "4" && payModes == "24")
+                (deliveryMode == "1" && payModes == "24") ||
+                (deliveryMode == "3" && payModes == "24") ||
+                (deliveryMode == "4" && payModes == "24")
               ) {
                 return (
                   <tr key={salesid}>
@@ -327,7 +324,7 @@ const RazorPay = ({ recentBooking }) => {
                         <strong
                           className="status-btn"
                           style={{
-                            fontWeight: "bold",
+                            fontWeight: "b",
                             fontSize: "1em",
                             color: "white",
                             backgroundColor: "#1a82c3",
@@ -342,7 +339,7 @@ const RazorPay = ({ recentBooking }) => {
                         <strong
                           className="status-btn"
                           style={{
-                            fontWeight: "bold",
+                            fontWeight: "b",
                             fontSize: "1em",
                             color: "white",
                             backgroundColor: "#f0ad4e",
@@ -357,7 +354,7 @@ const RazorPay = ({ recentBooking }) => {
                         <strong
                           className="status-btn"
                           style={{
-                            fontWeight: "bold",
+                            fontWeight: "b",
                             fontSize: "1em",
                             color: "white",
                             backgroundColor: "#d9534f",
@@ -382,7 +379,7 @@ const RazorPay = ({ recentBooking }) => {
                       {sales_json.cartSumUp.items}
                     </td>
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -390,14 +387,14 @@ const RazorPay = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.subTotal).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {discount && Number(discount) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {discount && Number(discount) !== 0
                         ? Number(discount).toFixed(2)
@@ -405,9 +402,9 @@ const RazorPay = ({ recentBooking }) => {
                     </td>
                     <td className="text-end">
                       {devileryCharge && Number(devileryCharge) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {devileryCharge && Number(devileryCharge) !== 0
                         ? Number(devileryCharge).toFixed(2)
@@ -415,7 +412,7 @@ const RazorPay = ({ recentBooking }) => {
                     </td>
 
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -423,14 +420,14 @@ const RazorPay = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.tax).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {roundoff && Number(roundoff) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {roundoff && Number(roundoff) !== 0
                         ? Number(roundoff).toFixed(2)
@@ -454,7 +451,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1.1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -467,7 +464,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -480,7 +477,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -494,7 +491,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#1a82c3",
@@ -507,7 +504,7 @@ const RazorPay = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -525,11 +522,11 @@ const RazorPay = ({ recentBooking }) => {
                           <CCol className="text-end">
                             {sales_json.cartSumUp.grandTotal &&
                               Number(sales_json.cartSumUp.grandTotal) !== 0 && (
-                                <bold>
+                                <b>
                                   <span style={{ paddingRight: "3px" }}>
                                     &#8377;
                                   </span>
-                                </bold>
+                                </b>
                               )}
                             {sales_json.cartSumUp.grandTotal &&
                             Number(sales_json.cartSumUp.grandTotal) !== 0
@@ -563,7 +560,6 @@ const RazorPay = ({ recentBooking }) => {
                 return null; // Return null for rows that don't match the condition
               }
             } catch (error) {
-              // console.error("Error parsing sales_json:", error);
               return null;
             }
           })}

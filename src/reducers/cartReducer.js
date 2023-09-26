@@ -8,11 +8,13 @@ import {
   SET_IS_PARCEL,
   UPDATE_CUSTOMIZED,
   CLEAR_CART_ITEMS,
+  SET_CART_SUM_UP
 } from "../action/actionTypes";
 
 const initialState = {
   sidebarShow: true,
   cartItems: [],
+  cartSumUp: null,
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -65,6 +67,13 @@ const cartReducer = (state = initialState, action) => {
         ...state,
         cartItems: [], // Clear the cart items
       };
+    
+      case SET_CART_SUM_UP:
+      return {
+        ...state,
+        cartSumUp: action.payload,
+      };
+    
 
     default:
       return state;
@@ -72,3 +81,6 @@ const cartReducer = (state = initialState, action) => {
 };
 
 export default cartReducer;
+
+
+

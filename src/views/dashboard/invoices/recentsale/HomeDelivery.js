@@ -39,7 +39,7 @@ const HomeDelivery = ({ recentBooking }) => {
                 ? sales_json.cartSumUp.payDetails[0].payMode
                 : undefined;
               const roundoff = sales_json.cartSumUp.roundoff;
-              if (deliveryMode === "4" && payModes !== "24") {
+              if (deliveryMode == "4" && payModes != "24") {
                 return (
                   <tr key={salesid}>
                     <td>{salesid}</td>
@@ -58,7 +58,7 @@ const HomeDelivery = ({ recentBooking }) => {
                       {sales_json.cartSumUp.items}
                     </td>
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -66,14 +66,14 @@ const HomeDelivery = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.subTotal).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {discount && Number(discount) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {discount && Number(discount) !== 0
                         ? Number(discount).toFixed(2)
@@ -81,9 +81,9 @@ const HomeDelivery = ({ recentBooking }) => {
                     </td>
                     <td className="text-end">
                       {devileryCharge && Number(devileryCharge) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {devileryCharge && Number(devileryCharge) !== 0
                         ? Number(devileryCharge).toFixed(2)
@@ -91,7 +91,7 @@ const HomeDelivery = ({ recentBooking }) => {
                     </td>
 
                     <td className="text-end">
-                      <bold>
+                      <b>
                         <span
                           style={{
                             paddingRight: "3px",
@@ -99,14 +99,14 @@ const HomeDelivery = ({ recentBooking }) => {
                         >
                           &#8377;
                         </span>
-                      </bold>
+                      </b>
                       {Number(sales_json.cartSumUp.tax).toFixed(2)}
                     </td>
                     <td className="text-end">
                       {roundoff && Number(roundoff) !== 0 && (
-                        <bold>
+                        <b>
                           <span style={{ paddingRight: "3px" }}>&#8377;</span>
-                        </bold>
+                        </b>
                       )}
                       {roundoff && Number(roundoff) !== 0
                         ? Number(roundoff).toFixed(2)
@@ -130,7 +130,7 @@ const HomeDelivery = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1.1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -143,7 +143,7 @@ const HomeDelivery = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -157,7 +157,7 @@ const HomeDelivery = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -170,7 +170,7 @@ const HomeDelivery = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#1a82c3",
@@ -183,7 +183,7 @@ const HomeDelivery = ({ recentBooking }) => {
                                         <strong
                                           className="status-btn"
                                           style={{
-                                            fontWeight: "bold",
+                                            fontWeight: "b",
                                             fontSize: "1em",
                                             color: "white",
                                             backgroundColor: "#777777",
@@ -201,11 +201,11 @@ const HomeDelivery = ({ recentBooking }) => {
                           <CCol className="text-end" style={{}}>
                             {sales_json.cartSumUp.grandTotal &&
                               Number(sales_json.cartSumUp.grandTotal) !== 0 && (
-                                <bold>
+                                <b>
                                   <span style={{ paddingRight: "3px" }}>
                                     &#8377;
                                   </span>
-                                </bold>
+                                </b>
                               )}
                             {sales_json.cartSumUp.grandTotal &&
                             Number(sales_json.cartSumUp.grandTotal) !== 0

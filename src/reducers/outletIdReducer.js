@@ -12,7 +12,7 @@ const outletIdReducer = (state = initialState, action) => {
       };
     // ... other cases
     default:
-      return state;
+       return state;
   }
 };
 

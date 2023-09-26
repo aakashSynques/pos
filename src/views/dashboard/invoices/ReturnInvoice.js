@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BeatLoader } from "react-spinners";
 import axios from "axios";
+import { fetch } from "../../../utils";
 
 const ReturnInvoice = () => {
   const [returnedOrders, setReturnedOrders] = useState([]);
@@ -33,33 +34,29 @@ const ReturnInvoice = () => {
   );
   const getReturnInvoices = async () => {
     try {
+  
       const token = localStorage.getItem("pos_token");
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      // console.log(outlet_id);
-      setLoading(true);
-      const response = await axios.post(
-        "http://posapi.q4hosting.com/api/order/return",
-        { outlet_id },
-        { headers }
+      const headers = { Authorization: `Bearer ${token}` };
+      const body = {
+        outlet_id
+      }
+      const response = await fetch(
+        "/api/order/return",
+        "POST",
+        body,
+        headers
       );
-      // console.log(response.data.returnedOrders);
       setReturnedOrders(response.data.returnedOrders);
-      // console.log(response);
       setLoading(false);
       setNetworkError(false);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       if (err.response.data.message == "No Returned Orders Found.") {
-        // console.log("No Returned Orders Found.");
         setNetworkError(true);
         setLoading(false);
       } else if (err.response.data.message == "Outlet Id Required.") {
         setLoading(true);
-        console.log(err);
       } else {
-        console.log(err);
         setNetworkError(true);
         setLoading(false);
       }
@@ -86,7 +83,7 @@ const ReturnInvoice = () => {
         {networkError === true && (
           <CCardBody style={{ display: "flex" }}>
             <div>
-              <medium className="text-danger">No Returned Invoices..</medium>
+              <div className="text-danger medium-text">No Returned Invoices..</div>
             </div>
           </CCardBody>
         )}
@@ -101,9 +98,9 @@ const ReturnInvoice = () => {
             />
 
             <div>
-              <medium className="text-danger">
+              <div className="text-danger medium-text">
                 Loading Returned Invoices..
-              </medium>
+              </div>
             </div>
           </CCardBody>
         )}
@@ -115,14 +112,6 @@ const ReturnInvoice = () => {
                 {returnedOrders
                   .slice(0, 11)
                   .map(({ invoice_return_no, return_json }) => {
-                    // let returnInvoiceJson = null;
-
-                    // try {
-                    //   returnInvoiceJson = JSON.parse(return_json);
-                    // } catch (error) {
-                    //   // Handle the JSON parsing error, if needed
-                    //   console.error("Error parsing return_json:", error);
-                    // }
                     return (
                       <tr>
                         <td>
@@ -131,8 +120,7 @@ const ReturnInvoice = () => {
                           </Link>
                           <br />
                           <small>
-                            {return_json.selectedCustomerJson
-                              .customer_name &&
+                            {return_json.selectedCustomerJson.customer_name &&
                               return_json.selectedCustomerJson
                                 .customer_name}{" "}
                             ({return_json.selectedCustomerJson.mobile})
@@ -217,7 +205,7 @@ const ReturnInvoice = () => {
           </CTabContent>
         </CModalBody>
         <CModalFooter>
-          <CButton color="secondary" onClose={() => setReturns(false)}>
+          <CButton color="secondary" onClick={() => setReturns(false)}>
             Close
           </CButton>
         </CModalFooter>

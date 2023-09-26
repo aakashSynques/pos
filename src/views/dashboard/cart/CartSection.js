@@ -22,11 +22,12 @@ import {
   CInputGroup,
 } from "@coreui/react";
 import ToppingsModal from "./ToppingsModal";
-import KOTDeliveryOnTable from "./KOTDeliveryOnTable";
+import KOTDeliveryOnTable from "./kotmodel/KOTDeliveryOnTable";
+import ChangePickUpModel from "./changePickUpDeliver/ChangePickUpModel";
+import ChangeDeliveryCharge from "./changeDeliveryCharges/ChangeDeliveryCharge";
 
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
-  console.log(cartItems, "cart");
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
@@ -35,6 +36,9 @@ const CartSection = () => {
   );
   const selectedDelivery = useSelector(
     (state) => state.delivery.selectedDelivery
+  );
+  const submittedPickUpDateTime = useSelector(
+    (state) => state.pickup.submittedPickUpDateTime
   );
 
   const dispatch = useDispatch();
@@ -47,18 +51,13 @@ const CartSection = () => {
 
   const [quantity, setQuantity] = useState(1);
   const [isCartEmpty, setCartEmpty] = useState(true);
+  const [visiblePicKUp, setVisiblePickUp] = useState(false);
 
   useEffect(() => {
     setCartEmpty(cartItems.length === 0);
   }, [cartItems]);
 
   const getTotalAmountForItem = (item) => {
-    // const rate = item.prod_rate;
-    // console.log('prod rate', rate);
-    // const toppingsTotalPrice = selectedToppingsTotalPrice;
-    // console.log(selectedToppingsTotalPrice)
-
-    // return rate + toppingsTotalPrice;
     const rate = item.prod_rate + selectedToppingsTotalPrice;
     return rate;
   };
@@ -116,8 +115,18 @@ const CartSection = () => {
   const getFinalPayAmount = () => {
     const subtotal = getSubTotalAmount();
     const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
-    const finalPayAmount = subtotal + totalTaxes;
+    const finalPayAmounttotal = subtotal + totalTaxes;
+    const finalPayAmount = Math.round(finalPayAmounttotal); // Round off to the nearest whole number
     return finalPayAmount;
+  };
+
+  const getroundAmt = () => {
+    const subtotal = getSubTotalAmount();
+    const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
+    const finalPayAmounttotal = subtotal + totalTaxes;
+    const finalPayAmount = Math.round(finalPayAmounttotal);
+    const roundedAmountDifference = finalPayAmounttotal - finalPayAmount; // Calculate the difference
+    return roundedAmountDifference.toFixed(3);
   };
 
   // /////////////////// quantity update /////////////////////
@@ -126,10 +135,20 @@ const CartSection = () => {
   }, [quantity]);
   const qtyRef = useRef();
 
+  let deliveryId;
+  if (selectedDelivery == "Counter Sale") {
+    deliveryId = 1;
+  } else if (selectedDelivery == "On Table") {
+    deliveryId = 2;
+  } else if (selectedDelivery == "PickUp") {
+    deliveryId = 3;
+  } else {
+    deliveryId = 4;
+  }
+
   /// toppings //
   // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
-
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [selectedTopId, setSelectedTopId] = useState();
@@ -139,12 +158,10 @@ const CartSection = () => {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/products/all", "get", null, headers);
-      console.log(response.data.prodAllList);
       const filteredToppings = response.data.prodAllList.filter(
         (item) => item.category_heads === "Toppings"
       );
       setToppingsData(filteredToppings);
-      // console.log(filteredToppings);
     } catch (err) {
       console.log(err);
     } finally {
@@ -170,8 +187,6 @@ const CartSection = () => {
 
     displayToppings = displayToppings.filter(Boolean);
 
-    console.log(displayToppings);
-
     setSelectedToppings([...displayToppings]);
 
     setToppingModel(true);
@@ -179,11 +194,9 @@ const CartSection = () => {
 
   // CHECK IF TOPPING EXISTS AND ADD OR REMOVE ACCORDINGLY ON ONCLICK
   const handleToppingClick = (topping) => {
-    console.log(topping.prod_id);
     const isSelected = selectedToppings.some(
       (st) => st.prod_id === topping.prod_id
     );
-    // console.log(isSelected);
 
     if (isSelected) {
       setSelectedToppings(
@@ -192,7 +205,6 @@ const CartSection = () => {
     } else {
       setSelectedToppings([...selectedToppings, topping]);
     }
-    // console.log(selectedToppings);
   };
 
   // FILTER TOPPINGS ACCORDING TO CATEGORY
@@ -220,20 +232,19 @@ const CartSection = () => {
     const outletId = selectedOutletId.toString();
     if (product.rate_chart && product.rate_chart[outletId]) {
       const rateForOutlet = product.rate_chart[outletId][0];
-      console.log(rateForOutlet);
       if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
         return rateForOutlet.prod_rate;
       }
-    }
+    }  
     return "0";
   };
+
+ 
+
 
   // HANDLE SUBMIT FOR TOPPINGS
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
-
-    // console.log(selectedToppings, "selectedToppings");
-
     const cartItemData = selectedToppings.map((item) => {
       return {
         prod_id: item.prod_id,
@@ -241,7 +252,7 @@ const CartSection = () => {
         prod_sign: item.prod_sign,
         prod_name: item.prod_name,
         prod_description: item.prod_description,
-        prod_rate: getPriceForOutlet(item),
+        prod_rate: getPriceForOutlet(item), 
         category_id: item.category_id,
         prod_KOT_status: item.prod_KOT_status,
         prod_Parcel_status: item.prod_Parcel_status,
@@ -284,27 +295,23 @@ const CartSection = () => {
         customized: item.customized,
       };
     });
-    dispatch(setToppings(cartItems, selectedUrno, cartItemData));
+    dispatch(setToppings(cartItems, selectedUrno, cartItemData, selectedOutletId));
     setToppingModel(false); // Close the toppings model after submitting
     setSelectedToppings([]);
   };
-
-
+  
 
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
     const totalToppingPrice = cartItems
       .filter((topp) => topp.associated_prod_urno === 0)
       .reduce((toppingTotal, productToppings) => {
-        // console.log(productToppings, "productToppings");
-        // console.log(productToppings.toppings);
         const productToppingTotal = productToppings.toppings.reduce(
           (acc, topping) => {
             const toppingInfo = cartItems.find(
               //was earlier using toppingsData but there is outlet based price in cart
               (t) => t.urno === topping
             );
-            console.log(toppingInfo, "toppingInfo");
             return acc + (toppingInfo ? toppingInfo.prod_rate : 0);
           },
           0
@@ -339,34 +346,40 @@ const CartSection = () => {
     };
   }, [selectedToppings]);
 
+
+
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.shiftKey && event.key === "Enter") {
-        // Call the function to handle the "PAY" action
-        handlePayButtonClick();
+      if (event.key === "Enter" && event.shiftKey) {
+        if (!isCartEmpty) {
+          if (selectedCustomer) {
+            setPayBillsModel(true);
+          } else {
+            toast.error("Enter Customer Name First");
+          }
+        }
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [isCartEmpty, selectedCustomer]);
+  
+
   // const handlePayButtonClick = () => {
-  //   if (!isCartEmpty && selectedCustomer) {
-  //     setPayBillsModel(true);
+  //   if (!isCartEmpty) {
+  //     if (selectedCustomer) {
+  //       setPayBillsModel(true);
+  //     } else {
+  //       toast.error("Enter Customer Name First");
+  //     }
   //   }
   // };
-  const handlePayButtonClick = () => {
-    if (!isCartEmpty) {
-      if (selectedCustomer) {
-        setPayBillsModel(true);
-      } else {
-        toast.error("Enter Customer Name First");
-      }
-    }
-  };
+
+
+
+
 
   return (
     <div className="cartlist">
@@ -409,7 +422,7 @@ const CartSection = () => {
         )}
       </div>
 
-      {selectedDelivery === "On Table" && (
+      {deliveryId == 2 && (
         <>
           <hr style={{ margin: "0px" }} />
           <KOTDeliveryOnTable
@@ -478,18 +491,8 @@ const CartSection = () => {
                     PAY <font size="1">[ Shift + Enter ]</font>
                   </button>
                 </div>
-                {/* {selectedDelivery === "On Table" && (
-                  <button
-                    className="btn pay-btn btn-warning"
-                    type="button"
-                    disabled={isCartEmpty || !selectedCustomer}
-                  >
-                    BOOKING <font size="1"></font>
-                  </button>
-                )} */}
 
-                {selectedDelivery === "PickUp" ||
-                selectedDelivery === "Home Delivery" ? (
+                {deliveryId == 3 || deliveryId == 4 ? (
                   <div className="col-sm-6 font-size pl-0">
                     <button
                       className="btn pay-btn btn-warning"
@@ -510,18 +513,63 @@ const CartSection = () => {
                 {/* Display the final pay amount */}
               </h4>
               <small>
-                {getTotalItemsInCart()} Item(s){" "}
-                {/* Display total items in cart */}
+                {getTotalItemsInCart()} Item(s) RoundOff{" "}
+                <i className="fa fa-inr"></i> {getroundAmt()}
               </small>
             </CCol>
           </CRow>
           <hr style={{ margin: "4px 0" }} />
+
           <CRow>
-            <CCol sm={6} className="font-size">
+            <CCol sm={4} className="font-size">
               Delivery Mode [F2]
             </CCol>
-            <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
-              {selectedDelivery}{" "}
+            <CCol sm={8} style={{ fontSize: "14px" }} className="font-size">
+              <span className="pull-right">{selectedDelivery}</span> <br />
+              {deliveryId == 3 ? (
+                <>
+                  <label>
+                    <strong>DateTime :</strong>
+                  </label>
+
+                  {submittedPickUpDateTime ? (
+                    <span>
+                      {submittedPickUpDateTime.date}&nbsp;
+                      {submittedPickUpDateTime.time}
+                    </span>
+                  ) : (
+                    <span>{new Date().toLocaleString() + ""}</span>
+                  )}
+                  <br />
+                  <CButton
+                    className="btn btn-xs btn-warning pull-right mt-1 text-white rounded-1"
+                    onClick={() => setVisiblePickUp(!visiblePicKUp)}
+                  >
+                    <i className="fa fa-pencil"></i> Change [ Alt + D ]
+                  </CButton>
+                </>
+              ) : null}
+              {deliveryId == 4 ? (
+                <div className="pull-left pt-2">
+                  {/* <label>
+                    <b>Receiver:</b>
+                  </label>
+                  <span>----</span> <br />
+                  <label>
+                    <b>Address : </b>
+                  </label>
+                  <span> bhopal</span> <br />
+                  <label>
+                    <b>DateTime : </b>
+                  </label>
+                  <span>2023-08-25</span> <br />
+                  <button className="btn btn-xs btn-warning text-white rounded-1 mt-1">
+                    <i className="fa fa-pencil"></i> Change Delivery Details [ Alt +
+                    D ]
+                  </button> */}
+                  <ChangeDeliveryCharge />
+                </div>
+              ) : null}
             </CCol>
             <CCol sm={12}>
               <AnyNotes />
@@ -540,6 +588,13 @@ const CartSection = () => {
         finalPayAmount={getFinalPayAmount()}
         totalItem={getTotalItemsInCart()}
         selectedCustomer={selectedCustomer} // Pass the selected customer here
+      />
+
+      
+
+      <ChangePickUpModel
+        visiblePicKUp={visiblePicKUp}
+        onClose={() => setVisiblePickUp(false)}
       />
 
       <CModal
@@ -599,7 +654,7 @@ const CartSection = () => {
                   </span>
                   &nbsp;
                   <i className="fa fa-inr"></i>
-                  <span className="show_price">{topping.prod_rate}</span>
+                  <span className="show_price">{topping.rate_chart[selectedOutletId][0].prod_rate}</span>
                 </button>
               </label>
             ))}

@@ -19,6 +19,7 @@ const PrintContent = React.forwardRef(
     const selectedOutletObj = useSelector(
       (state) => state.selectedOutlet.selectedOutlet
     );
+    const { invoice_id, invoice_no } = ref.current || {};
     return (
       <div ref={ref} style={{ fontFamily: "math" }} className="pt-3 container">
         <div>
@@ -54,7 +55,7 @@ const PrintContent = React.forwardRef(
             <CCol className="text-start">
               <span>Invoice#: </span>
               <br />
-              <strong>..</strong>
+              {/* <strong>{invoice_no}</strong> */}
               <p>{new Date().toLocaleString()}</p>
             </CCol>
             <CCol className="text-end">
@@ -102,7 +103,29 @@ const PrintContent = React.forwardRef(
                 <CCol xs={9} className="text-start">
                   <CRow>
                     <CCol xs={10} className=" text-start">
-                      {item.prod_name}
+                      {item.prod_Customized_status == 1 ? (
+                        <>
+                          <b>
+                            {item.customized.flavor_name &&
+                            item.customized.shape_name &&
+                            item.customized.choice_name &&
+                            item.customized.size_name
+                              ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
+                              : item.prod_name}
+                          </b>{" "}
+                          <br />
+                          <small className="pull-left">
+                            <strong>Message on Cake:</strong>{" "}
+                            <span>{item.customized.message_on_cake}</span>{" "}
+                            <br />
+                            <strong>Message on Card:</strong>{" "}
+                            <span>{item.customized.message_on_cake}</span>
+                          </small>
+                          <br />
+                        </>
+                      ) : (
+                        <b>{item.prod_name}</b>
+                      )}
                     </CCol>
                   </CRow>
                 </CCol>

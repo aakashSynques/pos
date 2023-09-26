@@ -6,10 +6,11 @@ export const fetch = async (
   headers = {}
 ) => {
   const instance = axios.create({
-    baseURL: "http://posapi.q4hosting.com", // Replace with your base URL
+    baseURL: "http://posapi.q4hosting.com", 
+    // baseURL: "http://localhost:2000", 
   });
   return await instance({
-    url: endPoint,
+    url: endPoint,                            
     method,
     data,
     headers,

@@ -1,9 +1,10 @@
-import React, { Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { CContainer, CSpinner } from '@coreui/react'
+import React, { Suspense } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { CContainer, CSpinner } from "@coreui/react";
 
 // routes config
-import routes from '../routes'
+import routes from "../routes";
+// import ChangePwd from "../views/login/ChangePwd";
 
 const AppContent = () => {
   return (
@@ -21,13 +22,14 @@ const AppContent = () => {
                   element={<route.element />}
                 />
               )
-            )
+            );
           })}
           <Route path="/" element={<Navigate to="dashboard" replace />} />
+          {/* <Route path="/login/change-pwd" element={<ChangePwd />} /> */}
         </Routes>
       </Suspense>
     </CContainer>
-  )
-}
+  );
+};
 
-export default React.memo(AppContent)
+export default React.memo(AppContent);

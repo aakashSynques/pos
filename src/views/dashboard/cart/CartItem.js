@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   removeFromCart,
@@ -21,7 +21,7 @@ const CartItem = ({
   openToppingModel,
 }) => {
   const dispatch = useDispatch();
-  const [quantity, setQuantity] = useState(item.prod_qty);
+  const [quantity, setQuantity] = useState(+item.prod_qty);
   const [visibleNote, setVisibleNote] = useState(item.is_note);
   const [visibleComplentary, setVisibleComplentary] = useState(false);
 
@@ -29,6 +29,9 @@ const CartItem = ({
   const [complentaryNote, setComplentaryNote] = useState("");
   const [parcelBtn, setParcelBtn] = useState(item.is_parcel === 1);
   const [customizeModelVisible, setCustomizeModelVisible] = useState(false);
+  const [originalProdRate, setOriginalProdRate] = useState(item.prod_rate);
+  
+
 
   useEffect(() => {
     setProductNote(item.is_prod_note);
@@ -39,7 +42,7 @@ const CartItem = ({
   }, [item.is_note]);
 
   useEffect(() => {
-    setQuantity(item.prod_qty);
+    setQuantity(+item.prod_qty);
   }, [item.prod_qty]);
 
   const setCartQtyHandler = () => {
@@ -102,28 +105,47 @@ const CartItem = ({
     // inputReference.current.focus();
   }, []);
 
-  let displayText;
-
+  let customizeProd_text;
   if (Array.isArray(item.customized)) {
-    displayText = item.prod_name;
+    customizeProd_text = item.prod_name;
   } else {
-    // const customized = item.customized;
-    displayText = `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`;
+    customizeProd_text = `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`;
   }
+
+
+
+
+
+
+  // Calculate the total amount based on the original prod_rate and updated quantity
+  // const calculateTotalAmount = () => {
+  //   return originalProdRate * quantity;
+  // };
+  const [customPrice, setCustomPrice] = useState(item.prod_rate); // Track custom price
+  const calculateTotalAmount = () => {
+    return customPrice * quantity;
+  };
+
+
+  
+
   return (
     <>
       <tr key={item.prod_id}>
         <td>
-          <b>{displayText}</b> <br />
+          <b>{customizeProd_text}</b> <br />
           <small>
-            {item.category_name} | @ {item.prod_rate} <br />
+            {item.category_name} | @
+            {/* {item.prod_rate}  */}
+            {originalProdRate} 
+            
+            <br />
             {/* selected topping list */}
             {item.toppings &&
               item.toppings.map((toppingUrno) => {
                 const topping = cartItems.find((t) => t.urno === toppingUrno);
                 return (
                   <div key={toppingUrno}>
-                    {/* {console.log(topping)} */}
                     {topping ? (
                       <span>
                         {topping.prod_name} | @ <i className="fa fa-inr"></i>
@@ -152,6 +174,7 @@ const CartItem = ({
                 )}
               </>
             )}
+            
           </small>
           <div className="toppings-btn">
             <CButton
@@ -203,18 +226,17 @@ const CartItem = ({
                 <u className="text-danger">C</u>ustomize
               </CButton>
             ) : null}
+
           </div>
         </td>
 
-        {/* {setQuantity(item.prod_qty)} */}
-        {/* {console.log(item.prod_qty)} */}
         <td className="incree-decreement">
           <input
             type="text"
             className="w-25 text"
             value={quantity}
             onBlur={setCartQtyHandler}
-            onChange={(e) => setQuantity(e.target.value)}
+            onChange={(e) => setQuantity(+e.target.value)}
             onKeyDown={handleQuantityKeyDown} // Handle Enter key press
           />
           <br />
@@ -228,11 +250,17 @@ const CartItem = ({
           </CButton>
         </td>
         <td className="pt-3">
-          <b className="rate-font">
-            <i className="fa fa-inr"></i>
-            {getTotalAmountForItem(item)} <br />
-            {/* <input type="text" value={getTotalAmountForItem(item)} /> */}
-          </b>
+        {item.prod_Customized_status === 1 ? (
+          <input
+              type="text"
+              
+          />
+        ) : (
+            <b className="rate-font">
+              {/* <i className="fa fa-inr"></i> */}
+              {getTotalAmountForItem(item).toFixed(2)}
+            </b>
+          )}
 
           {/* item remove button */}
           <span
