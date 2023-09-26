@@ -2,9 +2,11 @@
 
 body {
   // font-family: $font-family_1 !important;
-  font-size: 14px !important;
-  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif !important;
+  // font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif !important;
+  // font-family: 'Roboto', sans-serif!important;
+  font-family: sans-serif!important;
 }
+
 a {
   text-decoration: none !important;
 }
@@ -151,9 +153,8 @@ a {
 }
 .total-price {
   font-size: 23px;
-  font-weight: 700;
-  color: #127246 !important;
-  margin: 0px;
+  font-weight: bold;
+  color: #26B99A !important;
 }
 .gray-outlet {
   background: rgb(240, 239, 239) !important;
@@ -162,7 +163,7 @@ a {
   font-size: 12px;
   padding-top: 11px;
 }
-.gray-outlet:hover {
+.outlet-btn .gray-outlet:hover {
   color: black !important;
 }
 .outletmodelform {
@@ -268,7 +269,8 @@ tr {
     background: #adadad !important;
   }
   b {
-    font-size: 14px;
+    font-size: 15px;
+    font-family: sans-serif;
   }
 }
 .label-danger {
@@ -449,6 +451,17 @@ tr {
     --bs-modal-width: 882px;
   }
 }
+
+@media (min-width: 1400px) {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm {
+    max-width: 1900px !important;
+  } 
+}
+
+
 .adjest {
   position: absolute;
   left: 45px;
@@ -595,9 +608,8 @@ tr {
   background-color: #777;
 }
 .cust-name b {
-  font-size: 17px;
+  font-size: 18px;
   color: black;
-  font-weight: 800;
 }
 .customer-sarch-sec {
   padding: 5px 4px;
@@ -775,12 +787,16 @@ tr {
 .font-size-2 {
   font-size: 13px !important;
 }
+.font-size-3{
+  font-size: 11px !important;
+}
+
 .light-outlet2:hover {
   background: rgb(224 142 26) !important;
 }
 .light-outlet3:hover {
   background: rgb(237 49 44) !important;
-}
+}.outlet-btn .white-outlet:hover{ color: #000000!important;}
 .dueAmt-style {
   padding: 2px 0px;
   background: #fda7a7;
@@ -856,3 +872,7 @@ tr {
   padding-left: 10px;
 }
 
+
+b, strong {
+  font-weight: 600!important;
+}

@@ -138,7 +138,7 @@ const RecentInvoice = () => {
 
         {networkError === true && (
           <CCardBody style={{ display: "flex" }}>
-            <div className="text-danger medium-text">No Recent Invoices..</div>
+            <div className="text-danger medium-text font-size-2">No Recent Invoices..</div>
           </CCardBody>
         )}
 
@@ -151,14 +151,14 @@ const RecentInvoice = () => {
               style={{ marginTop: "1%", marginRight: "2%" }}
             />
 
-            <div className="text-danger medium-text">
+            <div className="text-danger medium-text font-size-2">
               Loading Recent Invoices..
             </div>
           </CCardBody>
         )}
 
         {loading === false && networkError === false && (
-          <div id="DB_RecentPunchedInvoice">
+          <div>
             <table width="100%" className="table table-bordered ongoing">
               <tbody>
                 {recentBooking
@@ -262,7 +262,7 @@ const RecentInvoice = () => {
                             )
                           </small>
                         </td>
-                        <td
+                        <td align="right"
                           style={{
                             fontWeight: "bold",
                             color: "black",
@@ -272,22 +272,18 @@ const RecentInvoice = () => {
                             className="fa fa-edit pull-left text-warning"
                             title="Edit Collection"
                           ></i>
-                          <b>
-                            <span
-                              style={{
-                                paddingRight: "3px",
-                              }}
-                            >
-                              &#8377;
-                            </span>
+                          <small className="text-end font-size-3">
+                            
+                            <i className="fa fa-inr"></i>
                             {Number(
                               sales_json &&
                                 sales_json.cartSumUp &&
                                 sales_json.cartSumUp.grandTotal &&
                                 sales_json.cartSumUp.grandTotal
                             ).toFixed(2)}
-                          </b>{" "}
+                          </small>{" "}
                           <br />
+
                           <span
                             className="label bg-success text-white rounded-1 text-end"
                             style={{
@@ -314,7 +310,8 @@ const RecentInvoice = () => {
                             <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                           </svg> */}
                         </td>
-                      </tr>
+
+                                       </tr>
                     );
                   })}
               </tbody>

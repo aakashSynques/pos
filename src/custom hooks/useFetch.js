@@ -21,7 +21,7 @@ const [networkError, setNetworkError] = useState(false);
       };
       if (isFirstCall) {
         setLoading(true);
-        isFirstCall = false; // Update the flag after the first call
+        isFirstCall = false; 
       }
       const response = await axios.post(
     url,

@@ -324,5 +324,8 @@ const mapStateToProps = (state) => ({
     : null,
   cartItems: state.cart.cartItems,
 });
-// export default connect(mapStateToProps)(ProductsSearchBar);
 export default connect(mapStateToProps)(ProductsSearchBar);
+
+
+
+

@@ -30,7 +30,7 @@ const CartItem = ({
   const [parcelBtn, setParcelBtn] = useState(item.is_parcel === 1);
   const [customizeModelVisible, setCustomizeModelVisible] = useState(false);
   const [originalProdRate, setOriginalProdRate] = useState(item.prod_rate);
-  
+
 
 
   useEffect(() => {
@@ -127,18 +127,18 @@ const CartItem = ({
   };
 
 
-  
+
 
   return (
     <>
       <tr key={item.prod_id}>
-        <td>
-          <b>{customizeProd_text}</b> <br />
-          <small>
+        <td style={{ paddingBottom: "13px!important" }} className="pb-2">
+          <strong style={{ fontSize: "14px", fontWeight: "600" }} className="mb-3">{customizeProd_text}</strong> <br />
+          <small className="font-size-3">
             {item.category_name} | @
             {/* {item.prod_rate}  */}
-            {originalProdRate} 
-            
+            {originalProdRate}
+
             <br />
             {/* selected topping list */}
             {item.toppings &&
@@ -174,8 +174,9 @@ const CartItem = ({
                 )}
               </>
             )}
-            
+
           </small>
+
           <div className="toppings-btn">
             <CButton
               style={{
@@ -250,12 +251,12 @@ const CartItem = ({
           </CButton>
         </td>
         <td className="pt-3">
-        {item.prod_Customized_status === 1 ? (
-          <input
+          {item.prod_Customized_status === 1 ? (
+            <input
               type="text"
-              
-          />
-        ) : (
+
+            />
+          ) : (
             <b className="rate-font">
               {/* <i className="fa fa-inr"></i> */}
               {getTotalAmountForItem(item).toFixed(2)}
@@ -269,6 +270,7 @@ const CartItem = ({
           >
             <i className="fa fa-times"></i>
           </span>
+
         </td>
       </tr>
       <tr>
@@ -297,7 +299,7 @@ const CartItem = ({
                 setComplentaryNote(e.target.value);
               }}
               onBlur={setCompNoteOnBlur}
-              // autoFocus
+            // autoFocus
             ></CFormTextarea>
           </CCollapse>
         </td>

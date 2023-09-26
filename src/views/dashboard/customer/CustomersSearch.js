@@ -103,12 +103,6 @@ const CustomersSearch = () => {
     }
   };
 
-  // const handleUpdateCustomerData = (updatedData) => {
-  //   setSelectedCustomer((prevCustomer) => ({
-  //     ...prevCustomer,
-  //     json: { ...prevCustomer.json, ...updatedData },
-  //   }));
-  // };
 
   // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
@@ -468,13 +462,14 @@ const CustomersSearch = () => {
                         : selectedCustomer.json.cust_type_id === 6
                         ? "bg-success"
                         : selectedCustomer.json.cust_type_id === 2
-                        ? "bg-primary"
+                        ? "bg-info"
                         : "bg-grey"
                     }`}
                   >
                     {selectedCustomer.json.cust_type_name} Account
                   </label>{" "}
-                  - {selectedCustomer.json.mobile}
+
+                  - <small> {selectedCustomer.json.mobile}</small> 
                 </div>
               </CCol>
               {/* customer Edit and update */}
@@ -661,3 +656,4 @@ const CustomersSearch = () => {
 };
 
 export default CustomersSearch;
+
