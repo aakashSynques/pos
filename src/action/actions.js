@@ -29,6 +29,7 @@ import {
   SET_SELECTED_CUSTOMER_JSON,
   UPDATE_TOTAL_CASH,
   UPDATE_PAY_MODE_TOTALS,
+  GET_SAVE_SALE_DATA,
 } from "./actionTypes";
 
 // helper functions start
@@ -445,3 +446,8 @@ export const updatePayModeTotalsAction = (payModeTotals) => ({
     type: UPDATE_PAY_MODE_TOTALS,
     payload: payModeTotals,
 });
+
+export const getSaveSaleData = (getSaveSale) => ({
+  type : GET_SAVE_SALE_DATA,
+  payload: getSaveSale,
+})

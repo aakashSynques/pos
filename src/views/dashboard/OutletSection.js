@@ -41,6 +41,10 @@ const OutletOptions = ({ outletName }) => {
     (state) => state.recentBooking.recentBookings
   );
 
+  const getSaveSale = useSelector((state) => state.getSaveSale.getSaveSaleData);
+
+
+
   const getAllPendingBookings = async () => {
     try {
       // const token = localStorage.getItem("pos_token");
@@ -220,12 +224,11 @@ const OutletOptions = ({ outletName }) => {
               padding: "4px",
               marginLeft: "4%",
               borderRadius: "50px",
-              fontWeight: "900",
               fontSize: "12px",
               color: "#f0ad4e",
               backgroundColor: "white",
             }}
-          ></span>
+          >{getSaveSale.length}</span>
           <p>[Shift + L]</p>
         </CButton>
 
@@ -241,12 +244,11 @@ const OutletOptions = ({ outletName }) => {
               padding: "4px",
               marginLeft: "4%",
               borderRadius: "50px",
-              fontWeight: "900",
               fontSize: "12px",
               color: "#f0ad4e",
               backgroundColor: "white",
             }}
-          ></span>
+          >0 </span>
           <p>[Shift + K]</p>
         </CButton>
 
@@ -262,7 +264,6 @@ const OutletOptions = ({ outletName }) => {
               padding: "4px",
               marginLeft: "4%",
               borderRadius: "50px",
-              fontWeight: "900",
               fontSize: "12px",
               color: "#f0ad4e",
               backgroundColor: "white",
@@ -286,7 +287,6 @@ const OutletOptions = ({ outletName }) => {
               padding: "4px",
               marginLeft: "4%",
               borderRadius: "50px",
-              fontWeight: "900",
               fontSize: "12px",
               color: "#f0ad4e",
               backgroundColor: "white",

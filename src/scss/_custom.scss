@@ -36,6 +36,24 @@ a {
     padding-top: 2px;
   }
 }
+
+
+
+
+b{
+  font-weight: 600!important;
+}.nav-pills {
+  height: 34px;
+  margin: 2px 0 7px!important;
+  padding-left: 8px !important;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  border-bottom: 1px solid #E6E9ED;
+  background: linear-gradient(359deg, #f0f2f3, rgba(255, 255, 255, 0));
+}
+
+
 .modal-header {
   padding: 5px 17px;
 }
@@ -228,6 +246,7 @@ td {
     font-size: 12px;
     background: #909090 !important;
     color: rgb(255, 255, 255) !important;
+    padding: 6px 7px!important;
   }
 }
 tr {
@@ -293,20 +312,37 @@ tr {
 }
 .nav-pills {
   .nav-link {
-    background: #efefef;
-    color: $color_1;
     font-size: 12px;
     border: 1px solid #dddddd;
     margin-right: 4px;
     margin-bottom: 6px;
+    padding: 6px 6px;
+    color: #5A738E !important;
+    border-radius: 5px 5px 0px 0px !important;
+    background: #f5f7fa !important;
+    cursor: pointer;
     &:hover {
-      color: $color_9 !important;
+      color: black !important;
+      background: #ffffff !important;
     }
   }
+  ul.bar_tabs > li a {
+    padding: 10px 17px;
+    background: #F5F7FA!important;
+    margin: 0!important;
+    border-radius: 0!important;
+}
+
   .nav-link.active {
-    background: azure !important;
-    color: $color_1 !important;
+    background: #fff!important;
+    border-color: transparent!important;
   }
+  ul.bar_tabs > li.active {
+    border-right: 6px solid #D3D6DA!important;
+    border-top: 0;
+    margin-top: -15px;
+}
+
   .show {
     > .nav-link {
       background: azure !important;
@@ -817,8 +853,7 @@ tr {
 }
 .mode-2.mode-2 tbody tr td {
   padding: 4px 3px !important;
-  letter-spacing: 0.5px;
-  font-weight: bold;
+  font-weight: 500;
 }
 .mode-2 .newth {
   padding: 3px !important;
@@ -872,7 +907,3 @@ tr {
   padding-left: 10px;
 }
 
-
-b, strong {
-  font-weight: 600!important;
-}

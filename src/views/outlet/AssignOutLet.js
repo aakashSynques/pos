@@ -153,6 +153,7 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
   useEffect(() => {
     getOutletListdata();
   }, [outletmodel]);
+  
   useEffect(() => {
     // Add an event listener to handle the F1 key press
     const handleKeyPressOutlet = (e) => {

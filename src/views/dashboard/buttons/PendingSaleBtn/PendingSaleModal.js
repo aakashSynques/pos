@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getSaveSaleData } from "../../../../action/actions";
+
 import {
   CModal,
   CModalHeader,
@@ -12,12 +15,61 @@ import {
   CTabPane,
   CButton,
 } from "@coreui/react";
-
+import { fetch } from "../../../../utils";
 function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
+  const dispatch = useDispatch();
+  const outlet_id = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+  console.log('outlet id', outlet_id)
+  
   const [activeKey, setActiveKey] = useState(1);
-  
-  
+  const [saveSaleData, setsaveSaleData] = useState([]);
+  const getsaveSaleData = async () => {
+    try {
+      const token = localStorage.getItem("pos_token");
+      const headers = { Authorization: `Bearer ${token}` };
+      const response = await fetch(
+        "/api/sales/getAllSavedData",
+        "post",
+        null,
+        headers
+      );
+      setsaveSaleData(response.data.saved_data);
+      dispatch(getSaveSaleData(response.data.saved_data));
+      console.log('text re', dispatch(getSaveSaleData(response.data.saved_data)))
 
+
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    getsaveSaleData();
+  }, []);
+
+
+
+
+
+  const [tabCounts, setTabCounts] = useState([0, 0, 0, 0]);
+  useEffect(() => {
+    const counts = [0, 0, 0, 0];
+    saveSaleData.forEach((sale) => {
+      if (sale.cartSumUp.deliveryMode == 1) {
+        counts[0]++; // Counter Sale
+      } else if (sale.cartSumUp.deliveryMode == 2) {
+        counts[1]++; // On Table
+      } else if (sale.cartSumUp.deliveryMode == 3) {
+        counts[2]++; // Pick UP
+      } else if (sale.cartSumUp.deliveryMode == 4) {
+        counts[3]++; // Home Delivery
+      }
+    });
+
+    setTabCounts(counts);
+  }, [saveSaleData]);
 
 
 
@@ -27,6 +79,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
       size="lg"
       visible={pendingButtonModal}
       onClose={() => setPendingButtonModal(false)}
+      className="closing-table"
     >
       <CModalHeader>
         <CModalTitle>Pending Sales List</CModalTitle>
@@ -35,22 +88,22 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
         <CNav variant="pills" role="tablist">
           <CNavItem>
             <CNavLink active={activeKey === 1} onClick={() => setActiveKey(1)}>
-              Counter Sale <span className="badge"> 0</span>
+              Counter Sale <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[0]}</span>
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink active={activeKey === 2} onClick={() => setActiveKey(2)}>
-              On Table <span className="badge"> 0</span>
+              On Table <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[1]}</span>
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink active={activeKey === 3} onClick={() => setActiveKey(3)}>
-              Pick UP <span className="badge"> 0</span>
+              Pick UP <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[2]}</span>
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink active={activeKey === 4} onClick={() => setActiveKey(4)}>
-              Home Delivery <span className="badge"> 0</span>
+              Home Delivery <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[3]}</span>
             </CNavLink>
           </CNavItem>
         </CNav>
@@ -59,9 +112,73 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
           <CTabPane
             role="tabpanel"
             aria-labelledby="countersale"
-            visible={activeKey === 1}
+            visible={activeKey == 1}
           >
-            {/* <CounterSale recentBooking={recentBooking} /> */}
+            <table className="table table-bordered border booking-or-table collection-table-style table-hover mode-2" >
+              <thead className="thead-light">
+                <tr>
+                  <th width="5%">#</th>
+                  <th width="15%">Sales Date</th>
+                  <th width="25%">Customer Name</th>
+                  <th width="2%">Items</th>
+                  <th width="18%">Total Sale</th>
+                  <th>Note</th>
+                  <th width="12%" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {saveSaleData.map((sale, index) => {
+                  if (sale.cartSumUp.deliveryMode === 1) {
+                    const date = new Date(sale.eat);
+                    const formattedDate = `${date.getFullYear()}-${String(
+                      date.getMonth() + 1
+                    ).padStart(2, "0")}-${String(date.getDate()).padStart(
+                      2,
+                      "0"
+                    )} ${String(date.getHours()).padStart(2, "0")}:${String(
+                      date.getMinutes()
+                    ).padStart(2, "0")}:${String(date.getSeconds()).padStart(
+                      2,
+                      "0"
+                    )}`;
+                    return (
+                      <tr key={index}>
+                        <td>{sale.psid}</td>
+                        <td>{formattedDate}</td>
+                        <td>
+                          {sale.selectedCustomerJson.customer_name}{" "}
+                          <small>({sale.selectedCustomerJson.mobile})</small>
+                        </td>
+                        <td align="center">
+                          {sale.productsInCart.length}
+                        </td>
+                        <td align="right">
+                          <i className="fa fa-inr"></i>{" "}
+                          {parseFloat(sale.cartSumUp.grandTotal).toFixed(2)}
+                          <br />
+                          <span style={{ lineHeight: "18px" }}>
+                            Tax: <i className="fa fa-inr"></i>
+                            {sale.cartSumUp.tax}{" "}
+                          </span>
+                        </td>
+                        <td></td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                            <i className="fa fa-reply-all "></i> Process
+                          </button>
+                        </td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-danger">
+                            <i className="fa fa-times"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return null;
+                })}
+              </tbody>
+            </table>
           </CTabPane>
 
           <CTabPane
@@ -69,7 +186,73 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
             aria-labelledby="ontable"
             visible={activeKey === 2}
           >
-            {/* <OnTable recentBooking={recentBooking} /> */}
+
+            <table className="table table-bordered border booking-or-table collection-table-style table-hover mode-2" >
+              <thead className="thead-light">
+                <tr>
+                  <th width="5%">#</th>
+                  <th width="15%">Sales Date</th>
+                  <th width="25%">Customer Name</th>
+                  <th width="2%">Items</th>
+                  <th width="18%">Total Sale</th>
+                  <th>Note</th>
+                  <th width="12%" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {saveSaleData.map((sale, index) => {
+                  if (sale.cartSumUp.deliveryMode == 2) {
+                    const date = new Date(sale.eat);
+                    const formattedDate = `${date.getFullYear()}-${String(
+                      date.getMonth() + 1
+                    ).padStart(2, "0")}-${String(date.getDate()).padStart(
+                      2,
+                      "0"
+                    )} ${String(date.getHours()).padStart(2, "0")}:${String(
+                      date.getMinutes()
+                    ).padStart(2, "0")}:${String(date.getSeconds()).padStart(
+                      2,
+                      "0"
+                    )}`;
+                    return (
+                      <tr key={index}>
+                        <td>{sale.psid}</td>
+                        <td>{formattedDate}</td>
+                        <td>
+                          {sale.selectedCustomerJson.customer_name}{" "}
+                          <small>({sale.selectedCustomerJson.mobile})</small>
+                        </td>
+                        <td align="center">
+                          {sale.productsInCart.length}
+                        </td>
+                        <td align="right">
+                          <i className="fa fa-inr"></i>{" "}
+                          {parseFloat(sale.cartSumUp.grandTotal).toFixed(2)}
+                          <br />
+                          <span style={{ lineHeight: "18px" }}>
+                            Tax: <i className="fa fa-inr"></i>
+                            {sale.cartSumUp.tax}{" "}
+                          </span>
+                        </td>
+                        <td></td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                            <i className="fa fa-reply-all "></i> Process
+                          </button>
+                        </td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-danger">
+                            <i className="fa fa-times"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return null;
+                })}
+              </tbody>
+            </table>
+
           </CTabPane>
 
           <CTabPane
@@ -77,7 +260,71 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
             aria-labelledby="pickup"
             visible={activeKey === 3}
           >
-            {/* <PickUp recentBooking={recentBooking} /> */}
+            <table className="table table-bordered border booking-or-table collection-table-style table-hover mode-2" >
+              <thead className="thead-light">
+                <tr>
+                  <th width="5%">#</th>
+                  <th width="15%">Sales Date</th>
+                  <th width="25%">Customer Name</th>
+                  <th width="2%">Items</th>
+                  <th width="18%">Total Sale</th>
+                  <th>Note</th>
+                  <th width="12%" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {saveSaleData.map((sale, index) => {
+                  if (sale.cartSumUp.deliveryMode == 3) {
+                    const date = new Date(sale.eat);
+                    const formattedDate = `${date.getFullYear()}-${String(
+                      date.getMonth() + 1
+                    ).padStart(2, "0")}-${String(date.getDate()).padStart(
+                      2,
+                      "0"
+                    )} ${String(date.getHours()).padStart(2, "0")}:${String(
+                      date.getMinutes()
+                    ).padStart(2, "0")}:${String(date.getSeconds()).padStart(
+                      2,
+                      "0"
+                    )}`;
+                    return (
+                      <tr key={index}>
+                        <td>{sale.psid}</td>
+                        <td>{formattedDate}</td>
+                        <td>
+                          {sale.selectedCustomerJson.customer_name}{" "}
+                          <small>({sale.selectedCustomerJson.mobile})</small>
+                        </td>
+                        <td align="center">
+                          {sale.productsInCart.length}
+                        </td>
+                        <td align="right">
+                          <i className="fa fa-inr"></i>{" "}
+                          {parseFloat(sale.cartSumUp.grandTotal).toFixed(2)}
+                          <br />
+                          <span style={{ lineHeight: "18px" }}>
+                            Tax: <i className="fa fa-inr"></i>
+                            {sale.cartSumUp.tax}{" "}
+                          </span>
+                        </td>
+                        <td></td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                            <i className="fa fa-reply-all "></i> Process
+                          </button>
+                        </td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-danger">
+                            <i className="fa fa-times"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return null;
+                })}
+              </tbody>
+            </table>
           </CTabPane>
 
           <CTabPane
@@ -85,7 +332,71 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
             aria-labelledby="homedelivery"
             visible={activeKey === 4}
           >
-            {/* <HomeDelivery recentBooking={recentBooking} /> */}
+            <table className="table table-bordered border booking-or-table collection-table-style table-hover mode-2" >
+              <thead className="thead-light">
+                <tr>
+                  <th width="5%">#</th>
+                  <th width="15%">Sales Date</th>
+                  <th width="25%">Customer Name</th>
+                  <th width="2%">Items</th>
+                  <th width="18%">Total Sale</th>
+                  <th>Note</th>
+                  <th width="12%" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {saveSaleData.map((sale, index) => {
+                  if (sale.cartSumUp.deliveryMode == 4) {
+                    const date = new Date(sale.eat);
+                    const formattedDate = `${date.getFullYear()}-${String(
+                      date.getMonth() + 1
+                    ).padStart(2, "0")}-${String(date.getDate()).padStart(
+                      2,
+                      "0"
+                    )} ${String(date.getHours()).padStart(2, "0")}:${String(
+                      date.getMinutes()
+                    ).padStart(2, "0")}:${String(date.getSeconds()).padStart(
+                      2,
+                      "0"
+                    )}`;
+                    return (
+                      <tr key={index}>
+                        <td>{sale.psid}</td>
+                        <td>{formattedDate}</td>
+                        <td>
+                          {sale.selectedCustomerJson.customer_name}{" "}
+                          <small>({sale.selectedCustomerJson.mobile})</small>
+                        </td>
+                        <td align="center">
+                          {sale.productsInCart.length}
+                        </td>
+                        <td align="right">
+                          <i className="fa fa-inr"></i>{" "}
+                          {parseFloat(sale.cartSumUp.grandTotal).toFixed(2)}
+                          <br />
+                          <span style={{ lineHeight: "18px" }}>
+                            Tax: <i className="fa fa-inr"></i>
+                            {sale.cartSumUp.tax}{" "}
+                          </span>
+                        </td>
+                        <td></td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                            <i className="fa fa-reply-all "></i> Process
+                          </button>
+                        </td>
+                        <td align="center">
+                          <button className="btn btn-xs btn-danger">
+                            <i className="fa fa-times"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
+                  return null;
+                })}
+              </tbody>
+            </table>
           </CTabPane>
         </CTabContent>
       </CModalBody>

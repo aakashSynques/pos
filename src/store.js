@@ -11,6 +11,7 @@ import recentBookingReducer from "./reducers/recentBookingReducer";
 import inputReducer from "./reducers/inputFieldReducer";
 import customerAccReducer from "./reducers/customerAccReducer";
 import cashReducer from "./reducers/cashReducer";
+import saveSaleReducer from "./reducers/saveSaleReducer";
 
 
 const rootReducer = combineReducers({
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   inputFocus: inputReducer,
   customerAccount: customerAccReducer,
   totalCash: cashReducer,
+  getSaveSale: saveSaleReducer,
 
 });
 

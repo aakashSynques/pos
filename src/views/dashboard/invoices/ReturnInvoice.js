@@ -32,6 +32,7 @@ const ReturnInvoice = () => {
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
+  
   const getReturnInvoices = async () => {
     try {
   
@@ -83,7 +84,7 @@ const ReturnInvoice = () => {
         {networkError === true && (
           <CCardBody style={{ display: "flex" }}>
             <div>
-              <div className="text-danger medium-text">No Returned Invoices..</div>
+              <div className="text-danger medium-text font-size-2">No Returned Invoices..</div>
             </div>
           </CCardBody>
         )}
@@ -98,7 +99,7 @@ const ReturnInvoice = () => {
             />
 
             <div>
-              <div className="text-danger medium-text">
+              <div className="text-danger medium-text font-size-2">
                 Loading Returned Invoices..
               </div>
             </div>

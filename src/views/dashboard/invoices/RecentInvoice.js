@@ -67,7 +67,7 @@ const RecentInvoice = () => {
   //   newSocket.on("connect_error", (error) => {
   //     console.error("Socket connection error:", error);
   //   });
-  
+
   //   setSocket(newSocket);
   //   return () => {
   //     newSocket.disconnect();
@@ -84,6 +84,7 @@ const RecentInvoice = () => {
         outlet_id,
       };
       const response = await fetch("/api/order/recent", "POST", body, headers);
+      console.log('new res', response.data.recentOrders)
       dispatch(setRecentBookings(response.data.recentOrders));
       setLoading(false);
       setNetworkError(false);
@@ -116,7 +117,7 @@ const RecentInvoice = () => {
   }, [outlet_id]);
 
 
-  
+
   const clickInvoiceLink = (invoice_no, sales_json, salesid) => {
     setPrintBooking(!printBooking);
     setInvoiceDetails({ [invoice_no]: sales_json, salesid });
@@ -168,9 +169,9 @@ const RecentInvoice = () => {
                       <tr key={invoice_no}>
                         <td>
                           {sales_json &&
-                          sales_json.cartSumUp &&
-                          sales_json.cartSumUp.deliveryMode &&
-                          sales_json.cartSumUp.deliveryMode == "1" ? (
+                            sales_json.cartSumUp &&
+                            sales_json.cartSumUp.deliveryMode &&
+                            sales_json.cartSumUp.deliveryMode == "1" ? (
                             <strong
                               className="status-btn"
                               style={{
@@ -273,13 +274,13 @@ const RecentInvoice = () => {
                             title="Edit Collection"
                           ></i>
                           <small className="text-end font-size-3">
-                            
+
                             <i className="fa fa-inr"></i>
                             {Number(
                               sales_json &&
-                                sales_json.cartSumUp &&
-                                sales_json.cartSumUp.grandTotal &&
-                                sales_json.cartSumUp.grandTotal
+                              sales_json.cartSumUp &&
+                              sales_json.cartSumUp.grandTotal &&
+                              sales_json.cartSumUp.grandTotal
                             ).toFixed(2)}
                           </small>{" "}
                           <br />
@@ -296,9 +297,9 @@ const RecentInvoice = () => {
                             <i className="fa fa-inr"></i>{" "}
                             {Number(
                               sales_json &&
-                                sales_json.cartSumUp &&
-                                sales_json.cartSumUp.recoveryAmount &&
-                                sales_json.cartSumUp.recoveryAmount
+                              sales_json.cartSumUp &&
+                              sales_json.cartSumUp.recoveryAmount &&
+                              sales_json.cartSumUp.recoveryAmount
                             ).toFixed(2)}
                           </span>
                           {/* <svg
@@ -311,7 +312,7 @@ const RecentInvoice = () => {
                           </svg> */}
                         </td>
 
-                                       </tr>
+                      </tr>
                     );
                   })}
               </tbody>
@@ -320,11 +321,11 @@ const RecentInvoice = () => {
         )}
       </CCard>
 
-      
+
       <RecentTabModal
         booking={booking}
         setBooking={setBooking}
-        // recentBooking={recentBooking}
+      // recentBooking={recentBooking}
       />
       <RecentPrintModal
         salesid={salesid}
