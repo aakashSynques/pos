@@ -42,7 +42,7 @@ const ClearSaleBtn = () => {
         className="light-outlet light-outlet3"
         style={{ background: "#d9534f" }}
         onClick={handleClearSale}
-        disabled={!selectedCustomer && cartItems.length === 0} // Disable the button if no customer is selected and cart is empty
+        disabled={!selectedCustomer && cartItems.length === 0} 
       >
         <b>Clear Sale</b>
         <p>[Shift + Delete]</p>

@@ -122,10 +122,10 @@ const PendingBooking = () => {
         )}
         {loading === false && networkError === false && (
           <div className="pending-booking">
-            <table width="100%" className="table table-bordered ongoing">
+            <table width="100%" className="table table-bordered ongoing mb-0">
               <tbody>
                 {pendingBooking
-                  .slice(0, 10)
+                  .slice(0, 5)
                   .map(({ booking_json, booking_no, booking_id }) => {
                     return (
                       <tr key={booking_no}>

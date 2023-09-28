@@ -132,17 +132,21 @@ const Login = () => {
               >
                 <CCardBody>
                   <CForm onSubmit={handleSubmit}>
+                    <div className="text-center login_content">
                     <img src={logo} alt="logo" />
-                    <p className="text-medium-emphasis pt-2">
-                      Sign In to your account
-                    </p>
+                    {/* <p className="text-medium-emphasis pt-2">
+                    POS Login
+                    </p> */}
+                    <h1>POS Login</h1>
+                    </div>
                     <CInputGroup>
+
                       <CInputGroupText>
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
                         type="text"
-                        placeholder="Username"
+                        placeholder="Enter Your Login User ID."
                         onChange={(e) => setEmail(e.target.value)}
                         id="email"
                         required // Add the required attribute here

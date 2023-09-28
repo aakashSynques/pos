@@ -160,7 +160,7 @@ const RecentInvoice = () => {
 
         {loading === false && networkError === false && (
           <div>
-            <table width="100%" className="table table-bordered ongoing">
+            <table width="100%" className="table table-bordered ongoing mb-0">
               <tbody>
                 {recentBooking
                   .slice(0, 10)

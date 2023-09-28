@@ -4,12 +4,13 @@ body {
   // font-family: $font-family_1 !important;
   // font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif !important;
   // font-family: 'Roboto', sans-serif!important;
-  font-family: sans-serif!important;
+  font-family: sans-serif !important;
 }
 
 a {
   text-decoration: none !important;
 }
+
 .btn-primary {
   --cui-btn-color: rgba(255, 255, 255, 0.87);
   --cui-btn-bg: #dc2126;
@@ -18,19 +19,23 @@ a {
   --cui-btn-hover-bg: #f1801a;
   --cui-btn-hover-border-color: #ef7f1a;
 }
+
 .location-btn {
   background: white !important;
   border: 1px solid gray !important;
   color: $color_1 !important;
   margin-bottom: 6px;
+
   &:hover {
     background: #f3f3f3;
     border: 1px solid gray !important;
     color: $color_1;
   }
+
   h3 {
     font-size: 15px;
   }
+
   p {
     font-size: 12px;
     padding-top: 2px;
@@ -40,11 +45,13 @@ a {
 
 
 
-b{
-  font-weight: 600!important;
-}.nav-pills {
+b {
+  font-weight: 600 !important;
+}
+
+.nav-pills {
   height: 34px;
-  margin: 2px 0 7px!important;
+  margin: 2px 0 7px !important;
   padding-left: 8px !important;
   position: relative;
   z-index: 1;
@@ -57,19 +64,23 @@ b{
 .modal-header {
   padding: 5px 17px;
 }
+
 .btn-xs {
   padding: 1px 5px !important;
   font-size: 12px !important;
   line-height: 1.5 !important;
 }
+
 .cust-radio {
   padding: 4px 26px 6px 11px !important;
   margin-right: 6px;
   height: 30px;
 }
+
 .input-dro-font {
   font-size: 14px !important;
 }
+
 .img-upload-btn {
   padding: 2px 6px !important;
   font-size: 13px !important;
@@ -77,15 +88,18 @@ b{
   border-radius: 3px !important;
   margin: 0 1px;
 }
+
 @media (min-width: 992px) {
   .cust-model .modal-lg {
     --bs-modal-width: 580px !important;
   }
 }
+
 .cust-model .form-label {
   line-height: 10px;
   font-weight: 900;
 }
+
 .cust-model .col-form-label {
   line-height: 10px;
   font-weight: 900;
@@ -93,6 +107,7 @@ b{
 
 .product-search-section {
   padding: 3px;
+
   .category-list-box {
     .card-header {
       padding: 6px 11px;
@@ -103,39 +118,48 @@ b{
     }
   }
 }
+
 .category-list-box {
   .card-body {
     padding: 3px 9px;
   }
+
   .card {
     margin: 5px 0 0;
     padding: 0px;
   }
+
   small {
     font-size: 11px;
   }
+
   .p-10 {
     padding: 2px;
   }
 }
+
 .select-table {
   border-top: 1px solid gray;
   border-bottom: 1px solid #80808094;
   padding: 6px 0;
+
   .form-select {
     padding: 0px 6px !important;
     border-radius: 0;
     width: 63%;
   }
 }
+
 .font-size {
   font-size: 15px;
 }
+
 .bil-table {
   .row {
     padding: 5px 0 1px;
   }
 }
+
 .sidebar {
   &:not(.sidebar-end) {
     ~ {
@@ -145,8 +169,10 @@ b{
     }
   }
 }
+
 .card-box {
   height: 250px;
+
   svg {
     background: #e4e4e4;
     font-size: 49px;
@@ -154,6 +180,7 @@ b{
     color: $color_3;
     padding: 9px;
   }
+
   i {
     background: rgb(189 189 189 / 25%);
     color: $color_3;
@@ -162,6 +189,7 @@ b{
     font-size: 35px;
   }
 }
+
 .pay-btn {
   padding: 8px 15px !important;
   border-radius: 2px !important;
@@ -169,11 +197,13 @@ b{
   width: 100%;
   margin: 0;
 }
+
 .total-price {
   font-size: 23px;
   font-weight: bold;
   color: #26B99A !important;
 }
+
 .gray-outlet {
   background: rgb(240, 239, 239) !important;
   border: #f0f0f0;
@@ -181,17 +211,21 @@ b{
   font-size: 12px;
   padding-top: 11px;
 }
+
 .outlet-btn .gray-outlet:hover {
   color: black !important;
 }
+
 .outletmodelform {
   .btn-close {
     display: none !important;
   }
+
   .modal-header {
     padding: 9px 17px !important;
   }
 }
+
 .outlet-btn {
   button {
     margin-bottom: 8px;
@@ -199,15 +233,18 @@ b{
     border-radius: 3px;
     font-size: 11px;
     border: none;
+
     &:hover {
       // background-color: $background-color_3;
       color: $color_3 !important;
     }
   }
+
   p {
     margin-bottom: 1px;
   }
 }
+
 .ongoing {
   tr {
     th {
@@ -215,58 +252,70 @@ b{
       font-size: 11px;
     }
   }
+
   th {
     background-color: $background-color_6 !important;
     font-size: 11px;
   }
 }
+
 td {
   padding: 3px !important;
   font-size: 11px;
   font-size: 11px !important;
 }
+
 .status-btn {
   font-size: 9px !important;
   padding: 2px 3px !important;
   border-radius: 2px !important;
 }
+
 .pending-booking {
   th {
     line-height: 14px;
   }
+
   tr {
     font-size: 5px;
   }
 }
+
 .booking-or-table {
   tbody {
     font-size: 11px !important;
   }
+
   th {
     font-size: 12px;
     background: #909090 !important;
     color: rgb(255, 255, 255) !important;
-    padding: 6px 7px!important;
+    padding: 6px 7px !important;
   }
 }
+
 tr {
   font-size: 11px !important;
 }
+
 .badge {
   color: $color_7;
   background-color: $background-color_4;
   border-radius: 10px;
 }
+
 .btn-margin {
   margin: 0px 2px;
   padding: 2px 6px !important;
   font-size: 12px !important;
   color: $color_8 !important;
 }
+
 .btn-warning {
   background: #f0ad4e !important;
   border-color: $border-color_1;
 }
+
 .label-info {
   background-color: $background-color_5;
   color: $color_3;
@@ -274,10 +323,12 @@ tr {
   font-size: 10px;
   border-radius: 3px;
 }
+
 .inactive {
   pointer-events: none !important;
   // pointer-events not supported below ie11 position: fixed !important;
 }
+
 .cart-table {
   th {
     font-size: 12px !important;
@@ -287,11 +338,13 @@ tr {
     padding: 5px !important;
     background: #adadad !important;
   }
+
   b {
     font-size: 15px;
     font-family: sans-serif;
   }
 }
+
 .label-danger {
   background-color: $background-color_8;
   color: $color_3;
@@ -299,10 +352,12 @@ tr {
   font-size: 10px;
   border-radius: 3px;
 }
+
 .btn-danger {
   background: #d9534f !important;
   border-color: $border-color_2;
 }
+
 .label-primary {
   background-color: $background-color_9;
   color: $color_3;
@@ -310,6 +365,7 @@ tr {
   font-size: 10px;
   border-radius: 3px;
 }
+
 .nav-pills {
   .nav-link {
     font-size: 12px;
@@ -321,46 +377,52 @@ tr {
     border-radius: 5px 5px 0px 0px !important;
     background: #f5f7fa !important;
     cursor: pointer;
+
     &:hover {
       color: black !important;
       background: #ffffff !important;
     }
   }
-  ul.bar_tabs > li a {
+
+  ul.bar_tabs>li a {
     padding: 10px 17px;
-    background: #F5F7FA!important;
-    margin: 0!important;
-    border-radius: 0!important;
-}
+    background: #F5F7FA !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
 
   .nav-link.active {
-    background: #fff!important;
-    border-color: transparent!important;
+    background: #fff !important;
+    border-color: transparent !important;
   }
-  ul.bar_tabs > li.active {
-    border-right: 6px solid #D3D6DA!important;
+
+  ul.bar_tabs>li.active {
+    border-right: 6px solid #D3D6DA !important;
     border-top: 0;
     margin-top: -15px;
-}
+  }
 
   .show {
-    > .nav-link {
+    >.nav-link {
       background: azure !important;
       color: $color_1 !important;
     }
   }
 }
+
 .product-price {
   position: relative;
   float: right;
   margin: 0;
   line-height: 0;
 }
+
 .porduct-list {
   a {
     color: $color_10 !important;
   }
 }
+
 .product-list-abslute {
   position: absolute;
   width: 500px;
@@ -368,6 +430,7 @@ tr {
   max-height: 400px;
   overflow-y: scroll;
 }
+
 .product-list {
   padding: 3px 10px;
   font-size: 12px;
@@ -377,33 +440,40 @@ tr {
   color: $color_10 !important;
   background: #ffffff !important;
   cursor: pointer;
+
   b {
     font-family: $font-family_2 !important;
     font-size: 14px;
   }
+
   &:hover {
     background: #fff5b1e3 !important;
   }
+
   button {
     width: 100%;
     border: none;
     background: none;
   }
 }
+
 .btn-remove {
   font-size: 9px !important;
   padding: 0px 3px !important;
   border-radius: 4px !important;
   float: right;
 }
+
 .cust-list-custmize {
   position: relative;
   top: -24px;
 }
+
 .cartlist {
   z-index: 9;
   margin-top: 4px;
 }
+
 .cart-product-list {
   padding: 3px 16px;
   font-size: 11px;
@@ -413,6 +483,7 @@ tr {
   color: $color_10 !important;
   background: #ffffff !important;
 }
+
 // .bg-light-1 {
 //   // background-color: $background-color_10 !important;
 //   background: #898989!important;
@@ -422,6 +493,7 @@ tr {
   border: 1px solid #fffcfc;
   margin-top: 8px;
 }
+
 .incree-decreement button {
   border: 1px solid #cbc9c9;
   color: #9a9999;
@@ -430,6 +502,7 @@ tr {
   line-height: 11px;
   border-radius: 3px;
 }
+
 .btn-success {
   color: #fff !important;
   background-color: #26b99a !important;
@@ -441,27 +514,33 @@ tr {
     max-width: 1550px !important;
     max-width: 1430px;
   }
+
   .container-lg {
     max-width: 1550px !important;
     max-width: 1430px;
   }
+
   .container-md {
     max-width: 1550px !important;
     max-width: 1430px;
   }
+
   .container-sm {
     max-width: 1550px !important;
     max-width: 1430px;
   }
+
   .container-xl {
     max-width: 1550px !important;
     max-width: 1430px;
   }
+
   .container-xxl {
     max-width: 1550px !important;
     max-width: 1430px;
   }
 }
+
 @media (min-width: 768px) {
   .sidebar.sidebar-fixed {
     position: fixed;
@@ -471,30 +550,35 @@ tr {
     width: 200px;
   }
 }
+
 @media (min-width: 1200px) {
   .modal-xl {
     --bs-modal-width: 1480px !important;
   }
 }
+
 @media (min-width: 992px) {
+
   .container,
   .container-lg,
   .container-md,
   .container-sm {
     max-width: 1550px !important;
   }
+
   .topping-modals .modal-lg {
     --bs-modal-width: 882px;
   }
 }
 
 @media (min-width: 1400px) {
+
   .container,
   .container-lg,
   .container-md,
   .container-sm {
     max-width: 1900px !important;
-  } 
+  }
 }
 
 
@@ -504,6 +588,7 @@ tr {
   width: 622px;
   top: 115px;
 }
+
 .toppings-btn button {
   padding: 2px 5px;
   font-size: 9px;
@@ -516,6 +601,7 @@ tr {
   margin: 0 1px;
   border: 1px solid gray;
 }
+
 .toppings-btn-style label {
   width: 32%;
   border: 1px solid #efefef;
@@ -528,9 +614,11 @@ tr {
   color: #2c2c2c;
   background: #fbfbfb;
 }
+
 .toppings-btn-style label:hover {
   background: #fff5b1e3 !important;
 }
+
 .toppings-btn-style .toppingstyle {
   overflow: hidden;
   display: inline-block;
@@ -539,6 +627,7 @@ tr {
   white-space: nowrap;
   height: 17px;
 }
+
 .toppings-btn-style label button {
   background: #ededed;
   font-size: 13px;
@@ -548,23 +637,30 @@ tr {
   box-shadow: 1px 0px 0px #a1a1a1;
   word-spacing: 1px;
 }
+
 .selected-outlet {
-  background-color: #26b99a !important; /* Set your desired background color here */
-  color: #ffffff !important; /* Set the text color for better contrast */
+  background-color: #26b99a !important;
+  /* Set your desired background color here */
+  color: #ffffff !important;
+  /* Set the text color for better contrast */
   border-color: #4cae4c !important;
 }
+
 .change-focus input {
   border-radius: 0 !important;
   outline: none !important;
   box-shadow: none !important;
 }
+
 .change-focus input[type="text"]:focus {
   border: 2px dashed #c93333 !important;
   outline: none !important;
 }
+
 .topping-modals .btn-close {
   display: none !important;
 }
+
 .input-group-addon {
   border-color: transparent;
   padding: 6px 12px;
@@ -576,25 +672,30 @@ tr {
   border: 1px solid #80808059;
   border-radius: 4px;
 }
+
 .topping-modals .modal-title {
   font-size: 15px;
 }
+
 .topping-modals .modal-footer button {
   font-size: 13px;
   padding: 3px 8px;
   border-radius: 3px;
   border: 1px solid gray;
 }
+
 .prod-sign {
   margin-right: 5px !important;
   margin-top: 3px !important;
 }
+
 .cat-head {
   padding: 2px 5px;
   color: #ffffff;
   background: #26b99a;
   font-weight: bold;
 }
+
 .Toastify__toast {
   font-size: 11px !important;
   padding: 5px 9px !important;
@@ -602,6 +703,7 @@ tr {
   border-radius: 4px !important;
   max-width: 300px !important;
 }
+
 .Toastify__toast-container {
   width: 100%;
   display: flex;
@@ -614,22 +716,27 @@ tr {
 .header.header-sticky {
   padding: 0;
 }
+
 .btn-success-bg {
   color: #fff !important;
   background-color: #26b99a !important;
   border-color: #4cae4c !important;
 }
+
 .btn-success-bg:hover {
   background-color: #26b99a !important;
 }
+
 .btn-success-bg .badge {
   background: white;
   color: #26b99a !important;
 }
+
 .toppings-btn-style label button:hover {
   box-shadow: 0px 0px 4px #a1a1a1 !important;
   background: #f9f9f9;
 }
+
 .cust-label {
   display: inline;
   padding: 3px 9px;
@@ -643,26 +750,31 @@ tr {
   border-radius: 0.25em;
   background-color: #777;
 }
+
 .cust-name b {
   font-size: 18px;
   color: black;
 }
+
 .customer-sarch-sec {
   padding: 5px 4px;
   background: #efefef !important;
   margin-bottom: 0px;
 }
+
 .customer-sarch-sec button {
   padding: 1px 5px;
   font-size: 12px;
   line-height: 1.5;
 }
+
 .not-found-add-cust {
   text-align: center;
   font-size: 13px;
   font-weight: 600;
   padding: 9px 0;
 }
+
 .reg-new-btn {
   width: 35% !important;
   color: white !important;
@@ -672,12 +784,15 @@ tr {
   color: #fff;
   background-color: #1a82c3 !important;
 }
+
 .register-model .modal-header {
   padding: 11px 17px;
 }
+
 .register-model .btn-close {
   font-size: 10px;
 }
+
 // .register-model .modal-footer{
 //   padding: 4px 6px;
 // }
@@ -688,27 +803,33 @@ tr {
   font-size: 14px;
   padding: 4px 11px;
 }
+
 .register-model .input-group-text {
   padding: 0 12px !important;
   background: white;
   width: 35px;
   color: rgba(128, 128, 128, 0.7803921569);
 }
+
 .register-model .input-group-text {
   border-radius: 0;
 }
+
 .register-model .form-control {
   border-radius: 0px;
 }
+
 .cart-note {
   border-radius: 1px !important;
   font-size: 12px !important;
 }
+
 .empty-cart {
   text-align: center;
   padding-top: 54px;
   color: #80808069;
 }
+
 .empty-cart i {
   text-align: center;
   background: #e4e4e46b;
@@ -717,30 +838,37 @@ tr {
   padding: 17px;
   border-radius: 50%;
 }
+
 .table-height {
   height: 300px;
   overflow: scroll;
 }
+
 .label-default {
   background-color: #777;
 }
+
 .text-right {
   text-align: right;
 }
+
 .borders {
   padding: 3px 0px;
   margin: 1px 0;
   height: 3px;
 }
+
 .bill-head-bg {
   background-color: #efefef;
   font-weight: 800;
   font-size: 13px;
   padding: 5px 0;
 }
+
 .billing-note {
   background-color: #efefef;
 }
+
 .pay-mode-btn button {
   margin-bottom: 5px;
   margin-bottom: 5px;
@@ -754,12 +882,14 @@ tr {
   border: 1px solid rgba(128, 128, 128, 0.6901960784);
   background: none;
 }
+
 .btn-invisible {
   background: none !important;
   color: red !important;
   border: none !important;
   font-size: 14px !important;
 }
+
 @media (min-width: 576px) {
   .bills-model-width .modal-dialog {
     max-width: 600px;
@@ -773,12 +903,15 @@ tr {
 .kot-border-top {
   border-top: 1px dotted #efefef;
 }
+
 .btn-close {
   font-size: 11px !important;
 }
+
 .persion-details p {
   line-height: 5px;
 }
+
 .extra-info {
   height: 21px !important;
   border: none !important;
@@ -788,6 +921,7 @@ tr {
 .medium-text {
   font-size: medium;
 }
+
 .blink_me {
   font-size: 8px !important;
   font-weight: normal;
@@ -798,18 +932,21 @@ tr {
   top: -3px;
   background: #e74c3c !important;
 }
+
 .noti-bg {
   background: #f7f7f7;
   padding: 2px 20px;
   color: rgb(90, 115, 142);
   font-size: 15px;
 }
+
 .cust-ac-model {
   overflow-x: hidden;
   overflow-y: auto;
   border-left: 1px solid rgb(191, 197, 202);
   height: 550px;
 }
+
 .cust-ac-model .nav-pills .nav-link {
   background: #f5f7fa;
   color: black;
@@ -820,19 +957,27 @@ tr {
   padding: 5px 13px;
   border-radius: 3px;
 }
+
 .font-size-2 {
   font-size: 13px !important;
 }
-.font-size-3{
+
+.font-size-3 {
   font-size: 11px !important;
 }
 
 .light-outlet2:hover {
   background: rgb(224 142 26) !important;
 }
+
 .light-outlet3:hover {
   background: rgb(237 49 44) !important;
-}.outlet-btn .white-outlet:hover{ color: #000000!important;}
+}
+
+.outlet-btn .white-outlet:hover {
+  color: #000000 !important;
+}
+
 .dueAmt-style {
   padding: 2px 0px;
   background: #fda7a7;
@@ -840,24 +985,30 @@ tr {
   font-size: 15px;
   font-weight: bold;
 }
+
 .collection-table-style tbody tr {
   line-height: 14px;
   font-size: 13px !important;
 }
+
 .collection-table-style tbody tr td {
   font-size: 13px !important;
 }
+
 .collection-table-style tbody tr th {
   font-size: 14px !important;
   font-weight: bold;
 }
+
 .mode-2.mode-2 tbody tr td {
   padding: 4px 3px !important;
   font-weight: 500;
 }
+
 .mode-2 .newth {
   padding: 3px !important;
 }
+
 .table-titlse-style {
   font-size: 13px;
   padding: 3px 4px;
@@ -865,10 +1016,11 @@ tr {
 }
 
 @media (min-width: 992px) {
-  .closing-table .modal-lg{
+  .closing-table .modal-lg {
     --bs-modal-width: 980px !important;
   }
 }
+
 .custom-suggestion {
   padding: 2px 5px;
   font-size: 1.0em;
@@ -876,9 +1028,9 @@ tr {
   overflow: hidden;
   border: 1px dashed #efefef;
   color: #000000;
-  cursor: pointer; 
+  cursor: pointer;
   width: 100%;
-  
+
   //  position: absolute;
   // z-index: 99;
   // background: white;
@@ -889,17 +1041,19 @@ tr {
 .custom-suggestion:hover {
   background: #ffffc0;
 }
+
 .react-autosuggest__suggestions-container--open ul {
-  list-style-type: none!important;
+  list-style-type: none !important;
   padding-left: 0;
 }
-.react-autosuggest__suggestions-container--open{
-  position: absolute!important;
-  z-index: 99!important;
-  background: white!important;
-  font-size: 12px!important;
-  width: 30%!important;
-  list-style-type: none!important;
+
+.react-autosuggest__suggestions-container--open {
+  position: absolute !important;
+  z-index: 99 !important;
+  background: white !important;
+  font-size: 12px !important;
+  width: 30% !important;
+  list-style-type: none !important;
 }
 
 #react-autowhatever-1 ul {
@@ -907,3 +1061,68 @@ tr {
   padding-left: 10px;
 }
 
+
+.login_content h1 {
+  letter-spacing: -0.05em;
+  line-height: 20px;
+  margin: 19px 0 20px;
+  font-size: 21px;
+}
+
+.login_content h1:before {
+  content: "";
+  height: 1px;
+  position: absolute;
+  width: 20%;
+  left: 90px;
+  margin-top: 10px;
+  background: -webkit-linear-gradient(right, rgba(126, 126, 126, 1) 0%, rgba(255, 255, 255, 1) 100%) !important;
+}.login_content h1:after{
+  content: "";
+  height: 1px;
+  position: absolute;
+  width: 20%;
+  background: -webkit-linear-gradient(left, rgba(126,126,126,1) 0%,rgba(255,255,255,1) 100%)!important;
+  right: 90px;
+  margin-top: 10px;
+
+}
+
+
+.react-confirm-alert-overlay {
+   z-index: 9999!important;
+  background: rgb(102 102 102 / 30%)!important;
+  top: -40%!important;
+  text-align: center!important;
+
+}
+.react-confirm-alert-body > h1 {
+  font-size: 18px!important;
+  background: #9d9d9d!important;
+  color: white!important;
+  padding: 4px 7px!important;
+}
+.react-confirm-alert-body {
+  width: 375px!important;
+  padding: 0px!important;
+  box-shadow: 0 20px 75px rgb(6 8 14 / 24%)!important;
+  color: black!important;
+  border-radius: 0px!important;
+  text-align: center!important;
+}
+.react-confirm-alert-button-group {
+  justify-content: center!important;
+  padding-bottom: 33px!important;
+}
+.react-confirm-alert-button-group button {
+  background-color: green!important;
+  // color: #fff;
+  // border: none;
+  // padding: 10px 20px;
+  // margin-right: 10px;
+  // cursor: pointer;
+}
+
+.react-confirm-alert-button-group button:last-child {
+  background-color: #dd0404!important;
+}

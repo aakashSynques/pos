@@ -15,6 +15,8 @@ import CollectioStatusModal from "./buttons/collectionStatusBtn/CollectioStatusM
 import SaveSale from "./buttons/saveSale/SaveSale";
 import ClearSaleBtn from "./buttons/ClearSaleBtn";
 import { fetch } from "../../utils";
+import NewSale from "./buttons/newSaleBtn/NewSale";
+import DiscardSaleBtn from "./buttons/DiscardSaleBtn";
 
 // import { setInputFocused } from "../../action/actions";
 
@@ -204,10 +206,10 @@ const OutletOptions = ({ outletName }) => {
       <div className="outlet-btn">
         <AssignOutLet />
         <br />
-        <CButton className="light-outlet" style={{ background: "#f0ad4e" }}>
-          <b>New Sale</b>
-          <p>[Shift + N]</p>
-        </CButton>
+
+
+        {/* new sale button */}
+        <NewSale />
 
         {/* save sale button componet */}
         <SaveSale />
@@ -312,11 +314,13 @@ const OutletOptions = ({ outletName }) => {
         {/* claer sale component    */}
         <ClearSaleBtn />
 
-        <CButton className="light-outlet" style={{ background: "#d9534f" }}>
-          <b>Discard Sale</b>
-          <p>[Shift + Ctrl + Delete]</p>
-        </CButton>
+        {/* Discard save sale */}
+        <DiscardSaleBtn />
+        
       </div>
+
+
+
 
       <PendingSaleModal
         pendingButtonModal={pendingButtonModal}

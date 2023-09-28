@@ -6,8 +6,8 @@ export const fetch = async (
   headers = {}
 ) => {
   const instance = axios.create({
-    // baseURL: "http://posapi.q4hosting.com", 
-    baseURL: "http://localhost:2000", 
+    baseURL: "http://posapi.q4hosting.com", 
+    // baseURL: "http://localhost:2000", 
   });
   return await instance({
     url: endPoint,                            

@@ -41,7 +41,7 @@ const OnGoingKot = () => {
                     </small> */}
           <table
             width="100%"
-            className="table table-bordered ongoing"
+            className="table table-bordered ongoing mb-0"
             style={{ fontSize: "11px" }}
           >
             <tbody>

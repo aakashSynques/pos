@@ -5,10 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TokenMiddleware from "./middleware/middleware";
 import LoginMiddleware from "./middleware/login-middleware";
-// import io from "socket.io-client";
-import { setRecentBookings } from "./action/actions";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+
 
 const loading = (
   <div className="pt-3 text-center">
@@ -18,6 +15,7 @@ const loading = (
 
 const DefaultLayout = React.lazy(() => import("./layout/DefaultLayout"));
 const Login = React.lazy(() => import("./views/login/Login"));
+
 
 function App() {
   return (

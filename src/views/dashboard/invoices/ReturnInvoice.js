@@ -108,7 +108,7 @@ const ReturnInvoice = () => {
 
         {loading === false && networkError === false && (
           <div className="pending-booking">
-            <table width="100%" className="table table-bordered ongoing">
+            <table width="100%" className="table table-bordered ongoing mb-0">
               <tbody>
                 {returnedOrders
                   .slice(0, 11)

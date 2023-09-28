@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getSaveSaleData } from "../../../../action/actions";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import the CSS for styling
+
 
 import {
   CModal,
@@ -16,13 +19,15 @@ import {
   CButton,
 } from "@coreui/react";
 import { fetch } from "../../../../utils";
+import { toast } from "react-toastify";
+
 function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
   const dispatch = useDispatch();
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
   console.log('outlet id', outlet_id)
-  
+
   const [activeKey, setActiveKey] = useState(1);
   const [saveSaleData, setsaveSaleData] = useState([]);
   const getsaveSaleData = async () => {
@@ -38,9 +43,6 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
       setsaveSaleData(response.data.saved_data);
       dispatch(getSaveSaleData(response.data.saved_data));
       console.log('text re', dispatch(getSaveSaleData(response.data.saved_data)))
-
-
-
     } catch (err) {
       console.log(err);
     }
@@ -49,6 +51,49 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
     getsaveSaleData();
   }, []);
 
+
+  const deletePendingSale = async (psid) => {
+    confirmAlert({
+      title: "Confirm Deletion",
+      message: "Are you sure to discard the current cart from the pending list?",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: async () => {
+            try {
+              const token = localStorage.getItem("pos_token");
+              const headers = { Authorization: `Bearer ${token}` };
+              await fetch(`/api/sales/deletePenddingSaleData/${psid}`, "delete", null, headers);
+              getsaveSaleData();
+              toast.success("Pending sale data deleted successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+              });
+            } catch (err) {
+              console.error("Error deleting sale data:", err);
+
+              toast.error("Error deleting pending sale data. Please try again.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+              });
+            }
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {
+            toast.error("pandding sales not delete", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+            });
+          },
+        },
+      ],
+    });
+  };
 
 
 
@@ -80,6 +125,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
       visible={pendingButtonModal}
       onClose={() => setPendingButtonModal(false)}
       className="closing-table"
+      backdrop="static"
     >
       <CModalHeader>
         <CModalTitle>Pending Sales List</CModalTitle>
@@ -168,7 +214,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                           </button>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger">
+                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
                           </button>
                         </td>
@@ -241,7 +287,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                           </button>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger">
+                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
                           </button>
                         </td>
@@ -314,7 +360,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                           </button>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger">
+                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
                           </button>
                         </td>
@@ -386,7 +432,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                           </button>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger">
+                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
                           </button>
                         </td>
@@ -401,7 +447,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
         </CTabContent>
       </CModalBody>
       <CModalFooter>
-        <CButton color="secondary" onClick={() => setPendingButtonModal(false)}>
+        <CButton color="secondary" className="btn btn-sm btn-default" onClick={() => setPendingButtonModal(false)}>
           Close
         </CButton>
       </CModalFooter>
