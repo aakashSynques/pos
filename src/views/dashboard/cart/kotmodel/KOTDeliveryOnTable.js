@@ -12,17 +12,30 @@ import {
   CFormLabel,
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import { useSelector, useDispatch } from 'react-redux';
+
+import { setSelectedTableValue } from "../../../../action/actions";
+
+
 
 
 const DeliveryOnTable = ({
-  selectedCustomer, // Declare the prop for selectedCustomer
-  cartItems, // Declare the prop for cartItems
+  selectedCustomer,
+  cartItems,
 }) => {
+  const selectedTableValue = useSelector((state) => state.table.selectedTableValue);
+  const dispatch = useDispatch();
+  const handleTableValueChange = (e) => {
+    const newValue = e.target.value;
+    dispatch(setSelectedTableValue(newValue));
+  };
   const [visible, setVisible] = useState(false);
-  const [selectedTable, setSelectedTable] = useState(""); // Add this line
-  const customerSearchInputRef = useRef(null); // Create a ref for the customer search input
+  const customerSearchInputRef = useRef(null);
+
+
+
+
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -36,6 +49,7 @@ const DeliveryOnTable = ({
     };
   }, []);
 
+
   const handleKOTBtn = () => {
     if (selectedCustomer) {
       setVisible(!visible);
@@ -47,19 +61,29 @@ const DeliveryOnTable = ({
     }
   };
 
+
+
   return (
     <>
       <CContainer>
         <CRow className="py-1">
           <CCol sm={6}>
             <b>Table No. </b>
+            {/* <CFormSelect
+              aria-label="Default select example"
+              className="form-control rounded-0"
+              style={{ width: "80px", float: "right", height: "33px" }}
+              value={selectedTableValue}
+              onChange={(e) => setSelectedTableValue(e.target.value)} // Update the selected table
+            > */}
             <CFormSelect
               aria-label="Default select example"
               className="form-control rounded-0"
               style={{ width: "80px", float: "right", height: "33px" }}
-              value={selectedTable} // Set the selected value
-              onChange={(e) => setSelectedTable(e.target.value)} // Update the selected table
+              value={selectedTableValue}
+              onChange={handleTableValueChange}
             >
+
               <option value="">-</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -83,6 +107,7 @@ const DeliveryOnTable = ({
               <option value="20">20</option>
             </CFormSelect>
           </CCol>
+
           <CCol sm={6}>
             {cartItems.length > 0 && (
               <CButton
@@ -95,8 +120,14 @@ const DeliveryOnTable = ({
               </CButton>
             )}
           </CCol>
+
+
         </CRow>
       </CContainer>
+
+
+
+
       {/* Kot model */}
       <CModal
         visible={visible}
@@ -126,7 +157,7 @@ const DeliveryOnTable = ({
               </font>
             </CCol>
             <CCol sm={6}>
-              <h6 className="text-end pt-2">On Table : {selectedTable}</h6>
+              <h6 className="text-end pt-2">On Table : {selectedTableValue}</h6>
             </CCol>
           </CRow>
 
@@ -208,3 +239,7 @@ const DeliveryOnTable = ({
 };
 
 export default DeliveryOnTable;
+
+
+
+

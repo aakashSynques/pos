@@ -429,6 +429,7 @@ const CartSection = () => {
             selectedCustomer={selectedCustomer}
             cartItems={cartItems}
             subtotal={getSubTotalAmount()}
+            
           />
         </>
       )}

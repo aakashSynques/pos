@@ -12,6 +12,7 @@ import inputReducer from "./reducers/inputFieldReducer";
 import customerAccReducer from "./reducers/customerAccReducer";
 import cashReducer from "./reducers/cashReducer";
 import saveSaleReducer from "./reducers/saveSaleReducer";
+import KOTtableNoReducer from "./reducers/KOTtableNoReducer";
 
 
 const rootReducer = combineReducers({
@@ -28,6 +29,9 @@ const rootReducer = combineReducers({
   customerAccount: customerAccReducer,
   totalCash: cashReducer,
   getSaveSale: saveSaleReducer,
+  table: KOTtableNoReducer,
+
+
 
 });
 

@@ -38,10 +38,7 @@ function CollectionStatusTableLHS() {
     0
   );
 
-  // const totalTax = relevantCartSumUpData.reduce(
-  //   (accumulator, cartData) => accumulator + cartData.tax,
-  //   0
-  // );
+
 
   const totalTax = relevantCartSumUpData.reduce((accumulator, cartData) => {
     if (cartData && cartData.tax !== null && cartData.tax !== undefined) {

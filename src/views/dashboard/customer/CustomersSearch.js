@@ -90,7 +90,7 @@ const CustomersSearch = () => {
       );
       setCustomerSearchResults(response.data.suggestions);
       // Cache the results for the current query
-      console.log("cust res", response.data.suggestions);
+   
 
       setCache((prevCache) => ({
         ...prevCache,

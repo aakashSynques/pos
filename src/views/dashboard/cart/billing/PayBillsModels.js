@@ -25,6 +25,7 @@ import {
   setCartSumUp,
   setSelectedCustomerJson,
 } from "../../../../action/actions";
+import KOTDeliveryOnTable from "../kotmodel/KOTDeliveryOnTable";
 
 const PayBillsModels = ({
   visible,
@@ -58,6 +59,8 @@ const PayBillsModels = ({
     (state) => state.delivery.selectedDelivery
   );
 
+  console.log('sdfasdf', selectedDelivery)
+
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
@@ -65,6 +68,11 @@ const PayBillsModels = ({
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
   );
+
+
+  const selectedTableValue = useSelector((state) => state.table.selectedTableValue);
+
+
 
   const ipAddressComponentRef = useRef(); // Create a ref to access the IPAddressData component
   const publicIp = ipAddressComponentRef.current?.getPublicIp(); // Access the getPublicIp function
@@ -206,21 +214,21 @@ const PayBillsModels = ({
   const selectedCustomersJson =
     selectedCustomer && selectedCustomer.json
       ? {
-          cust_id: selectedCustomer.json.cust_id,
-          cust_type_id: selectedCustomer.json.cust_type_id,
-          cust_type_name: selectedCustomer.json.cust_type_name,
-          customer_name: selectedCustomer.json.customer_name,
-          email: selectedCustomer.json.email,
-          mobile: selectedCustomer.json.mobile,
-          alt_mobile: selectedCustomer.json.alt_mobile,
-          address: selectedCustomer.json.address,
-          pincode: selectedCustomer.json.pincode,
-          extra_note: selectedCustomer.json.extra_note,
-          pan_no: selectedCustomer.json.pan_no,
-          gst_no: selectedCustomer.json.gst_no,
-          eat: selectedCustomer.json.eat,
-          user_name: selectedCustomer.json.user_name,
-        }
+        cust_id: selectedCustomer.json.cust_id,
+        cust_type_id: selectedCustomer.json.cust_type_id,
+        cust_type_name: selectedCustomer.json.cust_type_name,
+        customer_name: selectedCustomer.json.customer_name,
+        email: selectedCustomer.json.email,
+        mobile: selectedCustomer.json.mobile,
+        alt_mobile: selectedCustomer.json.alt_mobile,
+        address: selectedCustomer.json.address,
+        pincode: selectedCustomer.json.pincode,
+        extra_note: selectedCustomer.json.extra_note,
+        pan_no: selectedCustomer.json.pan_no,
+        gst_no: selectedCustomer.json.gst_no,
+        eat: selectedCustomer.json.eat,
+        user_name: selectedCustomer.json.user_name,
+      }
       : null;
 
   const cartSumUp = {
@@ -254,7 +262,7 @@ const PayBillsModels = ({
     grandTotal: finalPayAmount.toFixed(2),
     outlet_id: selectedOutletId,
     deliveryMode: deliveryId,
-    deliveryTableNo: "",
+    deliveryTableNo: selectedTableValue,  //kot table number
     deliveryDate: "",
     deliveryTime: "",
     receiverName: "",
@@ -266,11 +274,11 @@ const PayBillsModels = ({
     eby: selectedOutletObj && selectedOutletObj.eby,
     salesUser: user
       ? {
-          user_id: user.user_id,
-          user_name: user.user_name,
-          user_mobile: user.user_mobile,
-          user_email: user.user_email,
-        }
+        user_id: user.user_id,
+        user_name: user.user_name,
+        user_mobile: user.user_mobile,
+        user_email: user.user_email,
+      }
       : null,
     Ip: publicIp,
     Browser: window.navigator.userAgent,
@@ -340,6 +348,22 @@ const PayBillsModels = ({
     };
   }, [selectedPayments]);
 
+
+  console.log('cart sum', cartSumUp)
+
+
+  // let deliveryId;
+  // if (selectedDelivery == "Counter Sale") {
+  //   deliveryId = 1;
+  // } else if (selectedDelivery == "On Table") {
+  //   deliveryId = 2;
+  // } else if (selectedDelivery == "PickUp") {
+  //   deliveryId = 3;
+  // } else {
+  //   deliveryId = 4;
+  // }
+
+
   return (
     <>
       <CContainer>
@@ -381,7 +405,7 @@ const PayBillsModels = ({
                 <CCol sm={2} xs={2} className="text-right">
                   <b>Amount</b>
                 </CCol>
-               </CRow>
+              </CRow>
 
               <CRow className="pt-2 pb-2">
                 {cartItems.map((item) => (
@@ -391,9 +415,9 @@ const PayBillsModels = ({
                         <>
                           <b>
                             {item.customized.flavor_name &&
-                            item.customized.shape_name &&
-                            item.customized.choice_name &&
-                            item.customized.size_name
+                              item.customized.shape_name &&
+                              item.customized.choice_name &&
+                              item.customized.size_name
                               ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
                               : item.prod_name}
                           </b>{" "}
@@ -425,7 +449,7 @@ const PayBillsModels = ({
                         )}
                       </small>
 
-                      <br />  
+                      <br />
                       <small
                         className="text-danger"
                         style={{ fontSize: "10px" }}
@@ -457,17 +481,21 @@ const PayBillsModels = ({
 
             <CRow className="billing-note">
               <CCol sm={5}>
-                <b>Delivery Mode</b> <br />
-                <div>{selectedDelivery}</div>
-                {/* <b>DateTime : </b> <div>{new Date().toLocaleString()}</div> */}
-                <b>Note</b>
+                <b className="font-size-2">Delivery Mode</b> <br />
+                <small>{selectedDelivery} :  {deliveryId == 2 && (<>
+                  {selectedTableValue}
+                </>
+                )}
+                </small> <br />
+
+                <b className="font-size-2">Note</b>
               </CCol>
 
               <CCol sm={7} style={{ backgroundColor: "white" }}>
                 <hr className="borders" />
                 <CRow>
                   <CCol sm={4}>
-                    <b>Total</b>
+                    <b >Total</b>
                   </CCol>
                   <CCol sm={4} className="text-left">
                     {totalItem} Item(s)
@@ -535,7 +563,7 @@ const PayBillsModels = ({
                           </CButton>
                         </CCol>
                         <CCol sm={3}>
-                          <strong>{getPaymentModeName(paymentMode)}</strong>
+                          <b className="font-size-2">{getPaymentModeName(paymentMode)}</b>
                         </CCol>
                         <CCol sm={5}>
                           <input
@@ -704,6 +732,9 @@ const PayBillsModels = ({
                   <ToastContainer />
                 </CButton>
               </CCol>
+
+
+
             </CRow>
           </CModalFooter>
         </CModal>

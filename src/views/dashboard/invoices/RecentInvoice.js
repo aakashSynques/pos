@@ -85,6 +85,7 @@ const RecentInvoice = () => {
       };
       const response = await fetch("/api/order/recent", "POST", body, headers);
       console.log('new res', response.data.recentOrders)
+
       dispatch(setRecentBookings(response.data.recentOrders));
       setLoading(false);
       setNetworkError(false);
@@ -115,6 +116,35 @@ const RecentInvoice = () => {
       getAllRecentInvoices();
     }
   }, [outlet_id]);
+
+
+
+  const relevantCartSumUpData = recentBooking.map((booking) => {
+    if (booking.sales_json && booking.sales_json.cartSumUp) {
+      const cartSumUp = booking.sales_json.cartSumUp;
+      return {
+        subtotal: parseFloat(cartSumUp.subTotal) || 0,
+        grandTotal: parseFloat(cartSumUp.grandTotal) || 0,
+        payDetails: cartSumUp.payDetails || [],
+        tax: parseFloat(cartSumUp.tax) || 0,
+      };
+    }
+    return null;
+  });
+
+
+
+  const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal);
+  console.log('gd', grandTotalValues)
+
+  const payAmountValues = relevantCartSumUpData.map(items => {
+    return items.payDetails.reduce((total, item) => total + item.payAmount, 0);
+  });
+  const remainingBalances = grandTotalValues.map((grandTotal, index) => grandTotal - payAmountValues[index]);
+
+
+
+
 
 
 
@@ -295,21 +325,8 @@ const RecentInvoice = () => {
                             }}
                           >
                             <i className="fa fa-inr"></i>{" "}
-                            {Number(
-                              sales_json &&
-                              sales_json.cartSumUp &&
-                              sales_json.cartSumUp.recoveryAmount &&
-                              sales_json.cartSumUp.recoveryAmount
-                            ).toFixed(2)}
+
                           </span>
-                          {/* <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="#f0ad4e"
-                            viewBox="0 0 66 66"
-                            stroke="#333"
-                          >
-                            <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                          </svg> */}
                         </td>
 
                       </tr>

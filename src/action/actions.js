@@ -30,6 +30,7 @@ import {
   UPDATE_TOTAL_CASH,
   UPDATE_PAY_MODE_TOTALS,
   GET_SAVE_SALE_DATA,
+  SET_SELECTED_TABLE_VALUE
 } from "./actionTypes";
 
 // helper functions start
@@ -450,4 +451,11 @@ export const updatePayModeTotalsAction = (payModeTotals) => ({
 export const getSaveSaleData = (getSaveSale) => ({
   type : GET_SAVE_SALE_DATA,
   payload: getSaveSale,
-})
+});
+
+
+
+export const setSelectedTableValue = (tableValue) => ({ 
+    type: SET_SELECTED_TABLE_VALUE,
+    payload: tableValue,
+});

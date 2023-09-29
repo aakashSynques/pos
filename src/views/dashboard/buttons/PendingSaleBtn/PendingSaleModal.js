@@ -26,7 +26,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-  console.log('outlet id', outlet_id)
+ 
 
   const [activeKey, setActiveKey] = useState(1);
   const [saveSaleData, setsaveSaleData] = useState([]);
@@ -42,7 +42,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
       );
       setsaveSaleData(response.data.saved_data);
       dispatch(getSaveSaleData(response.data.saved_data));
-      console.log('text re', dispatch(getSaveSaleData(response.data.saved_data)))
+    
     } catch (err) {
       console.log(err);
     }
@@ -50,6 +50,8 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
   useEffect(() => {
     getsaveSaleData();
   }, []);
+
+
 
 
   const deletePendingSale = async (psid) => {
