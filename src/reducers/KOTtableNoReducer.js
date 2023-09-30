@@ -1,8 +1,9 @@
 
-import { SET_SELECTED_TABLE_VALUE } from "../action/actionTypes";
+import { SET_SELECTED_TABLE_VALUE, SUBMIT_DELIVERY_DATA } from "../action/actionTypes";
 
 const initialState = {
   selectedTableValue: '',
+  submittedHomeDeliveryData: null,
 };
 
 const KOTtableNoReducer = (state = initialState, action) => {
@@ -12,6 +13,12 @@ const KOTtableNoReducer = (state = initialState, action) => {
         ...state,
         selectedTableValue: action.payload,
       };
+      case SUBMIT_DELIVERY_DATA:
+      return {
+        ...state,
+        submittedHomeDeliveryData: action.payload,
+      };
+      
     default:
       return state;
   }

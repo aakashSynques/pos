@@ -12,36 +12,68 @@ import {
   CFormSelect,
   CFormTextarea,
 } from "@coreui/react";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+
+
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { submitDeliveryData } from "../../../../action/actions";
 
 const ChangeDeliveryCharge = () => {
+  const dispatch = useDispatch();
+
+  // State to control the visibility of the modal
   const [visible, setVisible] = useState(false);
+
+  // Selected customer data from Redux store
   const selectedCustomer = useSelector(
     (state) => state.customer.selectedCustomer
   );
 
+  // Form input states
   const [receiverName, setReceiverName] = useState("");
   const [receiverMobile, setReceiverMobile] = useState("");
-  const [deliveryAmount, setDeliveryAmount] = useState("");
-  const [deliveryDate, setDeliveryDate] = useState("");
-  const [deliveryTiming, setDeliveryTiming] = useState("");
+  const [deliveryAmount, setDeliveryAmount] = useState(0);
+  const [deliveryDate, setDeliveryDate] = useState(new Date().toISOString().split('T')[0]);
+  const [deliveryTiming, setDeliveryTiming] = useState(getCurrentTime());
+
   const [receiverAd, setReceiverAd] = useState("");
-  //   const [editableCustomerAddress, setEditableCustomerAddress] = useState(""); // New state variable
-  const [submittedData, setSubmittedData] = useState(null); // State to store the submitted data
+
+  // State to store the submitted data
+  const [submittedHomeDeliveryData, setSubmittedHomeDeliveryData] = useState(null);
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  console.log('su date time', dispatch(submitDeliveryData(submittedHomeDeliveryData)))
+  dispatch(submitDeliveryData(submittedHomeDeliveryData));
+
+
+
+  function getCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const amOrPm = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12; // Convert 0 to 12
+    const timeString = `${padZero(formattedHours)}:${padZero(minutes)} ${amOrPm}`;
+    return timeString;
+  }
+
+  function padZero(value) {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+
 
   const handleCopyDetails = () => {
     if (selectedCustomer) {
       setReceiverName(selectedCustomer.json.customer_name || "");
       setReceiverMobile(selectedCustomer.json.mobile || "");
-      // const customerAddress = selectedCustomer?.json?.address || "";
-      setReceiverAd(selectedCustomer?.json?.address) || "";
+      setReceiverAd(selectedCustomer?.json?.address || "");
     }
   };
 
-  const submitChangeDeliveryFrom = () => {
-    const submittedData = {
+  // Function to submit the form
+  const submitChangeDeliveryForm = () => {
+    const submittedHomeDeliveryData = {
       receiverName,
       receiverMobile,
       deliveryAmount,
@@ -49,52 +81,85 @@ const ChangeDeliveryCharge = () => {
       deliveryTiming,
       receiverAd,
     };
-    setSubmittedData(submittedData);
+    setSubmittedHomeDeliveryData(submittedHomeDeliveryData);
+    setFormSubmitted(true); // Set formSubmitted to true after submitting
     toast("Change Delivery Charges information");
   };
 
+  // Function to close the modal
   const handleModalClose = () => {
     setVisible(false);
   };
 
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDeliveryTiming(getCurrentTime());
+    }, 60000); 
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+  const handleKeyPress = (event) => {
+    if (event.altKey && event.key === "d") {
+      setVisible(true);
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
+
   return (
     <div>
+      {/* Display Receiver Name and Mobile */}
       <label>
         <b>Receiver :</b>
       </label>
       <span>
-        {receiverName} {receiverMobile}
+        {formSubmitted && (<>
+          {submittedHomeDeliveryData.receiverName} {submittedHomeDeliveryData.receiverMobile}</>
+        )}
       </span>{" "}
       <br />
       <label>
         <b>Address : </b>
       </label>
-      <span>{receiverAd}</span> <br />
+      <span> {formSubmitted && (<>{submittedHomeDeliveryData.receiverAd} </>)}</span> <br />
       <label>
         <b>DateTime : </b>
       </label>
       <span>
-        {deliveryDate && deliveryTiming ? (
-          <span>
-            {deliveryDate} {deliveryTiming}
-          </span>
+        {submittedHomeDeliveryData ? (
+          <>
+            {submittedHomeDeliveryData.deliveryDate}{" "}
+            {submittedHomeDeliveryData.deliveryTiming}{" "}
+          </>
         ) : (
-          <span>{new Date().toLocaleString()}</span>
+          <span>{new Date().toLocaleDateString()}</span>
         )}
       </span>
+
       <br />
+
+      {/* Button to open the modal */}
       <button
         className="btn btn-xs btn-warning text-white rounded-1 mt-1"
         onClick={() => setVisible(!visible)}
       >
         <i className="fa fa-pencil"></i> Change Delivery Details [ Alt + D ]
       </button>
+
+      {/* Modal for changing delivery charges */}
       <CModal
         style={{ width: "630px" }}
         size="lg"
         backdrop="static"
         visible={visible}
-        onClose={() => setVisible(false)}
+        onClose={handleModalClose}
       >
         <CModalHeader>
           <CModalTitle>Change Delivery Charges</CModalTitle>
@@ -107,6 +172,7 @@ const ChangeDeliveryCharge = () => {
               </CCol>
               <CCol sm={3}>
                 <CFormInput
+                  value={deliveryAmount}
                   onChange={(e) => setDeliveryAmount(e.target.value)}
                   style={{ height: "35px", fontSize: "13px" }}
                   type="number"
@@ -124,9 +190,9 @@ const ChangeDeliveryCharge = () => {
                   onChange={(e) => setDeliveryDate(e.target.value)}
                   style={{ height: "35px", fontSize: "13px" }}
                   type="date"
+                  value={deliveryDate}
                   className="form-control input-md rounded-0 font-size"
-                  autocomplete="off"
-                  onkeydown="return false"
+                  onKeyDown={(e) => e.preventDefault()} // Disable manual input
                 />
               </CCol>
               <CCol sm={4}>
@@ -134,8 +200,10 @@ const ChangeDeliveryCharge = () => {
                   onChange={(e) => setDeliveryTiming(e.target.value)}
                   className="rounded-0 font-size"
                   style={{ height: "35px", fontSize: "13px" }}
+                  value={deliveryTiming}
+                  readOnly
                 >
-                  <option value="">Select Timing</option>
+                  <option value={getCurrentTime()}>{getCurrentTime()}</option>
                   <option value="Early Morning">Early Morning</option>
                   <option value="09:45 AM">09:45 AM</option>
                   <option value="10:00 AM">10:00 AM</option>
@@ -196,6 +264,9 @@ const ChangeDeliveryCharge = () => {
                   <option value="Midnight 12 Timing">Midnight 12 Timing</option>
                 </CFormSelect>
               </CCol>
+
+
+
             </CRow>
             <CRow className="mt-3">
               <CCol sm={4}>
@@ -238,7 +309,7 @@ const ChangeDeliveryCharge = () => {
                   value={receiverAd}
                   style={{ fontSize: "13px" }}
                   className="rounded-1"
-                  placeholder="Leave a comment here"
+                  placeholder="Delivery Address"
                   onChange={(e) => setReceiverAd(e.target.value)}
                 ></CFormTextarea>
               </CCol>
@@ -249,11 +320,11 @@ const ChangeDeliveryCharge = () => {
           <CButton
             className="btn btn-success py-1 rounded-1"
             onClick={() => {
-              submitChangeDeliveryFrom();
-              handleModalClose(); // Close the modal after submitting
+              submitChangeDeliveryForm();
+              handleModalClose();
             }}
           >
-            <i className="fa fa-plus"></i> Add Charge's
+            <i className="fa fa-plus"></i> Add Charges
           </CButton>
         </CModalFooter>
       </CModal>

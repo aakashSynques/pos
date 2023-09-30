@@ -30,7 +30,8 @@ import {
   UPDATE_TOTAL_CASH,
   UPDATE_PAY_MODE_TOTALS,
   GET_SAVE_SALE_DATA,
-  SET_SELECTED_TABLE_VALUE
+  SET_SELECTED_TABLE_VALUE,
+  SUBMIT_DELIVERY_DATA
 } from "./actionTypes";
 
 // helper functions start
@@ -398,6 +399,8 @@ export const setSubmittedPickUpDateTime = (date, time) => {
   };
 };
 
+
+
 export const setRecentBookings = (recentBookings) => {
   return { type: SET_RECENT_BOOKINGS, payload: recentBookings };
 };
@@ -458,4 +461,9 @@ export const getSaveSaleData = (getSaveSale) => ({
 export const setSelectedTableValue = (tableValue) => ({ 
     type: SET_SELECTED_TABLE_VALUE,
     payload: tableValue,
+});
+
+export const submitDeliveryData = (homedeliverydata) => ({
+  type: SUBMIT_DELIVERY_DATA,
+  payload: homedeliverydata,
 });

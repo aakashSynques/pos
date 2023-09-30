@@ -41,6 +41,7 @@ const CartSection = () => {
     (state) => state.pickup.submittedPickUpDateTime
   );
 
+  const submittedHomeDeliveryData = useSelector((state) => state.table.submittedHomeDeliveryData);
   const dispatch = useDispatch();
   const [toppingModel, setToppingModel] = useState(false);
   const [paybillsModel, setPayBillsModel] = useState(false);
@@ -111,14 +112,31 @@ const CartSection = () => {
     });
     return totalItems;
   };
+  const getDeliveryAmout = +submittedHomeDeliveryData?.deliveryAmount || 0;
+    const deliveryAmount = getDeliveryAmout.toFixed(2);
+
+
   // Function to calculate the final pay amount
-  const getFinalPayAmount = () => {
-    const subtotal = getSubTotalAmount();
-    const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
-    const finalPayAmounttotal = subtotal + totalTaxes;
-    const finalPayAmount = Math.round(finalPayAmounttotal); // Round off to the nearest whole number
-    return finalPayAmount;
-  };
+  // const getFinalPayAmount = () => {
+  //   const subtotal = getSubTotalAmount();
+  //   const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
+  //   const finalPayAmounttotal = subtotal + totalTaxes;
+  //   const finalPayAmount = Math.round(finalPayAmounttotal); // Round off to the nearest whole number
+  //   return finalPayAmount;
+  // };
+
+  // Function to calculate the final pay amount
+const getFinalPayAmount = () => {
+  const subtotal = getSubTotalAmount(); 
+  const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
+   const deliveryCharges =  +deliveryAmount;
+  const finalPayAmounttotal = subtotal + totalTaxes + deliveryCharges;
+  const finalPayAmount = Math.round(finalPayAmounttotal);
+  return finalPayAmount;
+};
+
+
+
 
   const getroundAmt = () => {
     const subtotal = getSubTotalAmount();
@@ -235,11 +253,11 @@ const CartSection = () => {
       if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
         return rateForOutlet.prod_rate;
       }
-    }  
+    }
     return "0";
   };
 
- 
+
 
 
   // HANDLE SUBMIT FOR TOPPINGS
@@ -252,7 +270,7 @@ const CartSection = () => {
         prod_sign: item.prod_sign,
         prod_name: item.prod_name,
         prod_description: item.prod_description,
-        prod_rate: getPriceForOutlet(item), 
+        prod_rate: getPriceForOutlet(item),
         category_id: item.category_id,
         prod_KOT_status: item.prod_KOT_status,
         prod_Parcel_status: item.prod_Parcel_status,
@@ -299,7 +317,7 @@ const CartSection = () => {
     setToppingModel(false); // Close the toppings model after submitting
     setSelectedToppings([]);
   };
-  
+
 
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
@@ -365,7 +383,7 @@ const CartSection = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isCartEmpty, selectedCustomer]);
-  
+
 
   // const handlePayButtonClick = () => {
   //   if (!isCartEmpty) {
@@ -429,7 +447,7 @@ const CartSection = () => {
             selectedCustomer={selectedCustomer}
             cartItems={cartItems}
             subtotal={getSubTotalAmount()}
-            
+
           />
         </>
       )}
@@ -453,10 +471,30 @@ const CartSection = () => {
               Discount <i className="fa fa-plus-circle"></i>
               <small> [Shift + D] </small>
             </CCol>
-            <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
+            <CCol sm={6} className="font-size text-end">
               <i className="fa fa-inr"></i> 0.00
             </CCol>
           </CRow>
+          {deliveryId == 4 ? (
+            <CRow>
+              <CCol sm={6} className="font-size">
+                Delivery Charges  <i className="fa fa-plus-circle"></i>
+                <small> [Alt + D] </small>
+              </CCol>
+              <CCol sm={6} style={{ color: "#a94442" }} className="font-size text-end font-w-5" >{""}
+                <i className="fa fa-inr"></i>  {deliveryAmount}
+               
+              </CCol>
+            </CRow>
+          ) : null}
+
+          {/* 
+
+          {deliveryId == 4 ? (
+                <div className="pull-left pt-2">
+                  <ChangeDeliveryCharge />
+                </div>
+              ) : null} */}
           <CRow>
             <CCol sm={6} className="font-size">
               Tax GST (2.5% SGST)
@@ -487,7 +525,7 @@ const CartSection = () => {
                     style={{ backgroundColor: "#26B99A" }}
                     type="button"
                     onClick={() => setPayBillsModel(!paybillsModel)}
-                    disabled={isCartEmpty || !selectedCustomer} // Disable if cart is empty or no customer selected
+                    disabled={isCartEmpty || !selectedCustomer}
                   >
                     PAY <font size="1">[ Shift + Enter ]</font>
                   </button>
@@ -511,7 +549,6 @@ const CartSection = () => {
               <h4 className="total-price">
                 <i className="fa fa-inr"></i>
                 {getFinalPayAmount().toFixed(2)}{" "}
-                {/* Display the final pay amount */}
               </h4>
               <small>
                 {getTotalItemsInCart()} Item(s) RoundOff{" "}
@@ -519,6 +556,8 @@ const CartSection = () => {
               </small>
             </CCol>
           </CRow>
+
+
           <hr style={{ margin: "4px 0" }} />
 
           <CRow>
@@ -527,55 +566,50 @@ const CartSection = () => {
             </CCol>
             <CCol sm={8} style={{ fontSize: "14px" }} className="font-size">
               <span className="pull-right">{selectedDelivery}</span> <br />
-              {deliveryId == 3 ? (
-                <>
-                  <label>
-                    <strong>DateTime :</strong>
-                  </label>
+              <span className="pull-right">
+                {deliveryId == 3 ? (
+                  <>
+                    <label>
+                      <strong>DateTime :</strong>
+                    </label>
 
-                  {submittedPickUpDateTime ? (
-                    <span>
-                      {submittedPickUpDateTime.date}&nbsp;
-                      {submittedPickUpDateTime.time}
-                    </span>
-                  ) : (
-                    <span>{new Date().toLocaleString() + ""}</span>
-                  )}
-                  <br />
-                  <CButton
-                    className="btn btn-xs btn-warning pull-right mt-1 text-white rounded-1"
-                    onClick={() => setVisiblePickUp(!visiblePicKUp)}
-                  >
-                    <i className="fa fa-pencil"></i> Change [ Alt + D ]
-                  </CButton>
-                </>
-              ) : null}
+                    {submittedPickUpDateTime ? (
+                      <span>
+                        {submittedPickUpDateTime.date}&nbsp;
+                        {submittedPickUpDateTime.time}
+                      </span>
+                    ) : (
+                      <span>{new Date().toLocaleString() + ""}</span>
+                    )}
+                    <br />
+                    <CButton
+                      className="btn btn-xs btn-warning pull-right mt-1 text-white rounded-1"
+                      onClick={() => setVisiblePickUp(!visiblePicKUp)}
+                    >
+                      <i className="fa fa-pencil"></i> Change [ Alt + D ]
+                    </CButton>
+                  </>
+                ) : null}
+              </span>
+
+
               {deliveryId == 4 ? (
                 <div className="pull-left pt-2">
-                  {/* <label>
-                    <b>Receiver:</b>
-                  </label>
-                  <span>----</span> <br />
-                  <label>
-                    <b>Address : </b>
-                  </label>
-                  <span> bhopal</span> <br />
-                  <label>
-                    <b>DateTime : </b>
-                  </label>
-                  <span>2023-08-25</span> <br />
-                  <button className="btn btn-xs btn-warning text-white rounded-1 mt-1">
-                    <i className="fa fa-pencil"></i> Change Delivery Details [ Alt +
-                    D ]
-                  </button> */}
                   <ChangeDeliveryCharge />
                 </div>
               ) : null}
+
+
+
             </CCol>
             <CCol sm={12}>
               <AnyNotes />
             </CCol>
           </CRow>
+
+
+
+
         </CContainer>
       </div>
       {/* pay bills model */}
@@ -591,12 +625,17 @@ const CartSection = () => {
         selectedCustomer={selectedCustomer} // Pass the selected customer here
       />
 
-      
+
 
       <ChangePickUpModel
         visiblePicKUp={visiblePicKUp}
         onClose={() => setVisiblePickUp(false)}
       />
+
+
+
+
+
 
       <CModal
         size="lg"
@@ -604,6 +643,8 @@ const CartSection = () => {
         onClose={() => setToppingModel(false)}
         className="topping-modals"
       >
+
+
         <CModalHeader className="p-3" onClose={() => setToppingModel(false)}>
           <CCol sm={4}>
             <CModalTitle>Apply Toppings</CModalTitle>
@@ -642,12 +683,12 @@ const CartSection = () => {
                   className={`btn btn-sm pull-right ${
                     // selectedToppings[topping.prod_id]?.includes(topping.prod_id)
                     selectedToppings &&
-                    selectedToppings.find(
-                      (object) => object.prod_id === topping.prod_id
-                    )
+                      selectedToppings.find(
+                        (object) => object.prod_id === topping.prod_id
+                      )
                       ? "btn-success-bg"
                       : ""
-                  }`}
+                    }`}
                   onClick={() => handleToppingClick(topping)}
                 >
                   <span className="badge">

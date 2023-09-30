@@ -43,7 +43,27 @@ a {
 }
 
 
+.print-model-border{
+  padding: 6px;
+    border-top: 1px dashed #909090;
+}
 
+.font-w-5{
+  font-weight: 500;
+}
+.font-w-5{
+  font-weight: 600;
+}
+.font-size-14{
+  font-size: 14px;
+}
+.font-size-2 {
+  font-size: 13px !important;
+}
+
+.font-size-3 {
+  font-size: 11px !important;
+}
 
 b {
   font-weight: 600 !important;
@@ -900,8 +920,9 @@ tr {
   background: #fff5b1e3 !important;
 }
 
-.kot-border-top {
-  border-top: 1px dotted #efefef;
+.kot-border-b {
+  border-bottom: 1px dotted #cfcfcf;
+  padding: 5px 0;
 }
 
 .btn-close {
@@ -956,14 +977,6 @@ tr {
   margin-bottom: 3px;
   padding: 5px 13px;
   border-radius: 3px;
-}
-
-.font-size-2 {
-  font-size: 13px !important;
-}
-
-.font-size-3 {
-  font-size: 11px !important;
 }
 
 .light-outlet2:hover {

@@ -185,7 +185,7 @@ function RecentPrintModal({
                 </React.Fragment>
               </CRow>
               <CRow className="text-start">
-                {}
+                { }
                 <CCol xs={1}>Qty</CCol>
                 <CCol xs={9} className="text-start">
                   Discription
@@ -216,9 +216,9 @@ function RecentPrintModal({
                             <>
                               <b>
                                 {item.customized.flavor_name &&
-                                item.customized.shape_name &&
-                                item.customized.choice_name &&
-                                item.customized.size_name
+                                  item.customized.shape_name &&
+                                  item.customized.choice_name &&
+                                  item.customized.size_name
                                   ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
                                   : item.prod_name}
                               </b>{" "}
@@ -333,62 +333,7 @@ function RecentPrintModal({
                 <CCol xs={2} className="text-center ">
                   {Number(cartSumUp && cartSumUp.grandTotal).toFixed(2)}
                 </CCol>
-                {deliveryMode == "4" ? (
-                  <CRow>
-                    <CCol xs="auto">
-                      <span
-                        className="text-start"
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "1em",
-                          padding: "2px",
-                        }}
-                      >
-                        Home Delivery : {cartSumUp && cartSumUp.deliveryDate}{" "}
-                        {cartSumUp && cartSumUp.deliveryTime}
-                      </span>
-                    </CCol>
-                    <CCol xs="auto" className="text-start ">
-                      <span
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "1em",
-                          padding: "2px",
-                        }}
-                      >
-                        Receiver
-                      </span>{" "}
-                      : {cartSumUp && cartSumUp.receiverName}{" "}
-                      {cartSumUp && cartSumUp.receiverMobileNo}
-                    </CCol>
-                    <CCol xs="auto" className="text-start ">
-                      <span
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "1em",
-                          padding: "2px",
-                        }}
-                      >
-                        At Location
-                      </span>{" "}
-                      : {cartSumUp && cartSumUp.deliveryAddress}
-                    </CCol>
-                    <CCol xs={10} className="text-start ">
-                      <span
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "1em",
-                          padding: "2px",
-                        }}
-                      >
-                        Ref# :
-                      </span>{" "}
-                      {cartSumUp && cartSumUp.up_biz_id}
-                    </CCol>
-                  </CRow>
-                ) : (
-                  ""
-                )}
+
 
                 <p
                   style={{
@@ -403,8 +348,8 @@ function RecentPrintModal({
               {cartSumUp && cartSumUp.note && (
                 <CRow>
                   {deliveryMode == "1" &&
-                  deliveryMode == "2" &&
-                  deliveryMode == "3" ? (
+                    deliveryMode == "2" &&
+                    deliveryMode == "3" ? (
                     <p
                       style={{
                         borderBottomStyle: "dashed",
@@ -440,77 +385,77 @@ function RecentPrintModal({
               <CRow>
                 {cartSumUp && cartSumUp.payDetails
                   ? cartSumUp.payDetails.map((p) => (
-                      <React.Fragment key={p.payMode}>
-                        <CCol xs={10} className="text-end">
-                          Paid By{" "}
-                          <span className="text-start">
-                            {p.payMode == "1" ? (
-                              <strong
-                                style={{
-                                  fontSize: "1.1em",
-                                  padding: "2px",
-                                }}
-                              >
-                                Cash
-                                <br />
-                              </strong>
-                            ) : p.payMode == "4" ? (
-                              <strong
-                                style={{
-                                  fontSize: "1em",
-                                  padding: "2px",
-                                }}
-                              >
-                                PayTm
-                                <br />
-                              </strong>
-                            ) : p.payMode == "6" ? (
-                              <strong
-                                style={{
-                                  fontSize: "1em",
-                                  padding: "2px",
-                                }}
-                              >
-                                Wallet
-                                <br />
-                              </strong>
-                            ) : p.payMode == "24" ? (
-                              <strong
-                                style={{
-                                  fontSize: "1em",
-                                  padding: "2px",
-                                }}
-                              >
-                                Rzp
-                                <br />
-                              </strong>
-                            ) : p.payMode == "25" ? (
-                              <strong
-                                style={{
-                                  fontSize: "1em",
-                                  padding: "2px",
-                                }}
-                              >
-                                HDFC CC*
-                                <br />
-                              </strong>
-                            ) : p.payMode == "26" ? (
-                              <strong
-                                style={{
-                                  fontSize: "1em",
-                                  padding: "2px",
-                                }}
-                              >
-                                HDFC QR
-                              </strong>
-                            ) : null}
-                          </span>
-                        </CCol>
-                        <CCol xs={2} className="text-center">
-                          {Number(p.payAmount).toFixed(2)}
-                        </CCol>
-                      </React.Fragment>
-                    ))
+                    <React.Fragment key={p.payMode}>
+                      <CCol xs={10} className="text-end">
+                        Paid By{" "}
+                        <span className="text-start">
+                          {p.payMode == "1" ? (
+                            <strong
+                              style={{
+                                fontSize: "1.1em",
+                                padding: "2px",
+                              }}
+                            >
+                              Cash
+                              <br />
+                            </strong>
+                          ) : p.payMode == "4" ? (
+                            <strong
+                              style={{
+                                fontSize: "1em",
+                                padding: "2px",
+                              }}
+                            >
+                              PayTm
+                              <br />
+                            </strong>
+                          ) : p.payMode == "6" ? (
+                            <strong
+                              style={{
+                                fontSize: "1em",
+                                padding: "2px",
+                              }}
+                            >
+                              Wallet
+                              <br />
+                            </strong>
+                          ) : p.payMode == "24" ? (
+                            <strong
+                              style={{
+                                fontSize: "1em",
+                                padding: "2px",
+                              }}
+                            >
+                              Rzp
+                              <br />
+                            </strong>
+                          ) : p.payMode == "25" ? (
+                            <strong
+                              style={{
+                                fontSize: "1em",
+                                padding: "2px",
+                              }}
+                            >
+                              HDFC CC*
+                              <br />
+                            </strong>
+                          ) : p.payMode == "26" ? (
+                            <strong
+                              style={{
+                                fontSize: "1em",
+                                padding: "2px",
+                              }}
+                            >
+                              HDFC QR
+                            </strong>
+                          ) : null}
+                        </span>
+                      </CCol>
+                      <CCol xs={2} className="text-center">
+                        {Number(p.payAmount).toFixed(2)}
+                      </CCol>
+                    </React.Fragment>
+                  ))
                   : null}
               </CRow>
               {cartSumUp && cartSumUp.deliveryMode && (
@@ -559,7 +504,49 @@ function RecentPrintModal({
                 </CRow>
               )}
 
-              <CRow>
+
+
+
+              {deliveryMode == "4" ? (
+                <CRow className="print-model-border">
+                  <CCol xs="auto">
+                    <span
+                      className="text-start"
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                        padding: "2px",
+                      }}
+                    >
+                      Home Delivery : {cartSumUp && cartSumUp.deliveryDate}{" "}
+                      {cartSumUp && cartSumUp.deliveryTime}
+                    </span>
+                  </CCol>
+                  <CCol xs="auto" className="text-start ">
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: "1em",
+                        padding: "2px",
+                      }}
+                    >
+                      Receiver
+                    </span>{" "}
+                    : {cartSumUp && cartSumUp.receiverName}{" "}
+                    {cartSumUp && cartSumUp.receiverMobileNo}
+                  </CCol>
+                  <CCol xs="auto" className="text-start ">
+                    <font className="font-size-14 font-w-6"></font>
+                    {" "}
+                    : {cartSumUp && cartSumUp.deliveryAddress}
+                  </CCol>
+
+                </CRow>
+              ) : (
+                ""
+              )}
+
+              <CRow className="print-model-border">
                 <CCol xs={10} className="text-start ">
                   {deliveryMode == "4" ? (
                     <span>

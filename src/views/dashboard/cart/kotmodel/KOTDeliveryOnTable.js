@@ -34,9 +34,6 @@ const DeliveryOnTable = ({
   const customerSearchInputRef = useRef(null);
 
 
-
-
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.altKey && event.key === "k") {
@@ -69,13 +66,7 @@ const DeliveryOnTable = ({
         <CRow className="py-1">
           <CCol sm={6}>
             <b>Table No. </b>
-            {/* <CFormSelect
-              aria-label="Default select example"
-              className="form-control rounded-0"
-              style={{ width: "80px", float: "right", height: "33px" }}
-              value={selectedTableValue}
-              onChange={(e) => setSelectedTableValue(e.target.value)} // Update the selected table
-            > */}
+
             <CFormSelect
               aria-label="Default select example"
               className="form-control rounded-0"
@@ -150,7 +141,7 @@ const DeliveryOnTable = ({
                         {selectedCustomer.json.cust_type_name} Account
                       </CFormLabel>
                     </font>
-                    <font size="1"> - {selectedCustomer.json.mobile}</font>{" "}
+                    <font size="2"> - {selectedCustomer.json.mobile}</font>{" "}
                     <br />
                   </>
                 )}
@@ -161,7 +152,7 @@ const DeliveryOnTable = ({
             </CCol>
           </CRow>
 
-          <CRow className="bill-head-bg mt-0 mb-2">
+          <CRow className="bill-head-bg mt-0 ">
             <CCol sm={7} xs={7}>
               <b>Product Details</b>
             </CCol>
@@ -179,8 +170,8 @@ const DeliveryOnTable = ({
           <CRow className="pt-2 pb-2">
             {cartItems.map((item) => (
               <>
-                <CCol sm={7} xs={7}>
-                  <b>{item.prod_name}</b>
+                <CCol sm={7} xs={7} className="kot-border-b">
+                  <font size="3" className="font-size-14">{item.prod_name}</font>
                   {item.is_parcel === 1 && (
                     <font size="1" className="text-primary pull-right">
                       Parcel &nbsp;
@@ -205,20 +196,21 @@ const DeliveryOnTable = ({
                   )}
                 </CCol>
 
-                <CCol sm={1} xs={1} className="text-center">
-                  {item.prod_qty}
+                <CCol sm={1} xs={1} className="text-center kot-border-b">
+                  <font className="font-size"> {item.prod_qty}</font>
                 </CCol>
-                <CCol sm={2} xs={2} className="text-center">
-                  <i className="fa fa-inr"></i> {item.prod_rate}
+                <CCol sm={2} xs={2} className="text-center kot-border-b">
+                  <font className="font-size">  <i className="fa fa-inr"></i> {item.prod_rate}</font>
                 </CCol>
-                <CCol sm={2} xs={2} className="text-right">
-                  <i className="fa fa-inr"></i> {item.prod_rate}
+                <CCol sm={2} xs={2} className="text-right kot-border-b ">
+                  <font className="font-size"><i className="fa fa-inr"></i> {item.prod_rate}</font>
                 </CCol>
               </>
             ))}
           </CRow>
+
           <CRow className="kot-border-top mt-2">
-            <b>Note :</b>
+            <font size="2" className="font-w-5">Note :</font>
           </CRow>
         </CModalBody>
         <CModalFooter>

@@ -35,17 +35,9 @@ const ChangePickUpModel = ({ onClose, visiblePicKUp }) => {
   };
   return (
     <div>
-      {/* <CButton
-        onClick={() => setVisiblePickUp(!visiblePicKUp)}
-        className="btn-sm"
-      >
-        Change PickUp
-      </CButton> */}
       <CModal
         size="sm"
         backdrop="static"
-        // visible={visiblePicKUp}
-        // onClose={() => setVisiblePickUp(false)}
         visible={visiblePicKUp}
         onClose={onClose}
       >
