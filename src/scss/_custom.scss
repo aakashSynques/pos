@@ -108,6 +108,8 @@ b {
   border-radius: 3px !important;
   margin: 0 1px;
 }
+.kot-table-t-lable{padding: 6px 5px!important;
+  border-bottom: 1px solid #efefef; line-height: 20px!important;}
 
 @media (min-width: 992px) {
   .cust-model .modal-lg {
@@ -1010,7 +1012,7 @@ tr {
 
 .collection-table-style tbody tr th {
   font-size: 14px !important;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .mode-2.mode-2 tbody tr td {

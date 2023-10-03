@@ -43,7 +43,6 @@ const ChangeDeliveryCharge = () => {
   const [submittedHomeDeliveryData, setSubmittedHomeDeliveryData] = useState(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  console.log('su date time', dispatch(submitDeliveryData(submittedHomeDeliveryData)))
   dispatch(submitDeliveryData(submittedHomeDeliveryData));
 
 

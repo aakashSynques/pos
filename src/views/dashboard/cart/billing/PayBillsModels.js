@@ -59,7 +59,7 @@ import {
       (state) => state.delivery.selectedDelivery
     );
   
-    console.log('sdfasdf', selectedDelivery)
+   
   
     const selectedOutletId = useSelector(
       (state) => state.selectedOutletId.selectedOutletId
@@ -72,8 +72,6 @@ import {
   
     const selectedTableValue = useSelector((state) => state.table.selectedTableValue);
     const submittedHomeDeliveryData = useSelector((state) => state.table.submittedHomeDeliveryData);
-    console.log('delivery nun', submittedHomeDeliveryData)
-    console.log('del amout', typeof submittedHomeDeliveryData?.deliveryAmount)
   
     const getDeliveryAmout = +submittedHomeDeliveryData?.deliveryAmount || 0;
     const deliveryAmount = + getDeliveryAmout.toFixed(2);
@@ -303,7 +301,6 @@ import {
     dispatch(setCartSumUp(cartSumUp));
     dispatch(setSelectedCustomerJson(selectedCustomersJson));
   
-    console.log('sum up', cartSumUp)
   
     const iframeRef = useRef(null);
     const [url, setUrl] = useState(null);
@@ -360,7 +357,6 @@ import {
     }, [selectedPayments]);
   
   
-    console.log('cart sum', cartSumUp)
   
   
     // let deliveryId;

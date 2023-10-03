@@ -48,13 +48,13 @@ const DeliveryOnTable = ({
 
 
   const handleKOTBtn = () => {
-    if (selectedCustomer) {
-      setVisible(!visible);
-    } else {
-      toast.error("Enter Customer Name First");
+    if (selectedTableValue === "") {
+      toast.error("Please select a table first");
       if (customerSearchInputRef.current) {
         customerSearchInputRef.current.focus(); // Focus on the input element
       }
+    } else {
+      setVisible(!visible);
     }
   };
 
@@ -105,14 +105,12 @@ const DeliveryOnTable = ({
                 className="btn btn-info btn-sm btn-block text-left text-white w-100"
                 type="button"
                 style={{ backgroundColor: "#5bc0de" }}
-                onClick={handleKOTBtn}
+                onClick={handleKOTBtn}                
               >
                 Create KOT <font size="1">[ Alt + K ]</font>
               </CButton>
             )}
           </CCol>
-
-
         </CRow>
       </CContainer>
 

@@ -59,7 +59,6 @@ import {
       (state) => state.delivery.selectedDelivery
     );
   
-    console.log('sdfasdf', selectedDelivery)
   
     const selectedOutletId = useSelector(
       (state) => state.selectedOutletId.selectedOutletId

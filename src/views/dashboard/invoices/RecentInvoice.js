@@ -84,7 +84,6 @@ const RecentInvoice = () => {
         outlet_id,
       };
       const response = await fetch("/api/order/recent", "POST", body, headers);
-      console.log('new res', response.data.recentOrders)
 
       dispatch(setRecentBookings(response.data.recentOrders));
       setLoading(false);
@@ -135,16 +134,15 @@ const RecentInvoice = () => {
 
 
   const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal);
-  console.log('gd', grandTotalValues)
-
   const payAmountValues = relevantCartSumUpData.map(items => {
     return items.payDetails.reduce((total, item) => total + item.payAmount, 0);
   });
-  const remainingBalances = grandTotalValues.map((grandTotal, index) => grandTotal - payAmountValues[index]);
 
 
 
-
+  const remainingBalances = grandTotalValues.map(
+    (grandTotal, index) => payAmountValues[index] - grandTotal
+  );
 
 
 
@@ -192,131 +190,135 @@ const RecentInvoice = () => {
           <div>
             <table width="100%" className="table table-bordered ongoing mb-0">
               <tbody>
-                {recentBooking
-                  .slice(0, 10)
-                  .map(({ invoice_no, sales_json, salesid }) => {
-                    return (
-                      <tr key={invoice_no}>
-                        <td>
-                          {sales_json &&
-                            sales_json.cartSumUp &&
-                            sales_json.cartSumUp.deliveryMode &&
-                            sales_json.cartSumUp.deliveryMode == "1" ? (
-                            <strong
-                              className="status-btn"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1em",
-                                color: "white",
-                                backgroundColor: "#f0ad4e",
-                                height: "2%",
-                                width: "2%",
-                              }}
-                            >
-                              Cs
-                            </strong>
-                          ) : sales_json &&
-                            sales_json.cartSumUp &&
-                            sales_json.cartSumUp.deliveryMode &&
-                            sales_json.cartSumUp.deliveryMode == "2" ? (
-                            <strong
-                              className="status-btn"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1em",
-                                color: "white",
-                                backgroundColor: "#28819e",
-                                height: "2%",
-                                width: "2%",
-                              }}
-                            >
-                              OT
-                            </strong>
-                          ) : sales_json &&
-                            sales_json.cartSumUp &&
-                            sales_json.cartSumUp.deliveryMode &&
-                            sales_json.cartSumUp.deliveryMode == "3" ? (
-                            <strong
-                              className="status-btn"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1em",
-                                color: "white",
-                                backgroundColor: "green",
-                                height: "2%",
-                                width: "2%",
-                              }}
-                            >
-                              PU
-                            </strong>
-                          ) : sales_json &&
-                            sales_json.cartSumUp &&
-                            sales_json.cartSumUp.deliveryMode &&
-                            sales_json.cartSumUp.deliveryMode == "4" ? (
-                            <strong
-                              className="status-btn"
-                              style={{
-                                fontWeight: "bold",
-                                fontSize: "1em",
-                                color: "white",
-                                backgroundColor: "#26b99a",
-                                height: "2%",
-                                width: "2%",
-                              }}
-                            >
-                              HD
-                            </strong>
-                          ) : null}
-                        </td>
-
-                        <td>
-                          <Link
-                            to=""
-                            className="text-primary text-link"
-                            onClick={() =>
-                              clickInvoiceLink(invoice_no, sales_json, salesid)
-                            }
+                {recentBooking.slice(0, 10).map(({ invoice_no, sales_json, salesid }, index) => {
+                  const grandTotal = sales_json && sales_json.cartSumUp && sales_json.cartSumUp.grandTotal
+                    ? Number(sales_json.cartSumUp.grandTotal).toFixed(2)
+                    : "N/A";
+                  const remainingBalance = remainingBalances[index];
+                  return (
+                    <tr key={invoice_no}>
+                      <td>
+                        {sales_json &&
+                          sales_json.cartSumUp &&
+                          sales_json.cartSumUp.deliveryMode &&
+                          sales_json.cartSumUp.deliveryMode == "1" ? (
+                          <strong
+                            className="status-btn"
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "1em",
+                              color: "white",
+                              backgroundColor: "#f0ad4e",
+                              height: "2%",
+                              width: "2%",
+                            }}
                           >
-                            {invoice_no}
-                            <br />
-                          </Link>
-                          <small>
-                            {sales_json &&
-                              sales_json.selectedCustomerJson &&
-                              sales_json.selectedCustomerJson.customer_name &&
-                              sales_json.selectedCustomerJson.customer_name}
-                            (
-                            {sales_json &&
-                              sales_json.selectedCustomerJson &&
-                              sales_json.selectedCustomerJson.mobile &&
-                              sales_json.selectedCustomerJson.mobile}
-                            )
-                          </small>
-                        </td>
-                        <td align="right"
-                          style={{
-                            fontWeight: "bold",
-                            color: "black",
-                          }}
+                            Cs
+                          </strong>
+                        ) : sales_json &&
+                          sales_json.cartSumUp &&
+                          sales_json.cartSumUp.deliveryMode &&
+                          sales_json.cartSumUp.deliveryMode == "2" ? (
+                          <strong
+                            className="status-btn"
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "1em",
+                              color: "white",
+                              backgroundColor: "#5bc0de",
+                              height: "2%",
+                              width: "2%",
+                            }}
+                          >
+                            OT - {sales_json.cartSumUp.deliveryTableNo}
+                          </strong>
+                        ) : sales_json &&
+                          sales_json.cartSumUp &&
+                          sales_json.cartSumUp.deliveryMode &&
+                          sales_json.cartSumUp.deliveryMode == "3" ? (
+                          <strong
+                            className="status-btn"
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "1em",
+                              color: "white",
+                              backgroundColor: "#1A82C3",
+                              height: "2%",
+                              width: "2%",
+                            }}
+                          >
+                            PU
+                          </strong>
+                        ) : sales_json &&
+                          sales_json.cartSumUp &&
+                          sales_json.cartSumUp.deliveryMode &&
+                          sales_json.cartSumUp.deliveryMode == "4" ? (
+                          <strong
+                            className="status-btn"
+                            style={{
+                              fontWeight: "bold",
+                              fontSize: "1em",
+                              color: "white",
+                              backgroundColor: "#26b99a",
+                              height: "2%",
+                              width: "2%",
+                            }}
+                          >
+                            HD
+                          </strong>
+                        ) : null}
+                      </td>
+
+                      <td>
+                        <Link
+                          to=""
+                          className="text-primary text-link"
+                          onClick={() =>
+                            clickInvoiceLink(invoice_no, sales_json, salesid)
+                          }
                         >
-                          <i
-                            className="fa fa-edit pull-left text-warning"
-                            title="Edit Collection"
-                          ></i>
-                          <small className="text-end font-size-3">
-
-                            <i className="fa fa-inr"></i>
-                            {Number(
-                              sales_json &&
-                              sales_json.cartSumUp &&
-                              sales_json.cartSumUp.grandTotal &&
-                              sales_json.cartSumUp.grandTotal
-                            ).toFixed(2)}
-                          </small>{" "}
+                          {invoice_no}
                           <br />
+                        </Link>
+                        <small>
+                          {sales_json &&
+                            sales_json.selectedCustomerJson &&
+                            sales_json.selectedCustomerJson.customer_name &&
+                            sales_json.selectedCustomerJson.customer_name}
+                          (
+                          {sales_json &&
+                            sales_json.selectedCustomerJson &&
+                            sales_json.selectedCustomerJson.mobile &&
+                            sales_json.selectedCustomerJson.mobile}
+                          )
+                        </small>
+                      </td>
+                      <td align="right"
+                        style={{
+                          fontWeight: "bold",
+                          color: "black",
+                        }}
+                      >
+                        <i
+                          className="fa fa-edit pull-left text-warning"
+                          title="Edit Collection"
+                        ></i>
+                        <small className="text-end font-size-3">
 
-                          <span
-                            className="label bg-success text-white rounded-1 text-end"
+                          <i className="fa fa-inr"></i>
+                          {Number(
+                            sales_json &&
+                            sales_json.cartSumUp &&
+                            sales_json.cartSumUp.grandTotal &&
+                            sales_json.cartSumUp.grandTotal
+                          ).toFixed(2)}
+                        </small>{" "}
+                        <br />
+                        {remainingBalance !== 0 && (
+
+                          <font
+                            className={`label text-white rounded-1 text-end ${remainingBalance <= 0 ? "bg-danger" : "bg-success"
+                              }`}
                             style={{
                               padding: "1px 5px",
                               fontSize: "10px",
@@ -324,14 +326,13 @@ const RecentInvoice = () => {
                               lineHeight: "1",
                             }}
                           >
-                            <i className="fa fa-inr"></i>{" "}
-
-                          </span>
-                        </td>
-
-                      </tr>
-                    );
-                  })}
+                            <i className="fa fa-inr"></i> {remainingBalance.toFixed(2)}
+                          </font>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

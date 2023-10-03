@@ -15,7 +15,7 @@ function OnGoingTabModal({ kotModal, setKotModal }) {
   const [activeKey, setActiveKey] = useState(1);
 
   return (
-    <CModal size="lg" visible={kotModal} onClose={() => setKotModal(false)}>
+    <CModal size="lg" visible={kotModal} onClose={() => setKotModal(false)} className="closing-table">
       <CModalHeader onClose={() => setKotModal(false)}>
         <CModalTitle>
           Pending KOTs To Bill <span className="badge"> 0</span>
