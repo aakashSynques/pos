@@ -51,7 +51,7 @@ a {
 .font-w-5{
   font-weight: 500;
 }
-.font-w-5{
+.font-w-6{
   font-weight: 600;
 }
 .font-size-14{
@@ -65,9 +65,9 @@ a {
   font-size: 11px !important;
 }
 
-b {
-  font-weight: 600 !important;
-}
+// b {
+//   font-weight: 600 !important;
+// }
 
 .nav-pills {
   height: 34px;
@@ -1140,4 +1140,5 @@ tr {
 
 .react-confirm-alert-button-group button:last-child {
   background-color: #dd0404!important;
-}
+}.new-kot tbody tr td{       padding: 4px 5px !important;
+  font-size: 14px !important;}

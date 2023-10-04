@@ -14,16 +14,22 @@ import {
 import React, { useState, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from 'react-redux';
-
 import { setSelectedTableValue } from "../../../../action/actions";
-
-
-
 
 const DeliveryOnTable = ({
   selectedCustomer,
   cartItems,
 }) => {
+  const cartSumUp = useSelector((state) => state.cart.cartSumUp);
+  const selectedCustomersJson = useSelector(
+    (state) => state.customer.selectedCustomerJson
+  );
+
+  const selectedOutletId = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+  console.log('selectecd id', selectedOutletId)
+
   const selectedTableValue = useSelector((state) => state.table.selectedTableValue);
   const dispatch = useDispatch();
   const handleTableValueChange = (e) => {
@@ -51,13 +57,52 @@ const DeliveryOnTable = ({
     if (selectedTableValue === "") {
       toast.error("Please select a table first");
       if (customerSearchInputRef.current) {
-        customerSearchInputRef.current.focus(); // Focus on the input element
+        customerSearchInputRef.current.focus();
       }
     } else {
       setVisible(!visible);
     }
   };
 
+
+
+  const saveKOTbtn = () => {
+
+    // Send a POST request to your API
+    fetch('http://localhost:2000/api/sales/saveKOTSales', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        dkot_no: "",
+        salesid: "",
+        outlet_id: selectedOutletId,
+        cust_id: selectedCustomersJson.cust_id,
+        table_no: selectedTableValue,
+        selectedCustomerJson: selectedCustomersJson,
+        sales_json: cartItems,
+        status: 1,
+        eby: "",
+        eat: new Date().toISOString(),
+        order_CurrentStatus: "",
+        order_ActionMadeStatus: "",
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to create KOT');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        toast.success("KOT created successfully");
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error('Failed to create KOT');
+      });
+  };
 
 
   return (
@@ -105,7 +150,7 @@ const DeliveryOnTable = ({
                 className="btn btn-info btn-sm btn-block text-left text-white w-100"
                 type="button"
                 style={{ backgroundColor: "#5bc0de" }}
-                onClick={handleKOTBtn}                
+                onClick={handleKOTBtn}
               >
                 Create KOT <font size="1">[ Alt + K ]</font>
               </CButton>
@@ -219,7 +264,7 @@ const DeliveryOnTable = ({
           >
             Close
           </CButton>
-          <CButton className="btn btn-sm btn-success rounded-1">
+          <CButton className="btn btn-sm btn-success rounded-1" onClick={saveKOTbtn}>
             Create KOT & Save
           </CButton>
         </CModalFooter>
