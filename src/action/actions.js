@@ -31,7 +31,8 @@ import {
   UPDATE_PAY_MODE_TOTALS,
   GET_SAVE_SALE_DATA,
   SET_SELECTED_TABLE_VALUE,
-  SUBMIT_DELIVERY_DATA
+  SUBMIT_DELIVERY_DATA,
+  SET_PENDING_KOT_DATA,
 } from "./actionTypes";
 
 // helper functions start
@@ -467,3 +468,11 @@ export const submitDeliveryData = (homedeliverydata) => ({
   type: SUBMIT_DELIVERY_DATA,
   payload: homedeliverydata,
 });
+
+
+export const setPendingKotData = (kotdata) => {
+  return {
+    type: SET_PENDING_KOT_DATA,
+    payload: kotdata,
+  };
+};

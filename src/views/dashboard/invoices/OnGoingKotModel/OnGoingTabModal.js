@@ -18,19 +18,12 @@ function OnGoingTabModal({ kotModal, setKotModal }) {
     <CModal size="lg" visible={kotModal} onClose={() => setKotModal(false)} className="closing-table">
       <CModalHeader onClose={() => setKotModal(false)}>
         <CModalTitle>
-          Pending KOTs To Bill <span className="badge"> 0</span>
+          Pending KOTs To Bill <span className="badge"></span>
         </CModalTitle>
       </CModalHeader>
-
       <CModalBody>
-        <CTabContent>
-          <CTabPane
-            role="tabpanel"
-            aria-labelledby="home-tab"
-            visible={activeKey === 1}
-          >
+        <CTabContent>       
             <OnGoingKotModel />
-          </CTabPane>
         </CTabContent>
       </CModalBody>
 

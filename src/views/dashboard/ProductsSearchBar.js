@@ -5,6 +5,8 @@ import { useDispatch, useSelector, connect } from "react-redux";
 import { addToCart, setAllProducts } from "../../action/actions"; // Import the addToCart action
 import { ToastContainer, toast } from "react-toastify";
 import classnames from "classnames";
+import Autosuggest from 'react-autosuggest';
+
 
 
 // Determine the text color class based on the value of prod_sign
@@ -32,7 +34,7 @@ const ProductsSearchBar = () => {
       const response = await fetch("/api/products/all", "get", null, headers);
       setProductSearch(response.data.prodAllList);
       dispatch(setAllProducts(response.data.prodAllList));
- 
+
     } catch (err) {
       console.log(err);
     } finally {
@@ -47,11 +49,10 @@ const ProductsSearchBar = () => {
   const filteredItems = useMemo(() => {
     const outletId = selectedOutletId;
     if (query === "") return productSearch;
-    const filterProduct =productSearch && productSearch.filter((p) => {
+    const filterProduct = productSearch && productSearch.filter((p) => {
       const outletData = p.rate_chart?.[outletId]?.[0];
       return outletData && outletData.stock_availability > 0;
     });
-
     const filterSearchProduct = filterProduct.filter(
       (product) =>
         product.prod_name.toLowerCase().search(query.toLowerCase()) !== -1 ||
@@ -61,21 +62,20 @@ const ProductsSearchBar = () => {
   }, [query, selectedOutletId, productSearch]);
 
   // groud by category heads
-  const groupedItems = useMemo(() => {
-    const grouped = {};
-    for (const product of filteredItems) {
-      const categoryHeads = product.category_heads;
-      if (!grouped[categoryHeads]) {
-        grouped[categoryHeads] = [];
-      }
-      grouped[categoryHeads].push(product);
-    }
-    return grouped;
-  }, [filteredItems]);
+  // const groupedItems = useMemo(() => {
+  //   const grouped = {};
+  //   for (const product of filteredItems) {
+  //     const categoryHeads = product.category_heads;
+  //     if (!grouped[categoryHeads]) {
+  //       grouped[categoryHeads] = [];
+  //     }
+  //     grouped[categoryHeads].push(product);
+  //   }
+  //   return grouped;
+  // }, [filteredItems]);
 
   const getPriceForOutlet = (product) => {
     const outletId = selectedOutletId.toString();
-
     if (product.rate_chart && product.rate_chart[outletId]) {
       const rateForOutlet = product.rate_chart[outletId][0];
       if (rateForOutlet && rateForOutlet.prod_rate !== undefined) {
@@ -85,11 +85,7 @@ const ProductsSearchBar = () => {
     return "prod rate";
   };
 
-
-  // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
   function generateUniqueNumber() {
-    // const random4Digit = Math.floor(1000 + Math.random() * 9000);
-    // return random4Digit.toString(); // Convert to string
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
     return `${timestamp.toString() + randomString}`;
@@ -157,38 +153,12 @@ const ProductsSearchBar = () => {
     dispatch(addToCart(cartItemsArray, ...cartItemData));
   };
 
-    // ... Your existing code ...
 
 
-
-  // //////////////////// click outside ///////////////////////////
-  const [clickedOut, setClickedOut] = useState(false);
-  const ref = useRef(null);
-  const onClickOutside = () => {
-    // setQuery("");
-    setClickedOut(true);
-  };
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        onClickOutside && onClickOutside();
-        setClickedOut(true);
-      }
-    };
-    document.addEventListener("click", handleClickOutside, true);
-    return () => {
-      document.removeEventListener("click", handleClickOutside, true);
-    };
-  }, [onClickOutside]);
-
-  // -------------------------product search sortcut key Shit+P-------------------------------
-  // useEffect to handle the shortcut key (Shift + P) for focusing on the input element
   useEffect(() => {
     const handleShortcutKeyPress = (event) => {
       if (event.shiftKey && event.key === "P") {
-        // Prevent the default behavior of the "P" key (prevents it from appearing in the input box)
         event.preventDefault();
-        // Focus on the search bar input element
         const searchInput = document.getElementById("product-search-input");
         if (searchInput) {
           searchInput.focus();
@@ -200,118 +170,162 @@ const ProductsSearchBar = () => {
       document.removeEventListener("keydown", handleShortcutKeyPress);
     };
   }, []);
-  const isInputValid = (inputValue) => {
-    const specialCharactersRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
-    return !specialCharactersRegex.test(inputValue);
+
+
+
+  // Autosuggest state
+  const [suggestions, setSuggestions] = useState([]);
+  const onInputChange = (_, { newValue }) => {
+    setQuery(newValue);
+  };
+  const onSuggestionsFetchRequested = ({ value }) => {
+    const inputValue = value.trim().toLowerCase();
+    const filteredSuggestions = productSearch.filter((product) => {
+      return (
+        product.prod_name.toLowerCase().includes(inputValue) ||
+        product.prod_code.toLowerCase().includes(inputValue)
+      );
+    });
+    setSuggestions(filteredSuggestions);
+  };
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+  const onSuggestionSelected = (_, { suggestion }) => {
+    handleAddToCart(suggestion.prod_id);
+    setQuery("");
   };
 
+  const inputRef = useRef(null);
 
+  // State variables to track hover and selection
+  const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null);
 
-  const [focusedItemIndex, setFocusedItemIndex] = useState(0);
-  const handleArrowNavigation = (event) => {
-    if (filteredItems.length === 0) return;
-    if (event.key === "ArrowUp" && focusedItemIndex > 0) {
-      setFocusedItemIndex(focusedItemIndex - 1);
-    } else if (
-      event.key === "ArrowDown" &&
-      focusedItemIndex < filteredItems.length - 1
-    ) { 
-      setFocusedItemIndex(focusedItemIndex + 1);
+  // Ref to store the index of the focused suggestion
+  const focusedSuggestionIndexRef = useRef(0);
+
+  // Function to set the first suggestion as focused when the list is displayed
+  const focusFirstSuggestion = () => {
+    if (suggestions.length > 0) {
+      focusedSuggestionIndexRef.current = 0;
+      setHoveredSuggestion(suggestions[0]);
     }
   };
-  useEffect(() => {
-    document.addEventListener("keydown", handleArrowNavigation);
-    return () => {
-      document.removeEventListener("keydown", handleArrowNavigation);
-    };
-  }, [focusedItemIndex, filteredItems]);
 
- 
+  // Function to handle Up and Down arrow key presses
+  const handleArrowKeyPress = (event) => {
+    if (suggestions.length === 0) return;
+
+    if (event.key === "ArrowDown") {
+      // Move focus down to the next suggestion
+      focusedSuggestionIndexRef.current =
+        (focusedSuggestionIndexRef.current + 1) % suggestions.length;
+      setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
+    } else if (event.key === "ArrowUp") {
+      // Move focus up to the previous suggestion
+      focusedSuggestionIndexRef.current =
+        (focusedSuggestionIndexRef.current - 1 + suggestions.length) %
+        suggestions.length;
+      setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
+    }
+  };
+
+  // Handle suggestion item hover
+  const handleSuggestionHover = (suggestion) => {
+    focusedSuggestionIndexRef.current = suggestions.indexOf(suggestion);
+    setHoveredSuggestion(suggestion);
+  };
+
+  // Handle suggestion item selection
+  const handleSuggestionSelect = (suggestion) => {
+    setSelectedSuggestion(suggestion);
+    handleAddToCart(suggestion.prod_id);
+    setQuery("");
+  };
+
+  useEffect(() => {
+    focusFirstSuggestion();
+  }, [suggestions]);
+
+  useEffect(() => {
+    // Add event listener to the input field for arrow key presses
+    const inputElement = inputRef.current;
+    if (inputElement) {
+      inputElement.addEventListener("keydown", handleArrowKeyPress);
+    }
+
+    // Clean up the event listener on component unmount
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener("keydown", handleArrowKeyPress);
+      }
+    };
+  }, [handleArrowKeyPress]); // This effect will run when handleArrowKeyPress changes
 
 
 
   return (
-    <div>
-      <CInputGroup className="change-focus">
-        <CFormInput
-          autoComplete="off"
-          id="product-search-input" // Add an id to the input element for referencing
-          type="text"
-          placeholder="Search Product Code OR Name... [Shift + P]"
-          value={query}
-          // onChange={(e) => setQuery(e.target.value)}
-          onClick={() => setClickedOut(false)}
-          onChange={(e) => {
-            const inputValue = e.target.value;
-            if (isInputValid(inputValue)) {
-              setQuery(inputValue);
-            } else {
-              console.log(err);
-            }
+    <div className="product-serach-input p-1">
+      <Autosuggest
+        suggestions={suggestions}
+        onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+        onSuggestionsClearRequested={onSuggestionsClearRequested}
+        getSuggestionValue={(suggestion) => suggestion.prod_name}
+        renderSuggestion={(suggestion) => (
+          <div className="product-list-abslute ">
+            <div
+              className={`product-list suggestion-item ${suggestion === hoveredSuggestion ? "focused" : ""
+                }`}
+              onMouseEnter={() => handleSuggestionHover(suggestion)}
+              onMouseLeave={() => handleSuggestionHover(null)}
+              onClick={() => handleSuggestionSelect(suggestion)}
+            >
 
-          }}
-        />
-      </CInputGroup>
-      <div className="product-list-abslute" ref={ref}>  
-        {query !== "" &&
-          Object.entries(groupedItems).map(([categoryHeads, products]) => (
-            <div key={categoryHeads}>
-              <div
-                className="bg-success text-white"
-                style={{ padding: "2px 10px" }}
-              >
-                <i className="fa fa-arrow-circle-right"></i>&nbsp;
-                {categoryHeads}
+
+              <div className="pull-left fa-stack fa-xs prod-sign">
+                <span
+                  className={`fa-stack fa-xs ${getTextColorClass(
+                    suggestion.prod_sign
+                  )}`}
+                >
+                  <i className="fa fa-square-o fa-stack-2x"></i>
+                  <i className="fa fa-circle fa-stack-1x"></i>
+                </span>
               </div>
-              {products
-                .filter((product) => getPriceForOutlet(product) !== 0) // Exclude products with prod_rate equal to 0
-                .map((product, index) => (
-                  <div className={`product-list ${focusedItemIndex === index ? "focused" : ""}`} key={product.prod_id}>
-                    <button
-                      // key={product.prod_id}
-                      onClick={() => {
-                        handleAddToCart(product.prod_id);
-                        setQuery("");
-                      }}
-                    >
-                      <div className="pull-left fa-stack fa-xs prod-sign">
-                        <span
-                          className={`fa-stack fa-xs ${getTextColorClass(
-                            product.prod_sign
-                          )}`}
-                        >
-                          <i className="fa fa-square-o fa-stack-2x"></i>
-                          <i className="fa fa-circle fa-stack-1x"></i>
-                        </span>
-                      </div>
 
-                      <div className="pull-left">
-                        <b className="pull-left">{product.prod_name}</b>
-                        <br />
-                        <small className="pull-left">
-                          Code : {product.prod_code} {product.category_name}
-                        </small>
-                      </div>
+              <div className="pull-left">
+                <b className="pull-left">{suggestion.prod_name}</b>
+                <br />
+                <small className="pull-left">
+                  Code : {suggestion.prod_code} {suggestion.category_name}
+                </small>
+              </div>
 
-                      <div className="product-price">
-                        <i className="fa fa-inr"></i>
-                        {getPriceForOutlet(product).toFixed(3)}
-                        {/* {getTotalSGSTAmount().toFixed(3)} */}
-                      </div>
-                      <br />
-                    </button>
-                  </div>
-                ))}
+              <div className="product-price">
+                <i className="fa fa-inr"></i>
+                {getPriceForOutlet(suggestion)}
+              </div>
+              <br />
             </div>
-          ))}
-
-        {/* Render a message if no items match the search query */}
-        {query !== "" && filteredItems.length === 0 && (
-          <div className="product-list">
-            No items found matching the search query.
           </div>
         )}
-      </div>
+        inputProps={{
+          id: "product-search-input",
+          placeholder: "Search Product Code OR Name... [Shift + P]",
+          value: query,
+          onChange: onInputChange,
+          autoComplete: "off",
+          className: "search-input-style",
+          ref: inputRef, // Assign the inputRef to the input field
+        }}
+        onSuggestionSelected={onSuggestionSelected}
+        renderSuggestionsContainer={({ containerProps, children }) => (
+          <div {...containerProps} className="custom-suggestions-container">
+            {children}
+          </div>
+        )}
+      />
     </div>
   );
 };
@@ -319,8 +333,8 @@ const ProductsSearchBar = () => {
 const mapStateToProps = (state) => ({
   selectedOutlet: state.outlets.selectedOutletId
     ? state.outlets.outlets.find(
-        (outlet) => outlet.outlet_id === state.outlets.selectedOutletId
-      )
+      (outlet) => outlet.outlet_id === state.outlets.selectedOutletId
+    )
     : null,
   cartItems: state.cart.cartItems,
 });

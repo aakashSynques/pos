@@ -254,6 +254,8 @@ const OutletOptions = ({ outletName }) => {
           <p>[Shift + K]</p>
         </CButton>
 
+        
+
         <CButton
           className="light-outlet"
           style={{ background: "#f0ad4e" }}

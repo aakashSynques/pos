@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { CLink } from "@coreui/react";
 import { fetch } from "../../../../utils";
+import { setPendingKotData } from "../../../../action/actions";
+import { useDispatch, useSelector } from "react-redux";
 
 const OnGoingKotModel = () => {
+  const dispatch = useDispatch();
   const [returnModel, setReturnModel] = useState(false);
   const [openTable, setOpenTable] = useState(true);
   const [isChecked, setIsChecked] = useState(true);
   const [checkedItems, setCheckedItems] = useState({});
 
-  const [pendingKotData, setPendingKotData] = useState([]);
 
-  const getPendingKOT = async () => {
-    try {
-      const token = localStorage.getItem("pos_token");
-      const headers = { Authorization: `Bearer ${token}` };
-      const response = await fetch("/api/sales/getPendingKOT", "post", null, headers);
-      console.log('pendng kot', response)
-      setPendingKotData(response.data.KOT_data);
-      console.log('new data', response.data.KOT_data.map(item => item.dkot_no));
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
-  useEffect(() => {
-    getPendingKOT();
-  }, []);
+  const pendingKotData = useSelector((state) => state.table.pendingKotData);
+  console.log('pp', pendingKotData);
+
+
 
   const [selectedTable, setSelectedTable] = useState(null);
-
   useEffect(() => {
     const firstTableNo = pendingKotData.length > 0 ? pendingKotData[0].table_no : null;
     setSelectedTable(firstTableNo);
@@ -56,17 +46,17 @@ const OnGoingKotModel = () => {
     const calculateTotals = () => {
       const tableData = pendingKotData.filter((item) => item.table_no === selectedTable);
       let totalSubTotal = 0;
-      let totalItemsCount = 0; // Initialize total items count
+      let totalItemsCount = 0;
 
       tableData.forEach((item) => {
         const productsInCart = item.sales_json?.productsInCart || [];
         productsInCart.forEach((product) => {
           totalSubTotal += parseFloat(product.total_amount);
-          totalItemsCount++; // Increment the total items count
+          totalItemsCount++;
         });
       });
-      const sgstRate = 2.5; // SGST rate (2.5%)
-      const cgstRate = 2.5; // CGST rate (2.5%)
+      const sgstRate = 2.5;
+      const cgstRate = 2.5;
       const sgst = (totalSubTotal * sgstRate) / 100;
       const cgst = (totalSubTotal * cgstRate) / 100;
       const finalAmt = totalSubTotal + sgst + cgst;
@@ -86,11 +76,11 @@ const OnGoingKotModel = () => {
       const updatedCheckedItems = {
         ...prevCheckedItems,
         [dkotNo]: !prevCheckedItems[dkotNo],
-      };  
+      };
       return updatedCheckedItems;
     });
   };
-  
+
 
   return (
     <>
