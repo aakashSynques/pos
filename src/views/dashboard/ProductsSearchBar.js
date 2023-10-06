@@ -74,6 +74,19 @@ const ProductsSearchBar = () => {
   //   return grouped;
   // }, [filteredItems]);
 
+
+  const groupedItems = useMemo(() => {
+    const grouped = {};
+    for (const product of filteredItems) {
+      const categoryHeads = product.category_heads;
+      if (!grouped[categoryHeads]) {
+        grouped[categoryHeads] = [];
+      }
+      grouped[categoryHeads].push(product);
+    }
+    return grouped;
+  }, [filteredItems]);
+
   const getPriceForOutlet = (product) => {
     const outletId = selectedOutletId.toString();
     if (product.rate_chart && product.rate_chart[outletId]) {
@@ -148,12 +161,8 @@ const ProductsSearchBar = () => {
       // customized: item.customized,
       customized: [],
     }));
-
-    console.log('cart item deta', cartItemData)
     dispatch(addToCart(cartItemsArray, ...cartItemData));
   };
-
-
 
   useEffect(() => {
     const handleShortcutKeyPress = (event) => {
@@ -197,25 +206,17 @@ const ProductsSearchBar = () => {
   };
 
   const inputRef = useRef(null);
-
-  // State variables to track hover and selection
   const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
-
-  // Ref to store the index of the focused suggestion
   const focusedSuggestionIndexRef = useRef(0);
-
-  // Function to set the first suggestion as focused when the list is displayed
   const focusFirstSuggestion = () => {
-    if (suggestions.length > 0) {
-      focusedSuggestionIndexRef.current = 0;
+    if (suggestions.length > 1) {
+      focusedSuggestionIndexRef.current = -1;
       setHoveredSuggestion(suggestions[0]);
     }
   };
-
-  // Function to handle Up and Down arrow key presses
   const handleArrowKeyPress = (event) => {
-    if (suggestions.length === 0) return;
+    if (suggestions.length === 1) return;
 
     if (event.key === "ArrowDown") {
       // Move focus down to the next suggestion
@@ -223,13 +224,18 @@ const ProductsSearchBar = () => {
         (focusedSuggestionIndexRef.current + 1) % suggestions.length;
       setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
     } else if (event.key === "ArrowUp") {
-      // Move focus up to the previous suggestion
       focusedSuggestionIndexRef.current =
         (focusedSuggestionIndexRef.current - 1 + suggestions.length) %
         suggestions.length;
       setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
+    } else if (event.key === "Enter" || event.key === "Tab") {
+      // Handle Enter and Tab key press
+      if (hoveredSuggestion) {
+        handleSuggestionSelect(hoveredSuggestion);
+      }
     }
   };
+
 
   // Handle suggestion item hover
   const handleSuggestionHover = (suggestion) => {
@@ -243,25 +249,22 @@ const ProductsSearchBar = () => {
     handleAddToCart(suggestion.prod_id);
     setQuery("");
   };
-
   useEffect(() => {
     focusFirstSuggestion();
   }, [suggestions]);
 
+
   useEffect(() => {
-    // Add event listener to the input field for arrow key presses
     const inputElement = inputRef.current;
     if (inputElement) {
       inputElement.addEventListener("keydown", handleArrowKeyPress);
     }
-
-    // Clean up the event listener on component unmount
     return () => {
       if (inputElement) {
         inputElement.removeEventListener("keydown", handleArrowKeyPress);
       }
     };
-  }, [handleArrowKeyPress]); // This effect will run when handleArrowKeyPress changes
+  }, [handleArrowKeyPress]);
 
 
 
@@ -281,8 +284,6 @@ const ProductsSearchBar = () => {
               onMouseLeave={() => handleSuggestionHover(null)}
               onClick={() => handleSuggestionSelect(suggestion)}
             >
-
-
               <div className="pull-left fa-stack fa-xs prod-sign">
                 <span
                   className={`fa-stack fa-xs ${getTextColorClass(
@@ -317,7 +318,8 @@ const ProductsSearchBar = () => {
           onChange: onInputChange,
           autoComplete: "off",
           className: "search-input-style",
-          ref: inputRef, // Assign the inputRef to the input field
+          ref: inputRef,
+
         }}
         onSuggestionSelected={onSuggestionSelected}
         renderSuggestionsContainer={({ containerProps, children }) => (
