@@ -30,7 +30,7 @@ const CustomizeModel = ({
   const [customShapeList, setCustomShapeList] = useState([]);
   const dispatch = useDispatch();
   const [extraProdNote, setExtraProdNote] = useState("");
-  const cartItemsArray = useSelector((state) => state.cart.cartItems); // Replace 'state.cart.cartItems' with the correct path to your cart items in the Redux state
+  const cartItemsArray = useSelector((state) => state.cart.cartItems);
   const [customFlavorList, setCustomFlavorList] = useState([]);
   const [customSizeList, setCustomSizeList] = useState([]);
   const [photoMode, setPhotoMode] = useState(1); // 1 for Gallery, 2 for Upload
@@ -111,6 +111,9 @@ const CustomizeModel = ({
       size_id: formData.size_id,
       size_name: formData.size_name,
     };
+
+console.log("imge datA", customjsonData)
+
     let newCartWithNote = [];
     if (extraProdNote !== "") {
       setVisibleNote(true);
@@ -135,8 +138,6 @@ const CustomizeModel = ({
     onClose();
   };
 
-  // dispatch(setupdateCustomizInCart(cartItemsArray, productId, customjsonData));
-
   const handlePhotoModeChange = (mode) => {
     setPhotoMode(mode);
     setSelectedImage(null);
@@ -153,8 +154,13 @@ const CustomizeModel = ({
     const file = event.target.files[0];
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
+      setFormData({
+        ...formData,
+        photo_path: [file], // Store the selected file object in the formData
+      });
     }
   };
+
   const removeImage = () => {
     setSelectedImage(null);
   };
@@ -172,12 +178,12 @@ const CustomizeModel = ({
         </CModalHeader>
         <CModalBody>
           <CRow>
-            {/* selected custum flavor */}
             <CCol md={6}>
               <CFormSelect
                 id="inputCustomFlavor"
                 label="Custom Flavor"
-                className="rounded-0 input-dro-font"
+                className="rounded-0 input-dro-font font-size-2"
+                labelClassName="font-size-2"
                 value={formData.flavor_id}
                 onChange={(e) =>
                   setFormData({
@@ -199,8 +205,6 @@ const CustomizeModel = ({
                 ))}
               </CFormSelect>
             </CCol>
-            {/* selected custom shap */}
-
             <CCol md={6}>
               <CFormSelect
                 id="inputCustomShape"
@@ -227,7 +231,6 @@ const CustomizeModel = ({
                 ))}
               </CFormSelect>
             </CCol>
-
             <CCol md={6} className="mt-3">
               <legend className="col-form-label pt-0">Custom Choice</legend>
               <label className="btn  btn-default rounded-0 border cust-radio">
@@ -268,15 +271,11 @@ const CustomizeModel = ({
                 />
               </label>
             </CCol>
-
-            {/* selected custom size */}
             <CCol md={6} className="mt-3">
               <CFormSelect
                 id="inputCustomSize"
                 label="Custom Size"
                 className="rounded-0 input-dro-font"
-                // value={selectedSize}
-                // onChange={(e) => setSelectedSize(e.target.value)} // Update the selected shape
                 value={formData.size_id}
                 onChange={(e) =>
                   setFormData({
@@ -315,7 +314,7 @@ const CustomizeModel = ({
                 }
               ></CFormTextarea>
               <span className="text-primary" style={{ fontSize: "11px" }}>
-                Message length upto <span>250</span> characters.
+                Message length up to <span>250</span> characters.
               </span>
 
               <legend className="col-form-label pt-4">Message On Card</legend>
@@ -331,7 +330,7 @@ const CustomizeModel = ({
                 }
               ></CFormTextarea>
               <span className="text-primary" style={{ fontSize: "11px" }}>
-                Message length upto <span>250</span> characters.
+                Message length up to <span>250</span> characters.
               </span>
 
               <legend className="col-form-label pt-4">
@@ -344,40 +343,6 @@ const CustomizeModel = ({
                 onChange={(e) => setExtraProdNote(e.target.value)}
               ></CFormTextarea>
             </CCol>
-            {/* <CCol md={6} className="mt-2">
-              <legend className="col-form-label pt-0">Photo</legend>
-              <label className="btn  btn-default rounded-0 border cust-radio mr-1 px-2">
-                <CFormCheck
-                  type="radio"
-                  name="photo"
-                  id="gridRadios3"
-                  value="1"
-                  label="Photo Gallery"
-                  className="input-dro-font"
-                  defaultChecked
-                />{" "}
-              </label>
-              <label className="btn btn-default rounded-0  border cust-radio mr-0 px-2">
-                <CFormCheck
-                  type="radio"
-                  name="photo"
-                  id="gridRadios4"
-                  value="2"
-                  label="Upload Photo"
-                  className="input-dro-font"
-                />
-              </label>
-              <div>
-                <CButton
-                  type="file"
-                  color="warning"
-                  className="w-100 mt-3 font text-white"
-                  style={{ fontSize: "13px" }}
-                >
-                  <i className="fa-solid fa-image"></i> Browse Cake Gallery
-                </CButton>
-              </div>
-            </CCol> */}
             <div className="col-sm-6 col-xs-12">
               <div className="row">
                 <div className="hidden-sm col-xs-12">&nbsp;</div>
@@ -402,7 +367,7 @@ const CustomizeModel = ({
                     Photo Gallery
                   </label>
                   <label
-                    className={`btn btn-xs btn-default  img-upload-btn ${
+                    className={`btn btn-xs btn-default img-upload-btn ${
                       photoMode === 2 ? "active" : ""
                     }`}
                     onClick={() => handlePhotoModeChange(2)}

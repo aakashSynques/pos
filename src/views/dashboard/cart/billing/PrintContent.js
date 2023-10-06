@@ -103,6 +103,16 @@ const PrintContent = React.forwardRef(
                 <CCol xs={9} className="text-start">
                   <CRow>
                     <CCol xs={10} className=" text-start">
+
+
+                    {item.customized && item.customized.photo_path && (
+                        <img
+                          src={URL.createObjectURL(item.customized.photo_path[0])}
+                          alt="Customized"
+                          style={{ maxWidth: "50px", float: "left", marginRight: "10px" }}
+                        />
+                      )}
+
                       {item.prod_Customized_status == 1 ? (
                         <>
                           <b>
@@ -114,7 +124,7 @@ const PrintContent = React.forwardRef(
                               : item.prod_name}
                           </b>{" "}
                           <br />
-                          <small className="pull-left">
+                          <small className="pull-left font-size-3">
                             <strong>Message on Cake:</strong>{" "}
                             <span>{item.customized.message_on_cake}</span>{" "}
                             <br />

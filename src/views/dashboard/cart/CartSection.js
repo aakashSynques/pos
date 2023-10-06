@@ -113,7 +113,7 @@ const CartSection = () => {
     return totalItems;
   };
   const getDeliveryAmout = +submittedHomeDeliveryData?.deliveryAmount || 0;
-    const deliveryAmount = getDeliveryAmout.toFixed(2);
+  const deliveryAmount = getDeliveryAmout.toFixed(2);
 
 
   // Function to calculate the final pay amount
@@ -126,14 +126,14 @@ const CartSection = () => {
   // };
 
   // Function to calculate the final pay amount
-const getFinalPayAmount = () => {
-  const subtotal = getSubTotalAmount(); 
-  const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
-   const deliveryCharges =  +deliveryAmount;
-  const finalPayAmounttotal = subtotal + totalTaxes + deliveryCharges;
-  const finalPayAmount = Math.round(finalPayAmounttotal);
-  return finalPayAmount;
-};
+  const getFinalPayAmount = () => {
+    const subtotal = getSubTotalAmount();
+    const totalTaxes = getTotalSGSTAmount() + getTotalCGSTAmount();
+    const deliveryCharges = +deliveryAmount;
+    const finalPayAmounttotal = subtotal + totalTaxes + deliveryCharges;
+    const finalPayAmount = Math.round(finalPayAmounttotal);
+    return finalPayAmount;
+  };
 
 
 
@@ -160,8 +160,10 @@ const getFinalPayAmount = () => {
     deliveryId = 2;
   } else if (selectedDelivery == "PickUp") {
     deliveryId = 3;
-  } else {
+  } else if (selectedDelivery == "Home Delivery") {
     deliveryId = 4;
+  } else {
+    null
   }
 
   /// toppings //
@@ -238,8 +240,6 @@ const getFinalPayAmount = () => {
 
   // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
   function generateUniqueNumber() {
-    // const random4Digit = Math.floor(1000 + Math.random() * 9000);
-    // return random4Digit.toString(); // Convert to string
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
     return `${timestamp.toString() + randomString}`;
@@ -319,6 +319,7 @@ const getFinalPayAmount = () => {
   };
 
 
+
   // Function to calculate the total price of the selected toppings
   useEffect(() => {
     const totalToppingPrice = cartItems
@@ -383,20 +384,6 @@ const getFinalPayAmount = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isCartEmpty, selectedCustomer]);
-
-
-  // const handlePayButtonClick = () => {
-  //   if (!isCartEmpty) {
-  //     if (selectedCustomer) {
-  //       setPayBillsModel(true);
-  //     } else {
-  //       toast.error("Enter Customer Name First");
-  //     }
-  //   }
-  // };
-
-
-
 
 
   return (
@@ -483,18 +470,10 @@ const getFinalPayAmount = () => {
               </CCol>
               <CCol sm={6} style={{ color: "#a94442" }} className="font-size text-end font-w-5" >{""}
                 <i className="fa fa-inr"></i>  {deliveryAmount}
-               
+
               </CCol>
             </CRow>
           ) : null}
-
-          {/* 
-
-          {deliveryId == 4 ? (
-                <div className="pull-left pt-2">
-                  <ChangeDeliveryCharge />
-                </div>
-              ) : null} */}
           <CRow>
             <CCol sm={6} className="font-size">
               Tax GST (2.5% SGST)
@@ -598,18 +577,11 @@ const getFinalPayAmount = () => {
                   <ChangeDeliveryCharge />
                 </div>
               ) : null}
-
-
-
             </CCol>
             <CCol sm={12}>
               <AnyNotes />
             </CCol>
           </CRow>
-
-
-
-
         </CContainer>
       </div>
       {/* pay bills model */}
@@ -632,19 +604,12 @@ const getFinalPayAmount = () => {
         onClose={() => setVisiblePickUp(false)}
       />
 
-
-
-
-
-
       <CModal
         size="lg"
         visible={toppingModel}
         onClose={() => setToppingModel(false)}
         className="topping-modals"
       >
-
-
         <CModalHeader className="p-3" onClose={() => setToppingModel(false)}>
           <CCol sm={4}>
             <CModalTitle>Apply Toppings</CModalTitle>

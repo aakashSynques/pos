@@ -162,7 +162,13 @@ const ProductsSearchBar = () => {
       customized: [],
     }));
     dispatch(addToCart(cartItemsArray, ...cartItemData));
+    console.log("cart arrya", dispatch(addToCart(cartItemsArray, ...cartItemData)));
+
+    console.log('cartItemData', cartItemData)
   };
+
+
+
 
   useEffect(() => {
     const handleShortcutKeyPress = (event) => {
@@ -265,8 +271,6 @@ const ProductsSearchBar = () => {
       }
     };
   }, [handleArrowKeyPress]);
-
-
 
   return (
     <div className="product-serach-input p-1">

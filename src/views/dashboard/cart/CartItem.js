@@ -9,6 +9,7 @@ import {
   setParcelBtnInCart,
   setIsNoteInCart,
   setIsComplementaryNoteInCart,
+  setProductRateInCart
 } from "../../../action/actions";
 
 import { CCollapse, CButton, CFormTextarea } from "@coreui/react";
@@ -29,7 +30,18 @@ const CartItem = ({
   const [complentaryNote, setComplentaryNote] = useState("");
   const [parcelBtn, setParcelBtn] = useState(item.is_parcel === 1);
   const [customizeModelVisible, setCustomizeModelVisible] = useState(false);
-  const [originalProdRate, setOriginalProdRate] = useState(item.prod_rate);
+  // const [originalProdRate, setOriginalProdRate] = useState(item.prod_rate);
+  const [originalProdRate, setOriginalProdRate] = useState(parseFloat(+item.prod_rate));
+
+  console.log('orignal prode rate =', originalProdRate)
+  const [isEditing, setIsEditing] = useState(false);
+
+
+  const handleProductRateChange = (newRate) => {
+    dispatch(setProductRateInCart(cartItems, item.prod_id, newRate));
+    setIsEditing(false);
+  };
+
 
 
 
@@ -72,13 +84,6 @@ const CartItem = ({
     dispatch(setParcelBtnInCart(cartItems, item.prod_id, newParcelBtn));
     // dispatch(setParcelBtnInCart(cartItems, item.prod_id, parcelBtn));
   };
-
-  // const setParcelBtnBlur = () => {
-  //   const newParcelBtnValue = parcelBtn ? "0" : "1"; // Toggle the value
-  //   setParcelBtn(newParcelBtnValue);
-  //   dispatch(setParcelBtnInCart(cartItems, item.prod_id, newParcelBtnValue));
-  // };
-
   const noteClickHandler = (cartItems, prod_id) => {
     setVisibleNote(!visibleNote);
     if (item.is_note === 1) {
@@ -113,29 +118,20 @@ const CartItem = ({
   }
 
 
-
-
-
-
-  // Calculate the total amount based on the original prod_rate and updated quantity
-  // const calculateTotalAmount = () => {
-  //   return originalProdRate * quantity;
-  // };
-  const [customPrice, setCustomPrice] = useState(item.prod_rate); // Track custom price
-  const calculateTotalAmount = () => {
-    return customPrice * quantity;
-  };
-
-
-
-
   return (
     <>
       <tr key={item.prod_id}>
         <td style={{ paddingBottom: "13px!important" }} className="pb-2">
+        {item.customized && item.customized.photo_path && (
+            <img
+              src={URL.createObjectURL(item.customized.photo_path[0])}
+              alt="Customized"
+              style={{ maxWidth: "100px", float: "left",     marginRight: "10px"}}
+            />
+          )}
           <strong style={{ fontSize: "14px", fontWeight: "600" }} className="mb-3">{customizeProd_text}</strong> <br />
-          <small className="font-size-3">
-            {item.category_name} | @
+           <small className="font-size-3">
+           {item.category_name} | @
             {/* {item.prod_rate}  */}
             {originalProdRate}
 
@@ -250,29 +246,49 @@ const CartItem = ({
             Parcel
           </CButton>
         </td>
+
+
+
         <td className="pt-3">
           {item.prod_Customized_status === 1 ? (
-            <input
-              type="text"
-
-            />
+            isEditing ? (
+              <input
+                type="number"
+                value={originalProdRate}
+                onChange={(e) => setOriginalProdRate(parseFloat(e.target.value))}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleProductRateChange(parseFloat(e.target.value));
+                  }
+                }}
+                onBlur={() => setIsEditing(false)}
+              />
+            ) : (
+              <span className="rate-font" onClick={() => setIsEditing(true)}>
+                <i className="fa fa-times text-danger"></i> <b className="rate-font"> {item.prod_rate.toFixed(2)}</b>
+              </span>
+            )
           ) : (
-            <b className="rate-font">
-              {/* <i className="fa fa-inr"></i> */}
-              {getTotalAmountForItem(item).toFixed(2)}
-            </b>
+            <b className="rate-font">{item.prod_rate.toFixed(2)}</b>
           )}
+
+
+
+
+
 
           {/* item remove button */}
           <span
             className="btn btn-danger btn-remove"
             onClick={() => dispatch(removeFromCart(cartItems, item.urno))}
           >
-            <i className="fa fa-times"></i>
+            <i className="fa fa-trash fa-xs"></i>
           </span>
 
         </td>
       </tr>
+
+
       <tr>
         <td colspan="3" style={{ border: "0px" }}>
           <CCollapse visible={visibleNote}>

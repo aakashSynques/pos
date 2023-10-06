@@ -33,6 +33,7 @@ import {
   SET_SELECTED_TABLE_VALUE,
   SUBMIT_DELIVERY_DATA,
   SET_PENDING_KOT_DATA,
+  SET_PRODUCT_RATE,
 } from "./actionTypes";
 
 // helper functions start
@@ -474,5 +475,27 @@ export const setPendingKotData = (kotdata) => {
   return {
     type: SET_PENDING_KOT_DATA,
     payload: kotdata,
+  };
+};
+
+
+
+
+export const setProductRateInCart = (cartItems, prodId, newRate) => {
+  // Find the index of the item in the cart
+  const itemIndex = cartItems.findIndex((item) => item.prod_id === prodId);
+
+  // Create a copy of the cart items array to avoid mutating the state directly
+  const updatedCartItems = [...cartItems];
+
+  // Update the product rate for the item at the specified index
+  if (itemIndex !== -1) {
+    updatedCartItems[itemIndex].prod_rate = newRate;
+  }
+
+  // Return an action to update the cart with the new rate
+  return {
+    type: SET_PRODUCT_RATE,
+    cartItems: updatedCartItems,
   };
 };
