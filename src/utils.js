@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BASE_URL } from "./config";
 export const fetch = async (
   endPoint = "",
   method = "get",
@@ -6,8 +7,7 @@ export const fetch = async (
   headers = {}
 ) => {
   const instance = axios.create({
-    // baseURL: "http://posapi.q4hosting.com", 
-    baseURL: "http://localhost:2000", 
+    baseURL: BASE_URL,
   });
   return await instance({
     url: endPoint,                            

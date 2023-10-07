@@ -539,6 +539,7 @@ const CustomersSearch = () => {
               <CFormInput
                 id="customer-search-input"
                 type="text"
+                autoComplete="off"
                 placeholder="Search Customer Name [Shift + C]"
                 value={query}
                 onChange={(e) => {

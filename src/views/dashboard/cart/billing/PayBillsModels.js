@@ -25,7 +25,7 @@ import {
   setCartSumUp,
   setSelectedCustomerJson,
 } from "../../../../action/actions";
-import KOTDeliveryOnTable from "../kotmodel/KOTDeliveryOnTable";
+import { BASE_URL } from "../../../../config";
 
 const PayBillsModels = ({
   visible,
@@ -47,7 +47,6 @@ const PayBillsModels = ({
       componentRef.current.onPrint();
     }
   };
-
   useEffect(() => {
     // Connect to the Socket.IO server
     const newSocket = io.connect("http://posapi.q4hosting.com"); // Replace with your server URL
@@ -58,21 +57,14 @@ const PayBillsModels = ({
   const selectedDelivery = useSelector(
     (state) => state.delivery.selectedDelivery
   );
-
-
-
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
   );
-
-
   const selectedTableValue = useSelector((state) => state.table.selectedTableValue);
   const submittedHomeDeliveryData = useSelector((state) => state.table.submittedHomeDeliveryData);
-
   const getDeliveryAmout = +submittedHomeDeliveryData?.deliveryAmount || 0;
   const deliveryAmount = + getDeliveryAmout.toFixed(2);
 
@@ -92,8 +84,6 @@ const PayBillsModels = ({
     }
   }, []);
 
-  const [selectedPayment, setSelectedPayment] = useState(null);
-
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [extrainfo, setExtrainfo] = useState(""); // Define extrainfo state
@@ -106,7 +96,6 @@ const PayBillsModels = ({
   const alltax = sgstAmount + cgstAmount;
 
   const [paymentAmounts, setPaymentAmounts] = useState({});
-
   const setPayment = (paymentMode) => {
     if (selectedPayments.includes(paymentMode)) {
       setSelectedPayments(
@@ -150,20 +139,16 @@ const PayBillsModels = ({
         return "Unknown";
     }
   };
-
-  console.log('cart item', cartItems)
   const finalizeOrder = async () => {
     try {
       setSubmissionInProgress(true);
       const token = localStorage.getItem("pos_token");
-      const url = "http://posapi.q4hosting.com/api/sales/finalizeSales";
+      const url = `${BASE_URL}/api/sales/finalizeSales`; // Use the BASE_URL here
+
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       };
-
-
- 
       const requestBody = {
         productsInCart: cartItems,
         selectedCustomerJson: selectedCustomersJson,
@@ -181,13 +166,7 @@ const PayBillsModels = ({
         body: JSON.stringify(requestBody),
       });
 
-
-
-
-console.log('final', requestBody)
-
-
-      const responseData = await response.json(); // Parse the error response
+        const responseData = await response.json(); // Parse the error response
       if (responseData.dataPost.salesid) {
         setUrl(
           `http://pos.q4hosting.com/posinvolce/printSales/${responseData.dataPost.salesid}/NOKOT?random=${randomValue}`
@@ -299,10 +278,12 @@ console.log('final', requestBody)
       payExtraInfo: extrainfo,
       payAmount: paymentAmounts[paymentMode] || 0, // Use the value from paymentAmounts
     })),
+
   };
 
   dispatch(setCartSumUp(cartSumUp));
   dispatch(setSelectedCustomerJson(selectedCustomersJson));
+  console.log('cust', dispatch(setSelectedCustomerJson(selectedCustomersJson)))
 
 
   const iframeRef = useRef(null);
@@ -327,6 +308,8 @@ console.log('final', requestBody)
   };
 
   const [remainingBalance, setRemainingBalance] = useState(finalPayAmount);
+  const [paymentAmountSum, setPaymentAmountSum] = useState(0); // Declare paymentAmountSum
+
   const handlePaymentAmountKeyDown = (e, paymentMode) => {
     if (e.key === "Enter") {
       const updatedPaymentAmounts = {
@@ -343,9 +326,6 @@ console.log('final', requestBody)
     }
   };
 
-
-
-
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === "Enter") {
@@ -361,22 +341,6 @@ console.log('final', requestBody)
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedPayments]);
-
-
-
-
-  // let deliveryId;
-  // if (selectedDelivery == "Counter Sale") {
-  //   deliveryId = 1;
-  // } else if (selectedDelivery == "On Table") {
-  //   deliveryId = 2;
-  // } else if (selectedDelivery == "PickUp") {
-  //   deliveryId = 3;
-  // } else {
-  //   deliveryId = 4;
-  // }
-
-
 
 
   return (
@@ -607,6 +571,7 @@ console.log('final', requestBody)
                   </CCol>
                 </CRow>
 
+
                 {/* <CRow className="dueAmt-style">
                   <CCol sm={8} className="text-right">
                     <label>
@@ -670,7 +635,9 @@ console.log('final', requestBody)
                     ))}
                 </CRow>
                 <hr className="mt-2 m-0 p-0" />
-                {selectedPayments.length > 0 && (
+
+
+                {/* {selectedPayments.length > 0 && (
                   <CRow className="text-end pt-2">
                     <CCol sm={8}>
                       <h5 style={{ color: "red" }} className="font-size">
@@ -691,7 +658,32 @@ console.log('final', requestBody)
                       )}
                     </CCol>
                   </CRow>
+                )} */}
+
+                {selectedPayments.length > 0 && (
+                  <CRow className="text-end pt-2">
+                    <CCol sm={8}>
+                      {remainingBalance < 0 ? (
+                        <h5 style={{ color: "blue" }} className="font-size">
+                          Overpaid :  <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
+                        </h5>
+                      ) : remainingBalance === 0 ? (
+                        <h5 style={{ color: "green" }} className="font-size">
+                          Balance : <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
+                        </h5>
+                      ) : remainingBalance > 0 ? (
+                        <h5 style={{ color: "red" }} className="font-size">
+                          Remaining : <i className="fa fa-inr"></i> {remainingBalance.toFixed(2)}
+                        </h5>
+                      ) : (
+                        <h5 style={{ color: "yellow" }} className="font-size">
+                          <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
+                        </h5>
+                      )}
+                    </CCol>
+                  </CRow>
                 )}
+
               </CCol>
             </CRow>
           </CModalBody>

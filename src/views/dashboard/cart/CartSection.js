@@ -25,6 +25,7 @@ import ToppingsModal from "./ToppingsModal";
 import KOTDeliveryOnTable from "./kotmodel/KOTDeliveryOnTable";
 import ChangePickUpModel from "./changePickUpDeliver/ChangePickUpModel";
 import ChangeDeliveryCharge from "./changeDeliveryCharges/ChangeDeliveryCharge";
+import BookingModels from "./billing/BookingModels";
 
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -45,6 +46,7 @@ const CartSection = () => {
   const dispatch = useDispatch();
   const [toppingModel, setToppingModel] = useState(false);
   const [paybillsModel, setPayBillsModel] = useState(false);
+  const [bookingModels, setBookingModels] = useState(false);
   const [selectedUrno, setSelectedUrno] = useState();
   const [categoryHead, setCategoryHead] = useState("");
   const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] =
@@ -373,6 +375,7 @@ const CartSection = () => {
         if (!isCartEmpty) {
           if (selectedCustomer) {
             setPayBillsModel(true);
+            setBookingModel(true);
           } else {
             toast.error("Enter Customer Name First");
           }
@@ -515,12 +518,17 @@ const CartSection = () => {
                     <button
                       className="btn pay-btn btn-warning"
                       type="button"
+                      onClick={() => setBookingModels(!bookingModels)}
                       disabled={isCartEmpty || !selectedCustomer}
                     >
                       BOOKING <font size="1"></font>
                     </button>
                   </div>
                 ) : null}
+
+
+
+
               </CRow>
             </CCol>
 
@@ -595,6 +603,22 @@ const CartSection = () => {
         finalPayAmount={getFinalPayAmount()}
         totalItem={getTotalItemsInCart()}
         selectedCustomer={selectedCustomer} // Pass the selected customer here
+      />
+
+
+
+
+      <BookingModels
+        visible={bookingModels}
+        onClose={() => setBookingModels(false)}
+        cartItems={cartItems}
+        subtotal={getSubTotalAmount()}
+        totalSGST={getTotalSGSTAmount()}
+        totalCGST={getTotalCGSTAmount()}
+        finalPayAmount={getFinalPayAmount()}
+        totalItem={getTotalItemsInCart()}
+        selectedCustomer={selectedCustomer} // Pass the selected customer here
+
       />
 
 
