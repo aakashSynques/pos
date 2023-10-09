@@ -17,5 +17,5 @@ const DiscardSaleBtn = () => {
     </div>
   )
 }
-
+  
 export default DiscardSaleBtn

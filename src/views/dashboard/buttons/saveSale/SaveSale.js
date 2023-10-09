@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { CButton } from "@coreui/react";
 import { fetch } from "../../../../utils";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../../../config";
+import io from "socket.io-client";
+
+
 
 const SaveSale = () => {
   const selectedCustomer = useSelector(
@@ -13,6 +17,13 @@ const SaveSale = () => {
     (state) => state.customer.selectedCustomerJson
   );
   const cartItems = useSelector((state) => state.cart.cartItems);
+
+  const [socket, setSocket] = useState(null);
+  useEffect(() => {
+    const newSocket = io.connect(BASE_URL);
+    setSocket(newSocket);
+  }, []);
+
 
   const handleSaveSale = async () => {
     try {
@@ -30,8 +41,10 @@ const SaveSale = () => {
         body,
         headers
       );
-
+      await socket.emit("add-order", response);
       if (response.status === 200) {
+        await socket.emit("add-order", response);
+        console.log('soket update', await socket.emit("add-order", response))
         toast.success("Sale submitted successfully!", {
           position: "top-right",
           autoClose: 3000,
@@ -40,7 +53,7 @@ const SaveSale = () => {
       } else {
         console.log("Failed to submit sale. Status code:", response.status);
         const errorData = await response.json();
-        console.log("Error data:", errorData); // Log the response data for debugging
+        console.log("Error data:", errorData); 
         toast.error("Failed to submit sale. Please try again.", {
           position: "top-right",
           autoClose: 3000,
@@ -56,14 +69,6 @@ const SaveSale = () => {
       });
     }
   };
-
-
-
-
-  
-
-
-
 
 
   useEffect(() => {

@@ -27,6 +27,8 @@ import {
 } from "../../../../action/actions";
 import { BASE_URL } from "../../../../config";
 
+
+
 const PayBillsModels = ({
   visible,
   onClose,
@@ -48,10 +50,13 @@ const PayBillsModels = ({
     }
   };
   useEffect(() => {
-    // Connect to the Socket.IO server
-    const newSocket = io.connect("http://posapi.q4hosting.com"); // Replace with your server URL
+    const newSocket = io.connect(BASE_URL); // Replace with your server URL
+    console.log()
     setSocket(newSocket);
   }, []);
+
+
+
   const dispatch = useDispatch();
 
   const selectedDelivery = useSelector(
@@ -182,6 +187,10 @@ const PayBillsModels = ({
       resetPaymentState();
       await onClose();
       await socket.emit("add-order", responseData);
+
+
+      console.log('finlixe subit', await socket.emit("add-order", responseData))
+
       setSubmissionInProgress(false);
     } catch (error) {
       console.error("Error:", error);
@@ -283,8 +292,6 @@ const PayBillsModels = ({
 
   dispatch(setCartSumUp(cartSumUp));
   dispatch(setSelectedCustomerJson(selectedCustomersJson));
-  console.log('cust', dispatch(setSelectedCustomerJson(selectedCustomersJson)))
-
 
   const iframeRef = useRef(null);
   const [url, setUrl] = useState(null);

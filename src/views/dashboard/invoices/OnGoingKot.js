@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import OnGoingKotModel from "./OnGoingKotModel/OnGoingKotModel";
 import { setPendingKotData } from "../../../action/actions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { BeatLoader } from "react-spinners";
+
 import { fetch } from "../../../utils";
 import {
   CCard,
@@ -26,23 +28,39 @@ const OnGoingKot = () => {
 
   const [returns, setReturns] = useState(false);
   const [activeKey, setActiveKey] = useState(1);
-
   const [pendingKotDeta, setPendingKotDeta] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [networkError, setNetworkError] = useState(false);
+
+  const outlet_id = useSelector(
+    (state) => state.selectedOutletId.selectedOutletId
+  );
+
   const getPendingKOT = async () => {
     try {
+      setLoading(true);
+      setNetworkError(false);
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await fetch("/api/sales/getPendingKOT", "post", null, headers);
+      const body = {
+        outlet_id,
+      };
+      const response = await fetch("/api/sales/getPendingKOT", "POST", body, headers);
       setPendingKotDeta(response.data.KOT_data);
+      setLoading(false);
+      setNetworkError(false);
+      dispatch(setPendingKotData(response.data.KOT_data)); // Update Redux state immediately
 
     } catch (err) {
-      console.log(err);
+      setLoading(false);
+      setNetworkError(true);
+      dispatch(setPendingKotData([])); // Update Redux state immediately
     }
   };
+
   useEffect(() => {
     getPendingKOT();
-  }, []);
-  dispatch(setPendingKotData(pendingKotDeta));
+  }, [outlet_id]);
 
   const uniqueTableNumbers = new Set();
   const filteredPendingKotDeta = pendingKotDeta.filter((item) => {
@@ -52,10 +70,6 @@ const OnGoingKot = () => {
     }
     return false;
   });
-
-
-
-
 
   // Function to calculate the total amount, SGST, CGST, and grand total for a given table number
   const calculateTotalAmountForTable = (tableNo) => {
@@ -99,16 +113,8 @@ const OnGoingKot = () => {
     return finalGrandTotal.toFixed(2);
   };
 
-
   return (
     <>
-
-
-
-
-
-
-
       <CCard className="invoice-card">
         <CCardHeader className="invoice-card">
           OnGoing KOT(s)
@@ -120,49 +126,65 @@ const OnGoingKot = () => {
           </CLink>
         </CCardHeader>
 
-        <div>
-          <table
-            width="100%"
-            className="table table-bordered ongoing mb-0"
-            style={{ fontSize: "11px" }}
-          >
-            <tbody>
-              <tr style={{ background: "#efefef" }}>
-                <th>Table No</th>
-                <th>KOTs</th>
-                <th>Amount</th>
+        {networkError === true && (
+          <CCardBody style={{ display: "flex" }}>
+            <div className="text-danger medium-text font-size-2">No, KOT(s) Pending..</div>
+          </CCardBody>
+        )}
+        {loading === true && (
+          <CCardBody style={{ display: "flex" }}>
+            <BeatLoader
+              color="red"
+              loading={true}
+              size={8}
+              style={{ marginTop: "1%", marginRight: "2%" }}
+            />
+            <div className="text-danger medium-text font-size-2">
+              Loading Pending KOT(s) ..
+            </div>
+          </CCardBody>
+        )}
 
-              </tr>
-              {filteredPendingKotDeta.map((item, index) => (
-                <React.Fragment key={index}>
-                  <tr>
-                    <td>
-                      <b>
-                        <a href="" className="text-primary text-link">
-                          {item.table_no}
-                        </a>
-                      </b>
-                    </td>
-                    <td align="center">1</td>
-
-                    <td align="right"><i className="fa fa-inr"></i> {calculateTotalAmountForTable(item.table_no).grandTotal}</td>
-                  </tr>
-                </React.Fragment>
-              ))}
-
-              <tr style={{ background: "#efefef" }}>
-                <th colSpan="2" style={{ textAlign: "right" }}>
-                  Total Amount &nbsp;
-                </th>
-                <th style={{ textAlign: "right" }}>
-                  <i className="fa fa-inr"></i> {/* Render Total Amount here */}
-                  <i className="fa fa-inr"></i> {calculateFinalGrandTotal()} {/* Render Final Grand Total here */}
-
-                </th>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {loading === false && networkError === false && (
+          <div>
+            <table
+              width="100%"
+              className="table table-bordered ongoing mb-0"
+              style={{ fontSize: "11px" }}
+            >
+              <tbody>
+                <tr style={{ background: "#efefef" }}>
+                  <th>Table No</th>
+                  <th>KOTs</th>
+                  <th>Amount</th>
+                </tr>
+                {filteredPendingKotDeta.map((item, index) => (
+                  <React.Fragment key={index}>
+                    <tr>
+                      <td>
+                        <b>
+                          <a href="" className="text-primary text-link">
+                            {item.table_no}
+                          </a>
+                        </b>
+                      </td>
+                      <td align="center">1</td>
+                      <td align="right"><i className="fa fa-inr"></i> {calculateTotalAmountForTable(item.table_no).grandTotal}</td>
+                    </tr>
+                  </React.Fragment>
+                ))}
+                <tr style={{ background: "#efefef" }}>
+                  <th colSpan="2" style={{ textAlign: "right" }}>
+                    Total Amount &nbsp;
+                  </th>
+                  <th style={{ textAlign: "right" }}>
+                    <i className="fa fa-inr"></i> {calculateFinalGrandTotal()}
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        )}
       </CCard>
       {/* ==============================Model start here================================== */}
       <CModal size="lg" visible={returns} onClose={() => setReturns(false)} className="closing-table">
@@ -173,13 +195,7 @@ const OnGoingKot = () => {
         </CModalHeader>
         <CModalBody>
           <CTabContent>
-            <CTabPane
-              role="tabpanel"
-              aria-labelledby="home-tab"
-              visible={activeKey === 1}
-            >
-              <OnGoingKotModel />
-            </CTabPane>
+            <OnGoingKotModel />
           </CTabContent>
         </CModalBody>
         <CModalFooter>

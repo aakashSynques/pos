@@ -117,7 +117,6 @@ const RecentInvoice = () => {
   }, [outlet_id]);
 
 
-
   const relevantCartSumUpData = recentBooking.map((booking) => {
     if (booking.sales_json && booking.sales_json.cartSumUp) {
       const cartSumUp = booking.sales_json.cartSumUp;
@@ -134,16 +133,19 @@ const RecentInvoice = () => {
 
 
   const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal);
+  // const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal || 0);
+
+
   const payAmountValues = relevantCartSumUpData.map(items => {
     return items.payDetails.reduce((total, item) => total + item.payAmount, 0);
   });
 
 
+ 
 
   const remainingBalances = grandTotalValues.map(
     (grandTotal, index) => payAmountValues[index] - grandTotal
   );
-
 
 
   const clickInvoiceLink = (invoice_no, sales_json, salesid) => {
@@ -170,7 +172,6 @@ const RecentInvoice = () => {
             <div className="text-danger medium-text font-size-2">No Recent Invoices..</div>
           </CCardBody>
         )}
-
         {loading === true && (
           <CCardBody style={{ display: "flex" }}>
             <BeatLoader

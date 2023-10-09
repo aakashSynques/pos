@@ -161,7 +161,7 @@ const BookingModels = ({
                 machine_amount: 0,
                 book_id: 0,
                 psid: 0,
-          
+
             };
             const response = await fetch(url, {
                 method: "POST",
@@ -286,7 +286,6 @@ const BookingModels = ({
 
     dispatch(setCartSumUp(cartSumUp));
     dispatch(setSelectedCustomerJson(selectedCustomersJson));
-    console.log('cust', dispatch(setSelectedCustomerJson(selectedCustomersJson)))
 
 
     const iframeRef = useRef(null);

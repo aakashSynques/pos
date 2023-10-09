@@ -23,6 +23,7 @@ import io from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { setRecentBookings } from "../../../action/actions"; //recentinvoice
 import { fetch } from "../../../utils";
+import { BASE_URL } from "../../../config";
 
 const TotalPunchedInvoice = () => {
   const dispatch = useDispatch();
@@ -66,7 +67,7 @@ const TotalPunchedInvoice = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io.connect("http://posapi.q4hosting.com"); // Replace with your server URL
+    const newSocket = io.connect(BASE_URL); // Use the variable directly
     setSocket(newSocket);
   }, []);
 

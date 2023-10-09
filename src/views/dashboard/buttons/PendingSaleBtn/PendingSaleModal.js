@@ -26,7 +26,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
- 
+
 
   const [activeKey, setActiveKey] = useState(1);
   const [saveSaleData, setsaveSaleData] = useState([]);
@@ -34,22 +34,38 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
-      const response = await fetch(
-        "/api/sales/getAllSavedData",
-        "post",
-        null,
-        headers
-      );
-      setsaveSaleData(response.data.saved_data);
-      dispatch(getSaveSaleData(response.data.saved_data));
-    
+      const response = await fetch("/api/sales/getAllSavedData", "post", null, headers);
+      const allSavedData = response.data.saved_data;
+      const filteredData = allSavedData.filter(item => item.cartSumUp.outlet_id == outlet_id);
+      setsaveSaleData(filteredData);
+      dispatch(getSaveSaleData(filteredData));
     } catch (err) {
       console.log(err);
     }
   };
+console.log('save sale data', saveSaleData)
+
   useEffect(() => {
     getsaveSaleData();
-  }, []);
+  }, [outlet_id]);
+
+  const [tabCounts, setTabCounts] = useState([0, 0, 0, 0]);
+  useEffect(() => {
+    const counts = [0, 0, 0, 0];
+    saveSaleData.forEach((sale) => {
+      if (sale.cartSumUp.deliveryMode == 1 && "1") {
+        counts[0]++; // Counter Sale
+      } else if (sale.cartSumUp.deliveryMode == 2 && "2") {
+        counts[1]++; // On Table
+      } else if (sale.cartSumUp.deliveryMode == 3 && "3") {
+        counts[2]++; // Pick UP
+      } else if (sale.cartSumUp.deliveryMode == 4 && "4") {
+        counts[3]++; // Home Delivery
+      }
+    });
+
+    setTabCounts(counts);
+  }, [saveSaleData]);
 
 
 
@@ -99,24 +115,15 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
 
 
 
+  const [lastSaleDeleted, setLastSaleDeleted] = useState(false);
+  const deleteLastSale = () => {
+    if (!lastSaleDeleted && saveSaleData.length > 0) {
+      const lastSale = saveSaleData[saveSaleData.length - 1];
+      deletePendingSale(lastSale.psid);
+      setLastSaleDeleted(true);
+    }
+  };
 
-  const [tabCounts, setTabCounts] = useState([0, 0, 0, 0]);
-  useEffect(() => {
-    const counts = [0, 0, 0, 0];
-    saveSaleData.forEach((sale) => {
-      if (sale.cartSumUp.deliveryMode == 1) {
-        counts[0]++; // Counter Sale
-      } else if (sale.cartSumUp.deliveryMode == 2) {
-        counts[1]++; // On Table
-      } else if (sale.cartSumUp.deliveryMode == 3) {
-        counts[2]++; // Pick UP
-      } else if (sale.cartSumUp.deliveryMode == 4) {
-        counts[3]++; // Home Delivery
-      }
-    });
-
-    setTabCounts(counts);
-  }, [saveSaleData]);
 
 
 
@@ -136,22 +143,30 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
         <CNav variant="pills" role="tablist">
           <CNavItem>
             <CNavLink active={activeKey === 1} onClick={() => setActiveKey(1)}>
-              Counter Sale <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[0]}</span>
+              Counter Sale <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>
+                {tabCounts[0]}
+              </span>
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink active={activeKey === 2} onClick={() => setActiveKey(2)}>
-              On Table <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[1]}</span>
+              On Table <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>
+                {tabCounts[1]}
+              </span>
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink active={activeKey === 3} onClick={() => setActiveKey(3)}>
-              Pick UP <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[2]}</span>
+              Pick UP <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>
+                {tabCounts[2]}
+              </span>
             </CNavLink>
           </CNavItem>
           <CNavItem>
             <CNavLink active={activeKey === 4} onClick={() => setActiveKey(4)}>
-              Home Delivery <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>{tabCounts[3]}</span>
+              Home Delivery <span className="badge rounded-circle" style={{ padding: "3px 6px", fontSize: "12px" }}>
+                {tabCounts[3]}
+              </span>
             </CNavLink>
           </CNavItem>
         </CNav>
@@ -175,8 +190,41 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                 </tr>
               </thead>
               <tbody>
+                {/* {saveSaleData.map((sale, index) => (
+                  <tr key={index}>
+                    <td>{sale.psid}</td>
+                    <td>{sale.eat}</td>
+                    <td>
+                      {sale.selectedCustomerJson.customer_name}{" "}
+                      <small>({sale.selectedCustomerJson.mobile})</small>
+                    </td>
+                    <td align="center">
+                      {sale.productsInCart.length}
+                    </td>
+                    <td align="right">
+                      <i className="fa fa-inr"></i>{" "}
+                      {parseFloat(sale.cartSumUp.grandTotal).toFixed(2)}
+                      <br />
+                      <span style={{ lineHeight: "18px" }}>
+                        Tax: <i className="fa fa-inr"></i>
+                        {sale.cartSumUp.tax}{" "}
+                      </span>
+                    </td>
+                    <td>   {sale.cartSumUp.outlet_id}</td>
+                    <td align="center">
+                      <CButton className="btn btn-xs btn-warning rounded-1 text-white">
+                        <i className="fa fa-reply-all "></i> Process
+                      </CButton>
+                    </td>
+                    <td align="center">
+                      <CButton className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
+                        <i className="fa fa-times"></i>
+                      </CButton>
+                    </td>
+                  </tr>
+                ))} */}
                 {saveSaleData.map((sale, index) => {
-                  if (sale.cartSumUp.deliveryMode === 1) {
+                  if (sale.cartSumUp.deliveryMode == 1) {
                     const date = new Date(sale.eat);
                     const formattedDate = `${date.getFullYear()}-${String(
                       date.getMonth() + 1
@@ -211,14 +259,14 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                         </td>
                         <td></td>
                         <td align="center">
-                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                          <CButton className="btn btn-xs btn-warning rounded-1 text-white">
                             <i className="fa fa-reply-all "></i> Process
-                          </button>
+                          </CButton>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
+                          <CButton className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
-                          </button>
+                          </CButton>
                         </td>
                       </tr>
                     );
@@ -228,6 +276,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
               </tbody>
             </table>
           </CTabPane>
+
 
           <CTabPane
             role="tabpanel"
@@ -284,14 +333,14 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                         </td>
                         <td></td>
                         <td align="center">
-                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                          <CButton className="btn btn-xs btn-warning rounded-1 text-white">
                             <i className="fa fa-reply-all "></i> Process
-                          </button>
+                          </CButton>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
+                          <CButton className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
-                          </button>
+                          </CButton>
                         </td>
                       </tr>
                     );
@@ -357,14 +406,14 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                         </td>
                         <td></td>
                         <td align="center">
-                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                          <CButton className="btn btn-xs btn-warning rounded-1 text-white">
                             <i className="fa fa-reply-all "></i> Process
-                          </button>
+                          </CButton>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
+                          <CButton className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
-                          </button>
+                          </CButton>
                         </td>
                       </tr>
                     );
@@ -429,14 +478,14 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                         </td>
                         <td></td>
                         <td align="center">
-                          <button className="btn btn-xs btn-warning rounded-1 text-white">
+                          <CButton className="btn btn-xs btn-warning rounded-1 text-white">
                             <i className="fa fa-reply-all "></i> Process
-                          </button>
+                          </CButton>
                         </td>
                         <td align="center">
-                          <button className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
+                          <CButton className="btn btn-xs btn-danger" onClick={() => deletePendingSale(sale.psid)}>
                             <i className="fa fa-times"></i>
-                          </button>
+                          </CButton>
                         </td>
                       </tr>
                     );
@@ -452,6 +501,11 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
         <CButton color="secondary" className="btn btn-sm btn-default" onClick={() => setPendingButtonModal(false)}>
           Close
         </CButton>
+
+        <CButton className="btn btn-xs btn-danger" onClick={deleteLastSale}>
+          Last Sale Delete
+        </CButton>
+
       </CModalFooter>
     </CModal>
   );

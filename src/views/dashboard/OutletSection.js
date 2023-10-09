@@ -44,8 +44,7 @@ const OutletOptions = ({ outletName }) => {
   );
 
   const getSaveSale = useSelector((state) => state.getSaveSale.getSaveSaleData);
-
-
+  const pendingKotData = useSelector((state) => state.table.pendingKotData);
 
   const getAllPendingBookings = async () => {
     try {
@@ -234,6 +233,9 @@ const OutletOptions = ({ outletName }) => {
           <p>[Shift + L]</p>
         </CButton>
 
+
+
+
         <CButton
           className="light-outlet"
           style={{ background: "#f0ad4e" }}
@@ -250,11 +252,11 @@ const OutletOptions = ({ outletName }) => {
               color: "#f0ad4e",
               backgroundColor: "white",
             }}
-          >0 </span>
+          >{pendingKotData.length} </span>
           <p>[Shift + K]</p>
         </CButton>
 
-        
+
 
         <CButton
           className="light-outlet"
@@ -318,7 +320,7 @@ const OutletOptions = ({ outletName }) => {
 
         {/* Discard save sale */}
         <DiscardSaleBtn />
-        
+
       </div>
 
 

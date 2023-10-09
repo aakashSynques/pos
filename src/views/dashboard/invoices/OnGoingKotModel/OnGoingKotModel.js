@@ -14,9 +14,6 @@ const OnGoingKotModel = () => {
 
 
   const pendingKotData = useSelector((state) => state.table.pendingKotData);
-  console.log('pp', pendingKotData);
-
-
 
   const [selectedTable, setSelectedTable] = useState(null);
   useEffect(() => {
