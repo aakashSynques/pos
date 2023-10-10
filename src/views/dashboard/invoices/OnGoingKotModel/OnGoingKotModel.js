@@ -99,7 +99,7 @@ const OnGoingKotModel = () => {
         <tbody>
           <tr>
             <td className="p-0">
-              <table border="0" cellspacing="4" cellpadding="4" width="100%">
+              <table border="0" cellSpacing="4" cellPadding="4" width="100%">
                 <tbody>
                   {[...new Set(pendingKotData.map((kot) => kot.table_no))].map((tableNo) => (
                     <tr
@@ -123,7 +123,7 @@ const OnGoingKotModel = () => {
             </td>
 
             <td className="p-0">
-              <table border="0" cellspacing="4" cellpadding="4" width="100%">
+              <table border="0" cellSpacing="4" cellPadding="4" width="100%">
                 <tbody>
                   {pendingKotData.map((item) => {
                     if (item.table_no === selectedTable) {

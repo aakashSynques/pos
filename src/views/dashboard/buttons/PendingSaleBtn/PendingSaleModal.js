@@ -3,8 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { getSaveSaleData } from "../../../../action/actions";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import the CSS for styling
-
-
+import io from 'socket.io-client';
 import {
   CModal,
   CModalHeader,
@@ -20,9 +19,12 @@ import {
 } from "@coreui/react";
 import { fetch } from "../../../../utils";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../../../config";
+
 
 function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
   const dispatch = useDispatch();
+  const [socket, setSocket] = useState(null);
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
@@ -38,16 +40,28 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
       const allSavedData = response.data.saved_data;
       const filteredData = allSavedData.filter(item => item.cartSumUp.outlet_id == outlet_id);
       setsaveSaleData(filteredData);
+
       dispatch(getSaveSaleData(filteredData));
+      await socket.emit("add-order", setsaveSaleData);
     } catch (err) {
-      console.log(err);
+      console.log('new', err);
     }
   };
-console.log('save sale data', saveSaleData)
-
+   
   useEffect(() => {
     getsaveSaleData();
   }, [outlet_id]);
+
+  useEffect(() => {
+    const newSocket = io.connect("http://localhost:2000"); // Replace with your server URL
+    setSocket(newSocket);
+  
+  }, []);
+
+
+
+
+
 
   const [tabCounts, setTabCounts] = useState([0, 0, 0, 0]);
   useEffect(() => {
@@ -113,16 +127,6 @@ console.log('save sale data', saveSaleData)
     });
   };
 
-
-
-  const [lastSaleDeleted, setLastSaleDeleted] = useState(false);
-  const deleteLastSale = () => {
-    if (!lastSaleDeleted && saveSaleData.length > 0) {
-      const lastSale = saveSaleData[saveSaleData.length - 1];
-      deletePendingSale(lastSale.psid);
-      setLastSaleDeleted(true);
-    }
-  };
 
 
 
@@ -502,14 +506,12 @@ console.log('save sale data', saveSaleData)
           Close
         </CButton>
 
-        <CButton className="btn btn-xs btn-danger" onClick={deleteLastSale}>
-          Last Sale Delete
-        </CButton>
-
       </CModalFooter>
     </CModal>
   );
 }
 
 export default PendingSaleModal;
+
+
 

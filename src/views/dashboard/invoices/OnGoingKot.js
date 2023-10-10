@@ -25,9 +25,7 @@ import {
 
 const OnGoingKot = () => {
   const dispatch = useDispatch();
-
   const [returns, setReturns] = useState(false);
-  const [activeKey, setActiveKey] = useState(1);
   const [pendingKotDeta, setPendingKotDeta] = useState([]);
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
@@ -46,21 +44,30 @@ const OnGoingKot = () => {
         outlet_id,
       };
       const response = await fetch("/api/sales/getPendingKOT", "POST", body, headers);
-      setPendingKotDeta(response.data.KOT_data);
-      setLoading(false);
-      setNetworkError(false);
-      dispatch(setPendingKotData(response.data.KOT_data)); // Update Redux state immediately
 
+      if (response.status === 200) {
+        const responseData = await response.json();
+        setPendingKotDeta(responseData.data.KOT_data);
+        setLoading(false);
+        setNetworkError(false);
+        dispatch(setPendingKotData(responseData.data.KOT_data)); 
+      } else {
+        setLoading(false);
+        setNetworkError(true);
+        dispatch(setPendingKotData([])); 
+      }
     } catch (err) {
       setLoading(false);
       setNetworkError(true);
-      dispatch(setPendingKotData([])); // Update Redux state immediately
+      dispatch(setPendingKotData([])); 
     }
   };
 
   useEffect(() => {
     getPendingKOT();
   }, [outlet_id]);
+
+
 
   const uniqueTableNumbers = new Set();
   const filteredPendingKotDeta = pendingKotDeta.filter((item) => {

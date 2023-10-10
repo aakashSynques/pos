@@ -66,53 +66,53 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
       .map((item) =>
         item.rate_chart[selectedOutletId][0].stock_availability === 1
           ? {
-            prod_id: item.prod_id,
-            prod_code: item.prod_code,
-            prod_sign: item.prod_sign,
-            prod_name: item.prod_name,
-            prod_description: item.prod_description,
-            prod_rate: getPriceForOutlet(item),
-            category_id: item.category_id,
-            prod_KOT_status: item.prod_KOT_status,
-            prod_Parcel_status: item.prod_Parcel_status,
-            prod_Discount_status: item.prod_Discount_status,
-            prod_Complementary_status: item.prod_Complementary_status,
-            prod_Toppings_status: item.prod_Toppings_status,
-            prod_Customized_status: item.prod_Customized_status,
-            prod_Delivery_heads: item.prod_Delivery_heads,
-            prod_image: item.prod_image,
-            prod_Recommended: item.prod_Recommended,
-            prod_OnlineListing: item.prod_OnlineListing,
-            prod_TagsGroups: item.prod_TagsGroups,
-            prod_DeActive: item.prod_DeActive,
-            status: item.status,
-            eby: item.eby,
-            eat: item.eat,
-            recipe_outcome_value: item.recipe_outcome_value,
-            recipe_outcome_unit: item.recipe_outcome_unit,
-            stock_status: item.stock_status,
-            stock_current_value: item.stock_current_value,
-            LHB_prod_id: item.LHB_prod_id,
-            category_name: item.category_name,
-            category_heads: item.category_heads,
-            recipeCount: item.recipeCount,
-            is_parcel: 0,
-            is_complementary: 0,
-            is_complementary_note: "",
-            is_note: 0,
-            is_prod_note: "",
-            prod_qty: item.prod_qty,
-            prod_discount: item.prod_discount,
-            prod_discount_offered: item.prod_discount_offered,
-            total_amount: item.prod_rate,
-            KOT_pick: 0,
-            KOT_ready: 0,
-            KOT_dispatch: 0,
-            urno: generateUniqueNumber(),
-            associated_prod_urno: null,
-            toppings: [],
-            customized: [],
-          }
+              prod_id: item.prod_id,
+              prod_code: item.prod_code,
+              prod_sign: item.prod_sign,
+              prod_name: item.prod_name,
+              prod_description: item.prod_description,
+              prod_rate: getPriceForOutlet(item),
+              category_id: item.category_id,
+              prod_KOT_status: item.prod_KOT_status,
+              prod_Parcel_status: item.prod_Parcel_status,
+              prod_Discount_status: item.prod_Discount_status,
+              prod_Complementary_status: item.prod_Complementary_status,
+              prod_Toppings_status: item.prod_Toppings_status,
+              prod_Customized_status: item.prod_Customized_status,
+              prod_Delivery_heads: item.prod_Delivery_heads,
+              prod_image: item.prod_image,
+              prod_Recommended: item.prod_Recommended,
+              prod_OnlineListing: item.prod_OnlineListing,
+              prod_TagsGroups: item.prod_TagsGroups,
+              prod_DeActive: item.prod_DeActive,
+              status: item.status,
+              eby: item.eby,
+              eat: item.eat,
+              recipe_outcome_value: item.recipe_outcome_value,
+              recipe_outcome_unit: item.recipe_outcome_unit,
+              stock_status: item.stock_status,
+              stock_current_value: item.stock_current_value,
+              LHB_prod_id: item.LHB_prod_id,
+              category_name: item.category_name,
+              category_heads: item.category_heads,
+              recipeCount: item.recipeCount,
+              is_parcel: 0,
+              is_complementary: 0,
+              is_complementary_note: "",
+              is_note: 0,
+              is_prod_note: "",
+              prod_qty: item.prod_qty,
+              prod_discount: item.prod_discount,
+              prod_discount_offered: item.prod_discount_offered,
+              total_amount: item.prod_rate,
+              KOT_pick: 0,
+              KOT_ready: 0,
+              KOT_dispatch: 0,
+              urno: generateUniqueNumber(),
+              associated_prod_urno: null,
+              toppings: [],
+              customized: [],
+            }
           : null
       )
       .filter(Boolean);
@@ -144,19 +144,19 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
   useEffect(() => {
     getOutletListdata();
   }, [outletmodel]);
-
-  // useEffect(() => {
-  //   const handleKeyPressOutlet = (e) => {
-  //     if (e.key === "F1") {
-  //       e.preventDefault();
-  //       setOutletmodel(true);
-  //     }
-  //   };
-  //   window.addEventListener("keydown", handleKeyPressOutlet);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyPressOutlet);
-  //   };
-  // }, []);
+  
+  useEffect(() => {
+    const handleKeyPressOutlet = (e) => {
+      if (e.key === "F1") {
+        e.preventDefault(); 
+        setOutletmodel(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyPressOutlet);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPressOutlet);
+    };
+  }, []);
 
 
 
@@ -240,10 +240,11 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
                 outletListdata.map((outlet) => (
                   <CCol className="aws-btn" sm={6} key={outlet.outlet_id}>
                     <CButton
-                      className={`btn btn-block location-btn w-100 ${selectedOutlet?.outlet_id === outlet.outlet_id
+                      className={`btn btn-block location-btn w-100 ${
+                        selectedOutlet?.outlet_id === outlet.outlet_id
                           ? "selected-outlet"
                           : ""
-                        }`}
+                      }`}
                       onClick={() => handleSelectOutlet(outlet)}
                       data-id={outlet.outlet_id}
                     >
@@ -287,8 +288,9 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
             {Array.isArray(deliveryListdata) &&
               deliveryListdata.map((delivery) => (
                 <CButton
-                  className={`btn btn-block location-btn w-100 ${selectedDelivery === delivery ? "selected-outlet" : ""
-                    }`}
+                  className={`btn btn-block location-btn w-100 ${
+                    selectedDelivery === delivery ? "selected-outlet" : ""
+                  }`}
                   key={delivery}
                   onClick={() => handleSelectDelivery(delivery)}
                 >

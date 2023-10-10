@@ -50,8 +50,7 @@ const PayBillsModels = ({
     }
   };
   useEffect(() => {
-    const newSocket = io.connect(BASE_URL); // Replace with your server URL
-    console.log()
+    const newSocket = io.connect(BASE_URL); 
     setSocket(newSocket);
   }, []);
 
@@ -183,13 +182,9 @@ const PayBillsModels = ({
       }
       dispatch(clearCartItems());
       dispatch(clearSelectedCustomer());
-      // printComponentRef.current = true;
       resetPaymentState();
       await onClose();
       await socket.emit("add-order", responseData);
-
-
-      console.log('finlixe subit', await socket.emit("add-order", responseData))
 
       setSubmissionInProgress(false);
     } catch (error) {

@@ -34,6 +34,8 @@ import {
   SUBMIT_DELIVERY_DATA,
   SET_PENDING_KOT_DATA,
   SET_PRODUCT_RATE,
+  SET_NEWPSID_DISCARD,
+  SET_DISCARD_BUTTON_ACTIVE
 } from "./actionTypes";
 
 // helper functions start
@@ -475,6 +477,21 @@ export const setPendingKotData = (kotdata) => {
   return {
     type: SET_PENDING_KOT_DATA,
     payload: kotdata,
+  };
+};
+
+
+export const setPsid = (psid) => ({
+  type: 'SET_NEWPSID_DISCARD',
+  payload: psid,
+});
+
+
+
+export const setDiscardButtonActive = (isActive) => {
+  return {
+    type: SET_DISCARD_BUTTON_ACTIVE,
+    payload: isActive,
   };
 };
 
