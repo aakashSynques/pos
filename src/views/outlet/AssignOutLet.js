@@ -32,6 +32,10 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
+
+
+
+
   const cartItems = useSelector((state) => state.cart.cartItems);
   const allProducts = useSelector((state) => state.allProducts.allProducts);
 
@@ -51,12 +55,18 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
     return `${timestamp.toString() + randomString}`;
   }
 
+  
   const handleSelectOutlet = (outlet) => {
     setSelectedOutlet(outlet);
-    setSelectedOutletId(outlet.outlet_id);
-    setOutletmodel(false); // Close the outlet model
-    setDeliverymodel(true); // Open the delivery model
+  setSelectedOutletId(outlet.outlet_id);
+  setOutletmodel(false); // Close the outlet model
+  if (!selectedDelivery) {
+    // Only set deliverymodel to true if selectedDelivery is not already set
+    setDeliverymodel(true);
+  }
 
+
+  
     // cartItem manipulation START
     const matchingProducts = allProducts.filter((product) => {
       return cartItems.some((cartItem) => cartItem.prod_id === product.prod_id);
@@ -117,7 +127,9 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
       )
       .filter(Boolean);
     dispatch(setNewCart(newCart));
+
   };
+
 
   const getOutletListdata = async () => {
     try {
@@ -145,18 +157,18 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
     getOutletListdata();
   }, [outletmodel]);
 
-  // useEffect(() => {
-  //   const handleKeyPressOutlet = (e) => {
-  //     if (e.key === "F1") {
-  //       e.preventDefault();
-  //       setOutletmodel(true);
-  //     }
-  //   };
-  //   window.addEventListener("keydown", handleKeyPressOutlet);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyPressOutlet);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const handleKeyPressOutlet = (e) => {
+      if (e.key === "F1") {
+        e.preventDefault();
+        setOutletmodel(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyPressOutlet);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPressOutlet);
+    };
+  }, []);
 
 
 
@@ -241,8 +253,8 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
                   <CCol className="aws-btn" sm={6} key={outlet.outlet_id}>
                     <CButton
                       className={`btn btn-block location-btn w-100 ${selectedOutlet?.outlet_id === outlet.outlet_id
-                          ? "selected-outlet"
-                          : ""
+                        ? "selected-outlet"
+                        : ""
                         }`}
                       onClick={() => handleSelectOutlet(outlet)}
                       data-id={outlet.outlet_id}

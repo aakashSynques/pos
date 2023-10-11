@@ -323,7 +323,6 @@ const ProductsSearchBar = () => {
           autoComplete: "off",
           className: "search-input-style",
           ref: inputRef,
-
         }}
         onSuggestionSelected={onSuggestionSelected}
         renderSuggestionsContainer={({ containerProps, children }) => (

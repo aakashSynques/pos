@@ -35,7 +35,8 @@ import {
   SET_PENDING_KOT_DATA,
   SET_PRODUCT_RATE,
   SET_NEWPSID_DISCARD,
-  SET_DISCARD_BUTTON_ACTIVE
+  SET_DISCARD_BUTTON_ACTIVE,
+  SET_PANDING_SALE_PROCESS
 } from "./actionTypes";
 
 // helper functions start
@@ -494,6 +495,17 @@ export const setDiscardButtonActive = (isActive) => {
     payload: isActive,
   };
 };
+
+
+
+export const setPandingSaleProcess = (saleProcessData) => {
+  return {
+    type: SET_PANDING_SALE_PROCESS,
+    payload: saleProcessData
+  };
+};
+
+
 
 
 

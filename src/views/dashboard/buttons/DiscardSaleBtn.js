@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CButton } from "@coreui/react";
 import { clearCartItems, clearSelectedCustomer } from "../../../action/actions";
@@ -59,6 +59,26 @@ const DiscardSaleBtn = () => {
     });
   };
 
+
+
+
+  const handleShortcutKey = (event) => {
+    if (event.shiftKey && event.ctrlKey && event.key === "Delete") {
+      event.preventDefault();
+      if (discardButtonActive) {
+        deletePendingSale(psid);
+      }
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("keydown", handleShortcutKey);
+    return () => {
+      document.removeEventListener("keydown", handleShortcutKey);
+    };
+  }, [discardButtonActive, psid]);
+
+
+
   return (
     <CButton
       className="light-outlet light-outlet3"
@@ -66,7 +86,6 @@ const DiscardSaleBtn = () => {
       onClick={() => deletePendingSale(psid)}
       disabled={!discardButtonActive}
     >
-      {psid}
       <b>Discard Sale</b>
       <p>[Shift + Ctrl + Delete]</p>
     </CButton>

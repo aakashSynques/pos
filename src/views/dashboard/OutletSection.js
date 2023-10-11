@@ -17,6 +17,7 @@ import ClearSaleBtn from "./buttons/ClearSaleBtn";
 import { fetch } from "../../utils";
 import NewSale from "./buttons/newSaleBtn/NewSale";
 import DiscardSaleBtn from "./buttons/DiscardSaleBtn";
+import ChangeOutlet from "../outlet/ChangeOutlet";
 
 // import { setInputFocused } from "../../action/actions";
 
@@ -204,6 +205,8 @@ const OutletOptions = ({ outletName }) => {
     <>
       <div className="outlet-btn">
         <AssignOutLet />
+{/* 
+        <ChangeOutlet /> */}
         <br />
 
 

@@ -32,8 +32,6 @@ const CartItem = ({
   const [customizeModelVisible, setCustomizeModelVisible] = useState(false);
   // const [originalProdRate, setOriginalProdRate] = useState(item.prod_rate);
   const [originalProdRate, setOriginalProdRate] = useState(parseFloat(+item.prod_rate));
-
-  console.log('orignal prode rate =', originalProdRate)
   const [isEditing, setIsEditing] = useState(false);
 
 

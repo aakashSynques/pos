@@ -13,6 +13,7 @@ import customerAccReducer from "./reducers/customerAccReducer";
 import cashReducer from "./reducers/cashReducer";
 import saveSaleReducer from "./reducers/saveSaleReducer";
 import KOTtableNoReducer from "./reducers/KOTtableNoReducer";
+import pendingSaleProcessReducer from "./reducers/pendingSaleProcessReducer";
 
 
 const rootReducer = combineReducers({
@@ -30,9 +31,7 @@ const rootReducer = combineReducers({
   totalCash: cashReducer,
   getSaveSale: saveSaleReducer,
   table: KOTtableNoReducer,
-
-
-
+  pendingSaleProcess : pendingSaleProcessReducer,
 });
 
 const store = createStore(rootReducer);
