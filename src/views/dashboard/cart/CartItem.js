@@ -120,17 +120,16 @@ const CartItem = ({
     <>
       <tr key={item.prod_id}>
         <td style={{ paddingBottom: "13px!important" }} className="pb-2">
-        {item.customized && item.customized.photo_path && (
+          {item.customized && item.customized.photo_path && (
             <img
               src={URL.createObjectURL(item.customized.photo_path[0])}
               alt="Customized"
-              style={{ maxWidth: "100px", float: "left",     marginRight: "10px"}}
+              style={{ maxWidth: "100px", float: "left", marginRight: "10px" }}
             />
           )}
           <strong style={{ fontSize: "14px", fontWeight: "600" }} className="mb-3">{customizeProd_text}</strong> <br />
-           <small className="font-size-3">
-           {item.category_name} | @
-            {/* {item.prod_rate}  */}
+          <small className="font-size-3">
+            {item.category_name} | @
             {originalProdRate}
 
             <br />

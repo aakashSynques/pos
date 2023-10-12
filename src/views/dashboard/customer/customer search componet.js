@@ -324,7 +324,7 @@ const CustomersSearch = () => {
       if (focusedIndex !== -1) {
         const selectedCustomer = displayedItems[focusedIndex];
         handleSelectCustomer(selectedCustomer.value);
-        setFocusedIndex(-1); // Reset focus after selection
+        setFocusedIndex(-1); 
       }
     }
   };

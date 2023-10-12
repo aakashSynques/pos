@@ -17,7 +17,6 @@ import ClearSaleBtn from "./buttons/ClearSaleBtn";
 import { fetch } from "../../utils";
 import NewSale from "./buttons/newSaleBtn/NewSale";
 import DiscardSaleBtn from "./buttons/DiscardSaleBtn";
-import ChangeOutlet from "../outlet/ChangeOutlet";
 
 // import { setInputFocused } from "../../action/actions";
 
@@ -35,7 +34,6 @@ const OutletOptions = ({ outletName }) => {
   const [loading, setLoading] = useState(true);
   const [networkError, setNetworkError] = useState(false);
   const isInputFocused = useSelector((state) => state.inputFocus.isInputFocus);
-
   const outlet_id = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
@@ -68,7 +66,6 @@ const OutletOptions = ({ outletName }) => {
       };
       setLoading(true);
       const response = await fetch("/api/order/pending", "POST", body, headers);
-
       setPendingBooking(response.data.get_pending_booking);
       setLoading(false);
       setNetworkError(false);
@@ -205,8 +202,6 @@ const OutletOptions = ({ outletName }) => {
     <>
       <div className="outlet-btn">
         <AssignOutLet />
-{/* 
-        <ChangeOutlet /> */}
         <br />
 
 

@@ -21,7 +21,8 @@ import {
 const NewSale = () => {
     const dispatch = useDispatch();
 
-    const [visible, setVisible] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const selectedCustomer = useSelector(
         (state) => state.customer.selectedCustomer
     );
@@ -30,9 +31,6 @@ const NewSale = () => {
         (state) => state.customer.selectedCustomerJson
     );
     const cartItems = useSelector((state) => state.cart.cartItems);
-
-
-
 
     const handleSaveSale = async () => {
         try {
@@ -57,17 +55,13 @@ const NewSale = () => {
                     autoClose: 3000,
                     hideProgressBar: false,
                 });
-
-
                 dispatch(clearCartItems());
                 dispatch(clearSelectedCustomer());
-                setVisible(false);
-
-
+                setIsModalOpen(false);
             } else {
                 console.log("Failed to submit sale. Status code:", response.status);
                 const errorData = await response.json();
-                console.log("Error data:", errorData); // Log the response data for debugging
+                console.log("Error data:", errorData);
                 toast.error("Failed to submit sale. Please try again.", {
                     position: "top-right",
                     autoClose: 3000,
@@ -84,51 +78,48 @@ const NewSale = () => {
         }
     };
 
-
     const discardSale = async () => {
-
-        toast.error("Sale Cleared, You can start new sale", {
+        toast.error("Sale Cleared, You can start a new sale", {
             position: "top-right",
             autoClose: 3000,
             hideProgressBar: false,
         });
-
         dispatch(clearCartItems());
         dispatch(clearSelectedCustomer());
-        setVisible(false);
-    }
-
+        setIsModalOpen(false);
+    };
 
     const handleKeyDown = (event) => {
         if (event.shiftKey && event.key === 'N') {
-            setVisible(!visible);
+            setIsModalOpen(!isModalOpen);
         }
     };
+
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [visible]);
+    }, [isModalOpen]);
 
     return (
-        <div>
+        <>
             <CButton
                 className="light-outlet light-outlet2"
                 style={{ background: '#f0ad4e' }}
-                onClick={() => setVisible(!visible)}
+                onClick={() => setIsModalOpen(!isModalOpen)}
                 disabled={!selectedCustomer || cartItems.length === 0}
             >
                 <b>New Sale</b>
                 <p>[Shift + N]</p>
             </CButton>
 
-            <CModal visible={visible} onClose={() => setVisible(false)}>
-                <CModalHeader onClose={() => setVisible(false)}>
+            <CModal visible={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                <CModalHeader onClose={() => setIsModalOpen(false)}>
                     <CModalTitle>Sales Confirmation</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    <center>
+                    <div className='text-center'>
                         <font size="5" color="red"> Current sale is ongoing.</font>
                         <small className="font-size-2">
                             <br />
@@ -136,7 +127,7 @@ const NewSale = () => {
                             <b>OR</b><br />
                             * To Clear the current sale <b>Press Don't Save &amp; Proceed button</b>.
                         </small>
-                    </center>
+                    </div>
                 </CModalBody>
                 <CModalFooter>
                     <CContainer>
@@ -150,12 +141,11 @@ const NewSale = () => {
                                 <CButton className="btn btn-sm btn-warning text-white font-size-3 pl-2 pr-2 py-1 rounded-1" onClick={discardSale}>
                                     Don't Save &amp; Proceed
                                 </CButton>
-
                                 <CButton
                                     color="secondary"
                                     className="btn btn-sm font-size-3 rounded-1"
                                     style={{ marginLeft: '8px' }}
-                                    onClick={() => setVisible(false)}
+                                    onClick={() => setIsModalOpen(false)}
                                 >
                                     Close
                                 </CButton>
@@ -164,7 +154,7 @@ const NewSale = () => {
                     </CContainer>
                 </CModalFooter>
             </CModal>
-        </div>
+        </>
     );
 };
 

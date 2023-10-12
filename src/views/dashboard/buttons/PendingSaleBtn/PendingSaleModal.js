@@ -36,10 +36,8 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
       const headers = { Authorization: `Bearer ${token}` };
       const response = await fetch("/api/sales/getAllSavedData", "post", null, headers);
       const allSavedData = response.data.saved_data;
-      console.log('process for pending sale', allSavedData)
       const filteredData = allSavedData.filter(item => item.cartSumUp.outlet_id == outlet_id);
       setsaveSaleData(filteredData);
-
       dispatch(getSaveSaleData(filteredData));
       await socket.emit("add-order", setsaveSaleData);
     } catch (err) {
@@ -120,12 +118,12 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
         },
       ],
     });
-  };
+  };   
 
 
     const startSaleProcess = (pandingSaleProcess) => {
-    console.log("Selected Sale Data:",  dispatch(setPandingSaleProcess(pandingSaleProcess)));
-    dispatch(setPandingSaleProcess(pandingSaleProcess));
+    console.log("Selected Sale Data:",  pandingSaleProcess);
+    // dispatch(setPandingSaleProcess(pandingSaleProcess));
   };
 
   return (
@@ -187,7 +185,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                   <th width="2%">Items</th>
                   <th width="18%">Total Sale</th>
                   <th>Note</th>
-                  <th width="12%" colspan="2">Action</th>
+                  <th width="12%" colSpan="2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -266,7 +264,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                   <th width="2%">Items</th>
                   <th width="18%">Total Sale</th>
                   <th>Note</th>
-                  <th width="12%" colspan="2">Action</th>
+                  <th width="12%" colSpan="2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -339,7 +337,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                   <th width="2%">Items</th>
                   <th width="18%">Total Sale</th>
                   <th>Note</th>
-                  <th width="12%" colspan="2">Action</th>
+                  <th width="12%" colSpan="2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -411,7 +409,7 @@ function PendingSaleModal({ pendingButtonModal, setPendingButtonModal }) {
                   <th width="2%">Items</th>
                   <th width="18%">Total Sale</th>
                   <th>Note</th>
-                  <th width="12%" colspan="2">Action</th>
+                  <th width="12%" colSpan="2">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -646,7 +644,7 @@ export default PendingSaleModal;
 //                   <th width="2%">Items</th>
 //                   <th width="18%">Total Sale</th>
 //                   <th>Note</th>
-//                   <th width="12%" colspan="2">Action</th>
+//                   <th width="12%" colSpan="2">Action</th>
 //                 </tr>
 //               </thead>
 //               <tbody>

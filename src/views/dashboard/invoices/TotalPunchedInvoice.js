@@ -130,7 +130,7 @@ const TotalPunchedInvoice = () => {
 
         {networkError === true && (
           <CCardBody style={{ display: "flex" }}>
-            <div className="text-danger medium-text">No Punched Invoice..</div>
+            <div className="text-danger medium-text font-size-2">No Punched Invoice..</div>
           </CCardBody>
         )}
 
@@ -143,7 +143,7 @@ const TotalPunchedInvoice = () => {
               style={{ marginTop: "1%", marginRight: "2%" }}
             />
 
-            <div className="text-danger medium-text">
+            <div className="text-danger medium-text font-size-2">
               Loading Punched Invoice..
             </div>
           </CCardBody>

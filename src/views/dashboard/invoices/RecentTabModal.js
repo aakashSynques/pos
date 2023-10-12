@@ -211,7 +211,7 @@ function RecentTabModal({ booking, setBooking }) {
   const onTableArray = getOnTable();
   return (
     <div>
-      <CModal size="xl" visible={booking} onClose={() => setBooking(false)}>
+      <CModal size="xl" visible={booking} onClose={() => setBooking(false)}  backdrop="static">
         <CModalHeader onClose={() => setBooking(false)}>
           <CModalTitle>Recent Sales List</CModalTitle>
         </CModalHeader>

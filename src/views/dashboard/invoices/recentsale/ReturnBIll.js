@@ -63,7 +63,7 @@ const ReturnBIll = () => {
           </tr>
         </thead>
         <tbody>
-          <center className="text-center">NO data Found</center>
+          <div className="text-center">NO data Found</div>
         </tbody>
       </table>
     </>

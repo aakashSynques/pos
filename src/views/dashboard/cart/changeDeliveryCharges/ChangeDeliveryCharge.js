@@ -170,14 +170,17 @@ const ChangeDeliveryCharge = () => {
                 <label>Delivery Amount</label>
               </CCol>
               <CCol sm={3}>
-                <CFormInput
-                  value={deliveryAmount}
-                  onChange={(e) => setDeliveryAmount(e.target.value)}
-                  style={{ height: "35px", fontSize: "13px" }}
-                  type="number"
-                  maxlength="4"
-                  className="form-control input-xs rounded-0 font-size"
-                />
+             
+              <CFormInput
+  value={deliveryAmount}
+  onChange={(e) => setDeliveryAmount(+(e.target.value))} // Parse to float
+  style={{ height: "35px", fontSize: "13px" }}
+  type="number"
+  maxLength="4"
+  className="form-control input-xs rounded-0 font-size"
+/>
+
+
               </CCol>
             </CRow>
             <CRow className="mt-3">

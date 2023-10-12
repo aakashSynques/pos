@@ -132,20 +132,43 @@ const RecentInvoice = () => {
 
 
 
-  const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal);
-  // const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal || 0);
+  // const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal);
+  // // const grandTotalValues = relevantCartSumUpData.map(item => item.grandTotal || 0);
 
 
-  const payAmountValues = relevantCartSumUpData.map(items => {
-    return items.payDetails.reduce((total, item) => total + item.payAmount, 0);
-  });
+  // const payAmountValues = relevantCartSumUpData.map(items => {
+  //   return items.payDetails.reduce((total, item) => total + item.payAmount, 0);
+  // });
 
 
  
 
-  const remainingBalances = grandTotalValues.map(
-    (grandTotal, index) => payAmountValues[index] - grandTotal
-  );
+  // const remainingBalances = grandTotalValues.map(
+  //   (grandTotal, index) => payAmountValues[index] - grandTotal
+  // );
+
+
+
+
+
+
+
+  const grandTotalValues = relevantCartSumUpData
+  .filter(item => item !== null) // Filter out null values
+  .map(item => item.grandTotal || 0);
+
+const payAmountValues = relevantCartSumUpData
+  .filter(item => item !== null) // Filter out null values
+  .map(items => {
+    return items.payDetails.reduce((total, item) => total + item.payAmount, 0);
+  });
+
+const remainingBalances = grandTotalValues.map(
+  (grandTotal, index) => payAmountValues[index] - grandTotal
+);
+
+
+
 
 
   const clickInvoiceLink = (invoice_no, sales_json, salesid) => {
@@ -347,8 +370,8 @@ const RecentInvoice = () => {
       // recentBooking={recentBooking}
       />
       <RecentPrintModal
-        salesid={salesid}
-        setSalesid={setSalesid}
+        // salesid={salesid}
+        // setSalesid={setSalesid}
         printBooking={printBooking}
         setPrintBooking={setPrintBooking}
         invoiceDetails={invoiceDetails}

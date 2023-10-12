@@ -50,7 +50,7 @@ const PayBillsModels = ({
     }
   };
   useEffect(() => {
-    const newSocket = io.connect(BASE_URL); 
+    const newSocket = io.connect(BASE_URL);
     setSocket(newSocket);
   }, []);
 
@@ -87,6 +87,9 @@ const PayBillsModels = ({
       setUser(JSON.parse(storedUser));
     }
   }, []);
+
+
+
 
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
   const [selectedPayments, setSelectedPayments] = useState([]);
@@ -170,7 +173,7 @@ const PayBillsModels = ({
         body: JSON.stringify(requestBody),
       });
 
-        const responseData = await response.json(); // Parse the error response
+      const responseData = await response.json(); // Parse the error response
       if (responseData.dataPost.salesid) {
         setUrl(
           `http://pos.q4hosting.com/posinvolce/printSales/${responseData.dataPost.salesid}/NOKOT?random=${randomValue}`
@@ -192,6 +195,9 @@ const PayBillsModels = ({
       setSubmissionInProgress(false);
     }
   };
+
+
+  console.log('prode cat topping', cartItems)
 
   let deliveryId;
   if (selectedDelivery == "Counter Sale") {
@@ -232,7 +238,7 @@ const PayBillsModels = ({
     discountPercent: "0",
     discount: "0",
     discountType: "",
-    devileryCharges: "0",
+    devileryCharges: +submittedHomeDeliveryData?.deliveryAmount,
     tax: alltax,
     taxsplitGST: [
       {
@@ -282,9 +288,8 @@ const PayBillsModels = ({
       payExtraInfo: extrainfo,
       payAmount: paymentAmounts[paymentMode] || 0, // Use the value from paymentAmounts
     })),
-
   };
-
+  console.log('card sum up', cartSumUp)
   dispatch(setCartSumUp(cartSumUp));
   dispatch(setSelectedCustomerJson(selectedCustomersJson));
 
@@ -303,6 +308,9 @@ const PayBillsModels = ({
       return updatedAmounts;
     });
   };
+
+
+  console.log('home deliveryt charges', submittedHomeDeliveryData)
 
   const resetPaymentState = () => {
     setSelectedPayments([]);
@@ -356,7 +364,7 @@ const PayBillsModels = ({
           <CModalHeader onClose={onClose} className="pt-2 pb-2">
             <CModalTitle>Sales Summary</CModalTitle>
           </CModalHeader>
-          <CModalBody>
+          <CModalBody className="pt-1">
             <span>
               <font size="2">
                 {selectedCustomer && (
@@ -401,7 +409,6 @@ const PayBillsModels = ({
                         />
                       )}
 
-
                       {item.prod_Customized_status == 1 ? (
                         <>
                           <font size="3" className="font-size-14 text-uppercase">
@@ -422,8 +429,17 @@ const PayBillsModels = ({
                           </small>
                         </>
                       ) : (
-                        <font size="3" className="font-size-14">{item.prod_name}</font>
+                        <>
+                          <font size="3" className="font-size-14">{item.prod_name}</font><br />
+
+                        </>
                       )}
+
+
+
+
+
+
 
                       <small>
                         {item.is_parcel === 1 && (
@@ -467,6 +483,9 @@ const PayBillsModels = ({
                   </>
                 ))}
               </CRow>
+
+
+
             </span>
 
             <CRow className="billing-note">
@@ -572,19 +591,6 @@ const PayBillsModels = ({
                     </font>
                   </CCol>
                 </CRow>
-
-
-                {/* <CRow className="dueAmt-style">
-                  <CCol sm={8} className="text-right">
-                    <label>
-                      <input type="checkbox" /> Previous OverDue
-                    </label>
-                  </CCol>
-                  <CCol sm={4} className="text-right">
-                    <i className="fa fa-inr"></i>
-                  </CCol>
-                </CRow> */}
-
                 <hr className="borders" />
                 {selectedPayments.length === 0 && (
                   <center className="font-size-2 p-1 m-1" style={{ color: "#a94442" }}>
@@ -637,31 +643,6 @@ const PayBillsModels = ({
                     ))}
                 </CRow>
                 <hr className="mt-2 m-0 p-0" />
-
-
-                {/* {selectedPayments.length > 0 && (
-                  <CRow className="text-end pt-2">
-                    <CCol sm={8}>
-                      <h5 style={{ color: "red" }} className="font-size">
-                        Balance
-                      </h5>
-                    </CCol>
-                    <CCol sm={4}>
-                      {remainingBalance === 0 ? (
-                        <h5 style={{ color: "red" }} className="font-size">
-                          <i className="fa fa-inr"></i>{" "}
-                          {finalPayAmount.toFixed(2)}
-                        </h5>
-                      ) : (
-                        <h5 style={{ color: "red" }} className="font-size">
-                          <i className="fa fa-inr"></i>{" "}
-                          {remainingBalance.toFixed(2)}
-                        </h5>
-                      )}
-                    </CCol>
-                  </CRow>
-                )} */}
-
                 {selectedPayments.length > 0 && (
                   <CRow className="text-end pt-2">
                     <CCol sm={8}>

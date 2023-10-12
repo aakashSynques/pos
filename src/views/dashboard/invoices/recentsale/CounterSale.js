@@ -16,25 +16,26 @@ const CounterSale = ({ recentBooking }) => {
 
   return (
     <>
-      <table className="table table-bordered booking-or-table">
+      <table className="table table-bordered border booking-or-table collection-table-style table-hover mode-2">
+        
         <thead className="thead-light">
           <tr style={{ background: "#909090", color: "#ffffff" }}>
             <th width="8%">Order#</th>
-            <th width="12%">Invoice# / Invoice Date</th>
-            <th width="12%">Customer Name</th>
-            <th width="8%">Items</th>
+            <th width="15%">Invoice# / Invoice Date</th>
+            <th width="15%">Customer Name</th>
+            <th width="5%">Items</th>
             <th width="8%"> Total</th>
             <th width="8%">Discount</th>
             <th width="8%">Delivery</th>
-            <th width="8%">Tax</th>
-            <th width="8%">Round Off</th>
+            <th width="5%">Tax</th>
+            <th width="6%">Round Off</th>
             <th width="8%"> Total Amount</th>
             <th width="8%">Note</th>
-            <th width="20%" colSpan="4" className="text-center">
+            <th width="15%" colSpan="4" className="text-center">
               Action
               <tr>
-                <th>Print|</th>
-                <th>Edit|</th>
+                <th>Print</th>
+                <th>Edit</th>
                 <th>Return</th>
               </tr>
             </th>
@@ -232,17 +233,19 @@ const CounterSale = ({ recentBooking }) => {
                     </td>
                     <td>{sales_json.cartSumUp.note}</td>
                     <td>
-                      <button className="btn btn-success btn-margin">
+                      <button className="btn btn-sm btn-success btn-margin "    onClick={() =>
+                            clickInvoiceLink(invoice_no, sales_json, salesid)
+                          }>
                         <i className="fa fa-print"></i>
                       </button>
                     </td>
                     <td>
-                      <button className="btn btn-info btn-margin">
+                      <button className="btn btn-sm btn-info btn-margin">
                         <i className="fa fa-edit"></i>
                       </button>
                     </td>
                     <td>
-                      <button className="btn btn-danger btn-margin">
+                      <button className="btn btn-sm btn-danger btn-margin">
                         <i className="fa fa-share-square-o"></i>
                       </button>
                     </td>
@@ -259,9 +262,18 @@ const CounterSale = ({ recentBooking }) => {
         </tbody>
       </table>
 
-      <RecentPrintModal
+      {/* <RecentPrintModal
         active={activeKey === 1}
         onClick={() => setActiveKey(1)}
+        printBooking={printBooking}
+        setPrintBooking={setPrintBooking}
+        invoiceDetails={invoiceDetails}
+      /> */}
+
+
+<RecentPrintModal
+        // salesid={salesid}
+        // setSalesid={setSalesid}
         printBooking={printBooking}
         setPrintBooking={setPrintBooking}
         invoiceDetails={invoiceDetails}
