@@ -228,8 +228,9 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
           </div>
         )}
       </CButton>
+  
       <CModal
-        size="lg"
+      size="lg"
         visible={outletmodel}
         className="outletmodelform"
         backdrop="static"
@@ -274,7 +275,6 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
           </CContainer>
         </CModalBody>
       </CModal>
-
       {/* delivery mode model */}
       <div>
         <CButton
@@ -301,6 +301,7 @@ const AssignOutLet = ({ setSelectedOutletId }) => {
                 <CButton
                   className={`btn btn-block location-btn w-100 ${selectedDelivery === delivery ? "selected-outlet" : ""
                     }`}
+                    style={{height: "auto"}}
                   key={delivery}
                   onClick={() => handleSelectDelivery(delivery)}
                 >

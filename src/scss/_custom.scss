@@ -22,9 +22,11 @@ a {
 
 .location-btn {
   background: white !important;
-  border: 1px solid gray !important;
-  color: $color_1 !important;
+  border: 1px solid #bbbbbb !important;
+  color: #000000c7 !important; 
   margin-bottom: 6px;
+  border-radius: 3px !important;
+  height: 90px;
 
   &:hover {
     background: #f3f3f3;
@@ -34,18 +36,19 @@ a {
 
   h3 {
     font-size: 15px;
+    // color: #000000db;
   }
 
   p {
     font-size: 12px;
     padding-top: 2px;
+    // color: #000000de !important;
   }
 }
-
-
 .print-model-border{
-  padding: 6px;
+  padding: 1px 0px;
     border-top: 1px dashed #909090;
+  
 }
 
 .font-w-5{
@@ -64,7 +67,9 @@ a {
 .font-size-3 {
   font-size: 11px !important;
 }
-
+.font-size-15 {
+  font-size: 15px;
+}.text-black{color: #000000;}
 // b {
 //   font-weight: 600 !important;
 // }
@@ -250,6 +255,9 @@ a {
     padding: 9px 17px !important;
   }
 }
+.outletmodelform .aws-btn{
+  padding: 0px 8px;
+}
 
 .outlet-btn {
   button {
@@ -269,6 +277,12 @@ a {
     margin-bottom: 1px;
   }
 }
+
+
+@media (min-width: 992px){
+  .outletmodelform .modal-lg{
+    --bs-modal-width: 650px!important;
+  }}
 
 .ongoing {
   tr {

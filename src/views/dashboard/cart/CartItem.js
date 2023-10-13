@@ -193,6 +193,9 @@ const CartItem = ({
               <u className="text-danger">C</u>omplementary
             </CButton>
 
+
+
+            {/* Toppings model  */}
             {item.prod_Toppings_status == 1 ? (
               <CButton
                 style={{
@@ -206,6 +209,9 @@ const CartItem = ({
               </CButton>
             ) : null}
 
+
+
+              
             {item.prod_Customized_status == 1 ? (
               <CButton
                 style={{
@@ -330,3 +336,8 @@ const CartItem = ({
 };
 
 export default CartItem;
+
+
+
+
+

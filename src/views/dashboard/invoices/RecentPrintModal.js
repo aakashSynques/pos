@@ -98,13 +98,13 @@ function RecentPrintModal({
               </b>
               <br />
 
-              <small>
+              <small className="font-size-14 text-black">
                 {selectedOutletObj && selectedOutletObj.outlet_address},{" "}
                 {selectedOutletObj && selectedOutletObj.outlet_city} - {selectedOutletObj && selectedOutletObj.outlet_zip}
               </small>
               <br />
 
-              <small>{selectedOutletObj && selectedOutletObj.outlet_contact_no}</small>
+              <small className="font-size-14 text-black">{selectedOutletObj && selectedOutletObj.outlet_contact_no}</small>
               <p              >
                 {deliveryMode == "4" ? " BILL OF SUPPLY" : "TAX INVOICE"}
               </p>
@@ -113,15 +113,15 @@ function RecentPrintModal({
               <CRow className="print-model-border">
                 <React.Fragment>
                   <CCol className="text-start">
-                    <small>Invoice#:</small>
+                    <small className="font-size-14 text-black">Invoice#:</small>
                     <br />
                     <b className="font-size-2">{invoice_no}</b><br />
-                    <small>{cartSumUp && cartSumUp.eat}</small>
+                    <small className="font-size-14 text-black">{cartSumUp && cartSumUp.eat}</small>
                   </CCol>
 
                   <CCol className="text-end">
                     <font>
-                      <small>{selectedCustomerJson &&
+                      <small className="font-size-14 text-black">{selectedCustomerJson &&
                         selectedCustomerJson.customer_name}
                         <br />
                         {selectedCustomerJson && selectedCustomerJson.mobile}</small>
@@ -176,10 +176,10 @@ function RecentPrintModal({
                 { }
                 <CCol xs={1}>Qty</CCol>
                 <CCol xs={9} className="text-start">
-                  <small>     Discription</small>
+                  <small className="font-size-14 text-black">     Discription</small>
                 </CCol>
                 <CCol xs={2} className=" text-center">
-                  <small> Rate</small>
+                  <small className="font-size-14 text-black"> Rate</small>
                 </CCol>
               </CRow>
 
@@ -189,7 +189,7 @@ function RecentPrintModal({
                     return (
                       <React.Fragment key={index}>
                         <CCol xs={1}>
-                          <small>{item.prod_qty}</small>
+                          <small className="font-size-14 text-black">{item.prod_qty}</small>
                         </CCol>
                         <CCol xs={9} className="text-start">
                           {item.prod_Customized_status == 1 ? (
@@ -203,7 +203,7 @@ function RecentPrintModal({
                                   : item.prod_name}
                               </font>{" "}
                               <br />
-                              <small>
+                              <small className="font-size-14 text-black">
                                 <strong>Message on Cake:</strong>{" "}
                                 <span>{item.customized.message_on_cake}</span>{" "}
                                 <br />
@@ -212,7 +212,7 @@ function RecentPrintModal({
                               </small>
                             </>
                           ) : (
-                            <small>{item.prod_name}</small>
+                            <small className="font-size-14 text-black">{item.prod_name}</small>
                           )}
                           <br />
 
@@ -230,7 +230,7 @@ function RecentPrintModal({
                             )}
                           </small>
 
-                          <small>
+                          <small className="font-size-14 text-black">
                             {item.is_note === 1 && (
                               <>
                                 <strong>Product Note:</strong>{" "}
@@ -247,7 +247,7 @@ function RecentPrintModal({
                           </small>
                         </CCol>
                         <CCol xs={2} className="text-center">
-                          <small> {Number(item.prod_rate).toFixed(2)}</small>
+                          <small className="font-size-14 text-black"> {Number(item.prod_rate).toFixed(2)}</small>
                         </CCol>
                       </React.Fragment>
                     );
@@ -256,47 +256,51 @@ function RecentPrintModal({
 
 
               <CRow className="text-start print-model-border">
-                <CCol xs={3} className="text-start">
-                  <small> {cartSumUp && cartSumUp.items} Item(s)</small>
+                <CCol xs={1} className="text-start">
+                  <small className="font-size-14 text-black"> {cartSumUp && cartSumUp.items}</small>
                 </CCol>
+                <CCol xs={2} className="text-start">
+                  <small className="font-size-14 text-black">  Item(s)</small>
+                </CCol>
+
                 <CCol xs={7} className="text-end ">
-                  <small>Sub Total</small>
+                  <small className="font-size-14 text-black">Sub Total</small>
                 </CCol>
                 <CCol xs={2} className="text-end">
-                  <small> {Number(cartSumUp && cartSumUp.subTotal).toFixed(2)}</small><br />
+                  <small className="font-size-14 text-black"> {Number(cartSumUp && cartSumUp.subTotal).toFixed(2)}</small><br />
 
                 </CCol>
 
               </CRow>
               <CRow>
                 <CCol xs={10} className="text-end ">
-                  <small>    {cartSumUp && cartSumUp.taxsplitGST[0].taxPercent}%{" "}
+                  <small className="font-size-14 text-black">    {cartSumUp && cartSumUp.taxsplitGST[0].taxPercent}%{" "}
                     {cartSumUp && cartSumUp.taxsplitGST[0].taxType} on GST</small>
                 </CCol>
                 <CCol xs={2} className="text-end print-model-border">
-                  <small>   {Number(cartSumUp && cartSumUp.taxsplitGST[0].tax).toFixed(2)}</small>
+                  <small className="font-size-14 text-black">   {Number(cartSumUp && cartSumUp.taxsplitGST[0].tax).toFixed(2)}</small>
                 </CCol>
               </CRow>
               <CRow>
                 <CCol xs={10} className="text-end ">
-                  <small>  {cartSumUp && cartSumUp.taxsplitGST[1].taxPercent}%{" "}
+                  <small className="font-size-14 text-black">  {cartSumUp && cartSumUp.taxsplitGST[1].taxPercent}%{" "}
                     {cartSumUp && cartSumUp.taxsplitGST[1].taxType} on GST</small>
                 </CCol>
                 <CCol xs={2} className="text-end ">
-                  <small>{Number(cartSumUp && cartSumUp.taxsplitGST[1].tax).toFixed(2)}</small>
+                  <small className="font-size-14 text-black">{Number(cartSumUp && cartSumUp.taxsplitGST[1].tax).toFixed(2)}</small>
 
 
                 </CCol>
               </CRow>
               <CRow>
-                <CCol xs={10} className="text-end pt-2">
-                  <small>   Bill Total</small>
+                <CCol xs={10} className="text-end">
+                  <small className="font-size-14 text-black">   Bill Total</small>
                 </CCol>
                 <CCol xs={2} className="text-end print-model-border">
-                  <small>  {Number(cartSumUp && cartSumUp.grandTotal).toFixed(2)}</small>
+                  <small className="font-size-14 text-black">  {Number(cartSumUp && cartSumUp.grandTotal).toFixed(2)}</small>
                 </CCol>
 
-<span className="print-model-border"></span>
+                <span className="print-model-border"></span>
               </CRow>
 
               {cartSumUp && cartSumUp.note && (
@@ -341,34 +345,34 @@ function RecentPrintModal({
                   ? cartSumUp.payDetails.map((p) => (
                     <React.Fragment key={p.payMode}>
                       <CCol xs={10} className="text-end">
-                       <small> Paid By{" "}</small>
+                        <small className="font-size-14 text-black"> Paid By{" "}</small>
                         <small className="text-start">
                           {p.payMode == "1" ? (
-                        <> Cash</>
+                            <> Cash</>
                           ) : p.payMode == "4" ? (
-                        <> PayTm</>
+                            <> PayTm</>
                           ) : p.payMode == "6" ? (
-                          <>Wallet</>
+                            <>Wallet</>
                           ) : p.payMode == "24" ? (
-                           <>Rzp</>
+                            <>Rzp</>
                           ) : p.payMode == "25" ? (
                             <> HDFC CC*
-                            <br /></>
-                             
+                              <br /></>
+
                           ) : p.payMode == "26" ? (
-                           <> HDFC QR</>
+                            <> HDFC QR</>
                           ) : null}
                         </small>
                       </CCol>
                       <CCol xs={2} className="text-center">
-                       <small> {Number(p.payAmount).toFixed(2)}</small>
+                        <small className="font-size-14 text-black"> {Number(p.payAmount).toFixed(2)}</small>
                       </CCol>
                     </React.Fragment>
                   ))
                   : null}
               </CRow>
 
-              {cartSumUp && cartSumUp.deliveryMode && (
+              {/* {cartSumUp && cartSumUp.deliveryMode && (
                 <CRow>
                   {deliveryMode == "3" && (
                     <p
@@ -412,63 +416,53 @@ function RecentPrintModal({
                     ""
                   )}
                 </CRow>
-              )}
+              )} */}
 
 
 
 
               {deliveryMode == "4" ? (
-                <CRow className="print-model-border">
-                  <CCol xs="auto">
-                    <span
-                      className="text-start"
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: "1em",
-                        padding: "2px",
-                      }}
-                    >
-                      Home Delivery : {cartSumUp && cartSumUp.deliveryDate}{" "}
-                      {cartSumUp && cartSumUp.deliveryTime}
-                    </span>
-                  </CCol>
-                  <CCol xs="auto" className="text-start ">
-                    <span
-                      style={{
-                        fontWeight: "bold",
-                        fontSize: "1em",
-                        padding: "2px",
-                      }}
-                    >
+                <div >
+                  <div className="text-start ">
+                    <b className="font-size-14 font-w-5">
+                      Home Delivery : {cartSumUp && cartSumUp.deliveryDate}{" "}  {cartSumUp && cartSumUp.deliveryTime}
+                    </b>
+                  </div>
+
+                  <div className="text-start ">
+                    <span className="font-size-14 font-w-5" >
                       Receiver
                     </span>{" "}
-                    : {cartSumUp && cartSumUp.receiverName}{" "}
-                    {cartSumUp && cartSumUp.receiverMobileNo}
-                  </CCol>
-                  <CCol xs="auto" className="text-start ">
+                    :
+                    {" "}<small className="font-size-14">{cartSumUp && cartSumUp.receiverName}{" "} {cartSumUp && cartSumUp.receiverMobileNo}</small> <br />
+                  </div>
+                  <div className="text-start ">
                     <font className="font-size-14 font-w-6"></font>
                     {" "}
-                    : {cartSumUp && cartSumUp.deliveryAddress}
-                  </CCol>
+                    <span className="font-size-14 font-w-5" >
+                      At Location
+                    </span>{" "}
+                    : <small className="font-size-14">{cartSumUp && cartSumUp.deliveryAddress}</small>
+                  </div>
 
-                </CRow>
+                </div>
               ) : (
                 ""
               )}
 
-              <CRow>
-                <CCol xs={10} className="text-start ">
+              <CRow className="print-model-border">
+                <div className="text-start p-0">
                   {deliveryMode == "4" ? (
-                    <small>
+                    <small className="font-size-14 text-black">
                       Agent -{cartSumUp && cartSumUp.salesUser.user_name}
                     </small>
                   ) : (
-                    <small>
-                      Sales Person -{" "}
+                    <small className="font-size-14 text-black">
+                      Sales Person - {" "}
                       {cartSumUp && cartSumUp.salesUser.user_name}
                     </small>
                   )}
-                </CCol>
+                </div>
               </CRow>
             </CContainer>
           </CTabContent>
@@ -501,7 +495,7 @@ function RecentPrintModal({
 
               <CCol className="text-end">
                 <CButton
-                className="btn btn-sm font-size-2"
+                  className="btn btn-sm font-size-2"
                   color="secondary"
                   onClick={() => {
                     setPrintBooking(!true);

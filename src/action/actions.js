@@ -48,8 +48,6 @@ const addCartItem = (cartItemsArray, cartItem) => {
       (item) =>
         item.prod_id === cartItem.prod_id && Array.isArray(item.customized)
     );
-  // console.log("existingCartItem: ", existingCartItem);
-
   if (existingCartItem) {
     return cartItemsArray.map((item) =>
       item.prod_id === cartItem.prod_id
@@ -62,7 +60,6 @@ const addCartItem = (cartItemsArray, cartItem) => {
 
 const setQuantity = (cartItemsArray, productId, quantity) => {
   if (quantity == 0 || quantity == "") {
-    // If quantity is 0 or empty, remove the product from the cart
     const filteredItems = cartItemsArray.filter(
       (item) => item.prod_id !== productId
     );
@@ -243,6 +240,7 @@ const setUpdateCustomize = (cartItemsArray, productId, customjsonData) => {
   );
   return updatedCartItems;
 };
+
 
 const setClearCustomization = (cartItemsArray, productId) => {
   const updatedCartItems = cartItemsArray.map((item) =>
