@@ -197,7 +197,6 @@ const PayBillsModels = ({
   };
 
 
-  console.log('prode cat topping', cartItems)
 
   let deliveryId;
   if (selectedDelivery == "Counter Sale") {
@@ -398,90 +397,107 @@ const PayBillsModels = ({
 
               <CRow className="pt-2">
                 {cartItems.map((item) => (
-                  <>
-                    <CCol sm={7} xs={7} className="kot-border-b">
+                  !item.associated_prod_urno ? (
+                    <>
+                      <CCol sm={7} xs={7} className="kot-border-b">
 
-                      {item.customized && item.customized.photo_path && (
-                        <img
-                          src={URL.createObjectURL(item.customized.photo_path[0])}
-                          alt="Customized"
-                          style={{ maxWidth: "50px", float: "left", marginRight: "10px" }}
-                        />
-                      )}
-
-                      {item.prod_Customized_status == 1 ? (
-                        <>
-                          <font size="3" className="font-size-14 text-uppercase">
-                            {item.customized.flavor_name &&
-                              item.customized.shape_name &&
-                              item.customized.choice_name &&
-                              item.customized.size_name
-                              ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
-                              : item.prod_name}
-                          </font>{" "}
-                          <br />
-                          <small className="pull-left font-size-3">
-                            <strong>Message on Cake:</strong>{" "}
-                            <span>{item.customized.message_on_cake}</span>{" "}
+                        {item.customized && item.customized.photo_path && (
+                          <img
+                            src={URL.createObjectURL(item.customized.photo_path[0])}
+                            alt="Customized"
+                            style={{ maxWidth: "50px", float: "left", marginRight: "10px" }}
+                          />
+                        )}
+                        {item.prod_Customized_status === 1 ? (
+                          <>
+                            <font size="3" className="font-size-14 text-uppercase">
+                              {item.customized.flavor_name &&
+                                item.customized.shape_name &&
+                                item.customized.choice_name &&
+                                item.customized.size_name
+                                ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
+                                : item.prod_name}
+                            </font>{" "}
                             <br />
-                            <strong>Message on Card:</strong>{" "}
-                            <span>{item.customized.message_on_cake}</span>
-                          </small>
-                        </>
-                      ) : (
-                        <>
-                          <font size="3" className="font-size-14">{item.prod_name}</font><br />
+                            <small className="pull-left font-size-3">
+                              <strong>Message on Cake:</strong>{" "}
+                              <span>{item.customized.message_on_cake}</span>{" "}
+                              <br />
+                              <strong>Message on Card:</strong>{" "}
+                              <span>{item.customized.message_on_cake}</span>
+                            </small>
+                          </>
+                        ) : (
+                          <>
+                            <font size="3" className="font-size-14">{item.prod_name}
+                            </font><br />
+                            <span>
+                              {item.prod_Toppings_status === 1 && (
+                                <>
+                                  {
+                                    item.toppings &&
+                                    item.toppings.map((toppingUrno, index) => {
+                                      const topping = cartItems.find((t) => t.urno === toppingUrno);
+                                      return (
+                                        <font size="1" color="gray" key={index}>
+                                          {topping ? (
+                                            <font size="1" color="gray">
+                                              {index > 0 && " + "}{topping.prod_name.trim()}
+                                            </font>
+                                          ) : null}
+                                        </font>
+                                      );
+                                    })
+                                  }
 
-                        </>
-                      )}
-
-
-
-
-
-
-
-                      <small>
-                        {item.is_parcel === 1 && (
-                          <font size="1" className="text-primary pull-right">
-                            Parcel &nbsp;
-                          </font>
+                                </>
+                              )}
+                            </span>
+                          </>
                         )}
 
-                        {item.is_complementary === 1 && (
-                          <font size="1" className="text-primary pull-right">
-                            Complementary &nbsp;
-                          </font>
-                        )}
-                      </small>
+                        <small>
+                          {item.is_parcel === 1 && (
+                            <font size="1" className="text-primary pull right">
+                              Parcel &nbsp;
+                            </font>
+                          )}
 
-                      <br />
-                      <small
-                        className="text-danger"
-                        style={{ fontSize: "10px" }}
-                      >
-                        {item.is_note === 1 && (
-                          <>Note : {item.is_prod_note}, &nbsp;</>
-                        )}
+                          {item.is_complementary === 1 && (
+                            <font size="1" className="text-primary pull right">
+                              Complementary &nbsp;
+                            </font>
+                          )}
+                        </small>
 
-                        {item.is_complementary === 1 && (
-                          <>{item.is_complementary_note}, &nbsp;</>
-                        )}
-                      </small>
+                        <br />
+                        <small
+                          className="text-danger"
+                          style={{ fontSize: "10px" }}
+                        >
+                          {item.is_note === 1 && (
+                            <>Note : {item.is_prod_note}, &nbsp;</>
+                          )}
 
-                    </CCol>
+                          {item.is_complementary === 1 && (
+                            <>{item.is_complementary_note}, &nbsp;</>
+                          )}
+                        </small>
+                      </CCol>
 
-                    <CCol sm={1} xs={1} className="text-center kot-border-b">
-                      <font className="font-size-14">{item.prod_qty}</font>
-                    </CCol>
-                    <CCol sm={2} xs={2} className="text-center kot-border-b">
-                      <font className="font-size-14"><i className="fa fa-inr"></i> {item.prod_rate.toFixed(2)}</font>
-                    </CCol>
-                    <CCol sm={2} xs={2} className="text-right kot-border-b">
-                      <font className="font-size-14"> <i className="fa fa-inr"></i> {item.prod_rate.toFixed(2)}</font>
-                    </CCol>
-                  </>
+                      <CCol sm={1} xs={1} className="text-center kot-border-b">
+                        <font className="font-size-14">{item.prod_qty}</font>
+                      </CCol>
+                      <CCol sm={2} xs={2} className="text-center kot-border-b">
+                        <font className="font-size-14"><i className="fa fa-inr"></i> {item.prod_rate.toFixed(2)}</font>
+                      </CCol>
+                      <CCol sm={2} xs={2} className="text-right kot-border-b">
+                        <font className="font-size-14"> <i className="fa fa-inr"></i> {item.prod_rate.toFixed(2)}</font>
+                      </CCol>
+                    </>
+                  ) : null // If associated_prod_urno is present, return null (don't render the item)
                 ))}
+
               </CRow>
 
 

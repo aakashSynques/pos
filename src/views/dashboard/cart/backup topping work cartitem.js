@@ -14,23 +14,22 @@ import {
 
 import { CCollapse, CButton, CFormTextarea } from "@coreui/react";
 import CustmizeModel from "./CustmizeModel";
+import ToppingsModal from "./ToppingsModal";
 
 const CartItem = ({
   item,
   cartItems,
   getTotalAmountForItem,
-  openToppingModel,
-  totalToppingPrice
 }) => {
   const dispatch = useDispatch();
   const [quantity, setQuantity] = useState(+item.prod_qty);
   const [visibleNote, setVisibleNote] = useState(item.is_note);
   const [visibleComplentary, setVisibleComplentary] = useState(false);
-
   const [productNote, setProductNote] = useState(item.is_prod_note);
   const [complentaryNote, setComplentaryNote] = useState("");
   const [parcelBtn, setParcelBtn] = useState(item.is_parcel === 1);
   const [customizeModelVisible, setCustomizeModelVisible] = useState(false);
+  const [openToppingModel, setOpenToppingModel] = useState(false);
   // const [originalProdRate, setOriginalProdRate] = useState(item.prod_rate);
   const [originalProdRate, setOriginalProdRate] = useState(parseFloat(+item.prod_rate));
   const [isEditing, setIsEditing] = useState(false);
@@ -40,23 +39,6 @@ const CartItem = ({
     dispatch(setProductRateInCart(cartItems, item.prod_id, newRate));
     setIsEditing(false);
   };
-
-  let totalToppingPrice1 = 0;
-  if (item.toppings) {
-    totalToppingPrice1 = item.toppings.reduce((total, toppingUrno) => {
-      const topping = cartItems.find((t) => t.urno === toppingUrno);
-      if (topping) {
-        total += parseFloat(topping.prod_rate);
-      }
-      return total;
-    }, 0);
-  }
-  
-    // Add the total topping price to the item's prod_rate
-  const itemTotalPrice1 = parseFloat(item.prod_rate) + totalToppingPrice1;
-  console.log('total topping', itemTotalPrice1)
-
-
 
   useEffect(() => {
     setProductNote(item.is_prod_note);
@@ -131,6 +113,7 @@ const CartItem = ({
   }
 
 
+  console.log('selected cart itme', cartItems)
   return (
     <>
       <tr key={item.prod_id}>
@@ -209,9 +192,6 @@ const CartItem = ({
             >
               <u className="text-danger">C</u>omplementary
             </CButton>
-
-
-
             {/* Toppings model  */}
             {item.prod_Toppings_status == 1 ? (
               <CButton
@@ -220,14 +200,12 @@ const CartItem = ({
                   borderColor: item.toppings.length > 0 ? "#4cae4c" : "",
                   color: item.toppings.length > 0 ? "white" : "",
                 }}
-                onClick={() => openToppingModel(item.urno, item.category_heads)}
+                // onClick={() => openToppingModel(item.urno, item.category_heads)}
+                onClick={() => setOpenToppingModel(!openToppingModel)}
               >
                 <u className="text-danger">T</u>oppings
               </CButton>
             ) : null}
-
-
-
               
             {item.prod_Customized_status == 1 ? (
               <CButton
@@ -267,6 +245,8 @@ const CartItem = ({
           </CButton>
         </td>
 
+
+
         <td className="pt-3">
           {item.prod_Customized_status === 1 ? (
             isEditing ? (
@@ -283,21 +263,13 @@ const CartItem = ({
               />
             ) : (
               <span className="rate-font" onClick={() => setIsEditing(true)}>
-                <i className="fa fa-times text-danger"></i> <b className="rate-font">
-                   {item.prod_rate.toFixed(2)}
-                   
-                   </b>
+                <i className="fa fa-times text-danger"></i> <b className="rate-font"> {item.prod_rate.toFixed(2)}</b>
               </span>
             )
           ) : (
-            <>
-            <b className="rate-font">
-              {/* {item.prod_rate.toFixed(2)} */}
-            {itemTotalPrice1.toFixed(2)}
-            </b>
-            </>
+            <b className="rate-font">{item.prod_rate.toFixed(2)}</b>
           )}
-        
+
 
           {/* item remove button */}
           <span
@@ -350,11 +322,21 @@ const CartItem = ({
         item={item}
         setVisibleNote={setVisibleNote}
       />
+      <ToppingsModal 
+        openToppingModel={openToppingModel}
+        onClose={() => setOpenToppingModel(false)}
+      
+      />
+
+
     </>
   );
 };
 
 export default CartItem;
+
+
+
 
 
 

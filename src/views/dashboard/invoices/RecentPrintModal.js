@@ -47,6 +47,9 @@ function RecentPrintModal({
 
   const productsInCart =
     invoiceDetails && invoiceDetails[invoice_no].productsInCart;
+  console.log('invice', productsInCart)
+
+
   const selectedCustomerJson =
     invoiceDetails && invoiceDetails[invoice_no].selectedCustomerJson;
 
@@ -182,11 +185,10 @@ function RecentPrintModal({
                   <small className="font-size-14 text-black"> Rate</small>
                 </CCol>
               </CRow>
-
               <CRow className="text-start print-model-border">
                 {productsInCart &&
-                  productsInCart.map((item, index) => {
-                    return (
+                  productsInCart.map((item, index) => (
+                    !item.associated_prod_urno ? (
                       <React.Fragment key={index}>
                         <CCol xs={1}>
                           <small className="font-size-14 text-black">{item.prod_qty}</small>
@@ -212,7 +214,12 @@ function RecentPrintModal({
                               </small>
                             </>
                           ) : (
-                            <small className="font-size-14 text-black">{item.prod_name}</small>
+                            <>
+                              <small className="font-size-14 text-black">{item.prod_name}</small>
+
+                            </>
+
+
                           )}
                           <br />
 
@@ -240,19 +247,23 @@ function RecentPrintModal({
                             <br />
                             {item.is_complementary === 1 && (
                               <>
-                                <strong>Complementry Note:</strong>{" "}
+                                <strong>Complementary Note:</strong>{" "}
                                 <span>{item.is_complementary_note}</span>
                               </>
                             )}
                           </small>
                         </CCol>
                         <CCol xs={2} className="text-center">
-                          <small className="font-size-14 text-black"> {Number(item.prod_rate).toFixed(2)}</small>
+                          {/* prod rate */}
+                          <small className="font-size-14 text-black">
+                            {Number(item.prod_rate).toFixed(2)}
+                          </small>
                         </CCol>
                       </React.Fragment>
-                    );
-                  })}
+                    ) : null // If associated_prod_urno is present, return null (don't render the item)
+                  ))}
               </CRow>
+
 
 
               <CRow className="text-start print-model-border">

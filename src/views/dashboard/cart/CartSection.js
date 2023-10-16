@@ -737,11 +737,9 @@ const CartSection = () => {
   const [bookingModels, setBookingModels] = useState(false);
   const [selectedUrno, setSelectedUrno] = useState();
   const [categoryHead, setCategoryHead] = useState("");
-  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isCartEmpty, setCartEmpty] = useState(true);
   const [visiblePicKUp, setVisiblePickUp] = useState(false);
-
   useEffect(() => {
     setCartEmpty(cartItems.length === 0);
   }, [cartItems]);
@@ -882,9 +880,7 @@ const CartSection = () => {
     );
 
     displayToppings = displayToppings.filter(Boolean);
-
     setSelectedToppings([...displayToppings]);
-
     setToppingModel(true);
   };
 
@@ -989,29 +985,18 @@ const CartSection = () => {
     });
     dispatch(setToppings(cartItems, selectedUrno, cartItemData, selectedOutletId));
     setToppingModel(false); // Close the toppings model after submitting
-    setSelectedToppings([]);
+    // setSelectedToppings([]);
   };
 
   // Function to calculate the total price of the selected toppings
+  const [totalToppingPrice, setTotatalToppingPrice] = useState();
   useEffect(() => {
-    const totalToppingPrice = cartItems.filter((topp) => topp.associated_prod_urno === 0).reduce((toppingTotal, productToppings) => {
-      const productToppingTotal = productToppings.toppings.reduce(
-        (acc, topping) => {
-          const toppingInfo = cartItems.find(
-            (t) => t.urno === topping
-          );
-          console.log('toppingInfo', toppingInfo)
-          return acc + (toppingInfo ? toppingInfo.prod_rate : 0);
-        },
-        0
-      );
-      console.log('prod totping', productToppingTotal)
-      return toppingTotal + productToppingTotal;
-    }, 0);
-    setSelectedToppingsTotalPrice(totalToppingPrice);
-    console.log("selected toping price", totalToppingPrice)
+    const selectedToppingsProdRates = selectedToppings.map(topping => topping.prod_rate);
+    const totalToppingsPrice = selectedToppingsProdRates.reduce((total, rate) => total + rate, 0);    
+    setTotatalToppingPrice(totalToppingsPrice)
   }, [selectedToppings, toppingsData]);
 
+  
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.altKey && event.key === "c") {
@@ -1026,6 +1011,7 @@ const CartSection = () => {
 
   }, [cartItems, selectedUrno]); console.log('cartItems', cartItems)
 
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.altKey && event.key === "Enter") {
@@ -1037,6 +1023,8 @@ const CartSection = () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedToppings]);
+
+  
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -1085,6 +1073,7 @@ const CartSection = () => {
                       selectedToppings={selectedToppings} // Pass the selectedToppings as a prop
                       submittedToppings={submittedToppings} // Pass the submittedToppings as a prop
                       toppingsData={toppingsData} // Pass the toppingsData as a prop
+                      totalToppingPrice = {totalToppingPrice}
                     />
                   )
               )}

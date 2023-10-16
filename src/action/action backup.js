@@ -58,9 +58,6 @@ const addCartItem = (cartItemsArray, cartItem) => {
   return [...cartItemsArray, { ...cartItem, prod_qty: 1 }];
 };
 
-
-
-
 const setQuantity = (cartItemsArray, productId, quantity) => {
   if (quantity == 0 || quantity == "") {
     const filteredItems = cartItemsArray.filter(
@@ -68,25 +65,19 @@ const setQuantity = (cartItemsArray, productId, quantity) => {
     );
     return filteredItems;
   } else {
-
+    // Update the quantity and prod_rate if it's a regular quantity update
     const updatedItems = cartItemsArray.map((item) =>
       item.prod_id === productId
         ? {
-          ...item,
-          prod_qty: quantity,
-          prod_rate: item.prod_rate * (quantity / item.prod_qty),
-        }
+            ...item,
+            prod_qty: quantity,
+            prod_rate: item.prod_rate * (quantity / item.prod_qty),
+          }
         : item
     );
-
-    console.log('updatedItems', updatedItems)
     return updatedItems;
   }
 };
-
-
-
-
 
 
 const removeCartItem = (cartItemsArray, productUrno) => {
@@ -107,17 +98,17 @@ const setIsNote = (cartItemsArray, productId, visibleNote) => {
   const updatedItem = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_note: visibleNote ? 0 : 1,
-      }
+          ...item,
+          is_note: visibleNote ? 0 : 1,
+        }
       : item
   );
   const updatedItems = updatedItem.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_prod_note: item.is_note === 0 ? "" : item.is_prod_note,
-      }
+          ...item,
+          is_prod_note: item.is_note === 0 ? "" : item.is_prod_note,
+        }
       : item
   );
   return updatedItems;
@@ -127,10 +118,10 @@ const setProdNote = (cartItemsArray, productId, productNote) => {
   const updatedItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_note: 1,
-        is_prod_note: productNote,
-      }
+          ...item,
+          is_note: 1,
+          is_prod_note: productNote,
+        }
       : item
   );
   return updatedItems;
@@ -140,9 +131,9 @@ const setCompNote = (cartItemsArray, productId, complentaryNote) => {
   const updatedItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_complementary_note: complentaryNote,
-      }
+          ...item,
+          is_complementary_note: complentaryNote,
+        }
       : item
   );
   return updatedItems;
@@ -152,18 +143,18 @@ const setIsCompNote = (cartItemsArray, productId, visibleComplentary) => {
   const updatedItem = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_complementary: visibleComplentary ? 0 : 1,
-      }
+          ...item,
+          is_complementary: visibleComplentary ? 0 : 1,
+        }
       : item
   );
   const updatedItems = updatedItem.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_complementary_note:
-          item.is_complementary === 0 ? "" : item.is_complementary_note,
-      }
+          ...item,
+          is_complementary_note:
+            item.is_complementary === 0 ? "" : item.is_complementary_note,
+        }
       : item
   );
   return updatedItems;
@@ -173,9 +164,9 @@ const setParcel = (cartItemsArray, productId, parcelBtn) => {
   const updatedItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        is_parcel: parcelBtn,
-      }
+          ...item,
+          is_parcel: parcelBtn,
+        }
       : item
   );
   return updatedItems;
@@ -188,9 +179,9 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
   let newUpdatedCart = updatedCart.map((item) =>
     item.urno == productUrno
       ? {
-        ...item,
-        toppings: [],
-      }
+          ...item,
+          toppings: [],
+        }
       : item
   );
   let cartWithNewToppings = newUpdatedCart.map((cartItem) => {
@@ -198,8 +189,6 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
       ...cartItem,
     };
   });
-
-
   let toppingsWithInfo = selectedToppings.map(
     (toppingObj) =>
       toppingObj.prod_rate != 0 && {
@@ -212,11 +201,11 @@ const setToppingOnProd = (cartItemsArray, productUrno, selectedToppings) => {
   cartWithNewToppings = cartWithNewToppings.map((item) =>
     item.urno === productUrno
       ? {
-        ...item,
-        toppings: item.toppings.concat(
-          selectedToppings.map((topping) => topping.urno)
-        ),
-      }
+          ...item,
+          toppings: item.toppings.concat(
+            selectedToppings.map((topping) => topping.urno)
+          ),
+        }
       : item
   );
   return cartWithNewToppings;
@@ -230,9 +219,9 @@ const clearProdToppings = (cartItemsArray, productUrno) => {
   let cartWithoutToppings = updatedCart.map((item) =>
     item.urno === productUrno
       ? {
-        ...item,
-        toppings: [],
-      }
+          ...item,
+          toppings: [],
+        }
       : item
   );
   return cartWithoutToppings;
@@ -242,9 +231,9 @@ const setUpdateCustomize = (cartItemsArray, productId, customjsonData) => {
   const updatedCartItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        customized: customjsonData,
-      }
+          ...item,
+          customized: customjsonData,
+        }
       : item
   );
   return updatedCartItems;
@@ -255,9 +244,9 @@ const setClearCustomization = (cartItemsArray, productId) => {
   const updatedCartItems = cartItemsArray.map((item) =>
     item.prod_id === productId
       ? {
-        ...item,
-        customized: [],
-      }
+          ...item,
+          customized: [],
+        }
       : item
   );
 
@@ -459,20 +448,20 @@ export const updateTotalCash = (totalCash) => ({
 });
 
 export const updatePayModeTotalsAction = (payModeTotals) => ({
-  type: UPDATE_PAY_MODE_TOTALS,
-  payload: payModeTotals,
+    type: UPDATE_PAY_MODE_TOTALS,
+    payload: payModeTotals,
 });
 
 export const getSaveSaleData = (getSaveSale) => ({
-  type: GET_SAVE_SALE_DATA,
+  type : GET_SAVE_SALE_DATA,
   payload: getSaveSale,
 });
 
 
 
-export const setSelectedTableValue = (tableValue) => ({
-  type: SET_SELECTED_TABLE_VALUE,
-  payload: tableValue,
+export const setSelectedTableValue = (tableValue) => ({ 
+    type: SET_SELECTED_TABLE_VALUE,
+    payload: tableValue,
 });
 
 export const submitDeliveryData = (homedeliverydata) => ({
