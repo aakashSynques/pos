@@ -51,11 +51,8 @@ const CartItem = ({
       return total;
     }, 0);
   }
-  
-    // Add the total topping price to the item's prod_rate
   const itemTotalPrice1 = parseFloat(item.prod_rate) + totalToppingPrice1;
-  console.log('total topping', itemTotalPrice1)
-
+  console.log('totalToppingPrice1', totalToppingPrice1)
 
 
   useEffect(() => {
@@ -81,6 +78,7 @@ const CartItem = ({
       setCartQtyHandler();
     }
   };
+
   const setProdNoteOnBlur = () => {
     dispatch(setProductNoteInCart(cartItems, item.prod_id, productNote));
   };
@@ -120,7 +118,6 @@ const CartItem = ({
     if (visibleNote && inputReference.current) {
       inputReference.current.focus();
     }
-    // inputReference.current.focus();
   }, []);
 
   let customizeProd_text;
@@ -133,215 +130,209 @@ const CartItem = ({
 
   return (
     <>
-      <tr key={item.prod_id}>
-        <td style={{ paddingBottom: "13px!important" }} className="pb-2">
-          {item.customized && item.customized.photo_path && (
-            <img
-              src={URL.createObjectURL(item.customized.photo_path[0])}
-              alt="Customized"
-              style={{ maxWidth: "100px", float: "left", marginRight: "10px" }}
-            />
-          )}
-          <strong style={{ fontSize: "14px", fontWeight: "600" }} className="mb-3">{customizeProd_text}</strong> <br />
-          <small className="font-size-3">
-            {item.category_name} | @
-            {originalProdRate}
 
-            <br />
-            {/* selected topping list */}
-            {item.toppings &&
-              item.toppings.map((toppingUrno) => {
-                const topping = cartItems.find((t) => t.urno === toppingUrno);
-                return (
-                  <div key={toppingUrno}>
-                    {topping ? (
-                      <span>
-                        {topping.prod_name} | @ <i className="fa fa-inr"></i>
-                        {topping.prod_rate}
-                      </span>
-                    ) : null}
-                  </div>
-                );
-              })}
-
-
-            {item.customized && (
-              <>
-                {item.customized.message_on_cake && (
-                  <>
-                    <span style={{ fontWeight: "bold" }}>
-                      Message on Cake:{" "}
-                    </span>
-                    <span>{item.customized.message_on_cake}</span>
-                    <br />
-                  </>
-                )}
-                {item.customized.message_on_card && (
-                  <>
-                    <span style={{ fontWeight: "bold" }}>Message on Card:</span>
-                    <span> {item.customized.message_on_card}</span>
-                  </>
-                )}
-              </>
-            )}
-
-          </small>
-
-          <div className="toppings-btn">
-            <CButton
-              style={{
-                backgroundColor: item.is_note === 1 ? "#26B99A" : "",
-                borderColor: item.is_note === 1 ? "#4cae4c" : "",
-                color: item.is_note === 1 ? "white" : "",
-              }}
-              onClick={() => noteClickHandler(cartItems, item.prod_id)}
-            >
-              <u className="text-danger">N</u>ote
-            </CButton>
-
-            <CButton
-              style={{
-                backgroundColor: item.is_complementary === 1 ? "#26B99A" : "",
-                borderColor: item.is_complementary === 1 ? "#4cae4c" : "",
-                color: item.is_complementary === 1 ? "white" : "",
-              }}
-              onClick={() => complentaryClickHandler(cartItems, item.prod_id)}
-            >
-              <u className="text-danger">C</u>omplementary
-            </CButton>
-
-
-
-            {/* Toppings model  */}
-            {item.prod_Toppings_status == 1 ? (
-              <CButton
-                style={{
-                  backgroundColor: item.toppings.length > 0 ? "#26B99A" : "",
-                  borderColor: item.toppings.length > 0 ? "#4cae4c" : "",
-                  color: item.toppings.length > 0 ? "white" : "",
-                }}
-                onClick={() => openToppingModel(item.urno, item.category_heads)}
-              >
-                <u className="text-danger">T</u>oppings
-              </CButton>
-            ) : null}
-
-
-
-              
-            {item.prod_Customized_status == 1 ? (
-              <CButton
-                style={{
-                  backgroundColor: Array.isArray(item.customized)
-                    ? ""
-                    : "#26B99A",
-                  borderColor: Array.isArray(item.customized) ? "" : "#4cae4c",
-                  color: Array.isArray(item.customized) ? "" : "white",
-                }}
-                onClick={() => setCustomizeModelVisible(!customizeModelVisible)}
-              >
-                <u className="text-danger">C</u>ustomize
-              </CButton>
-            ) : null}
-
-          </div>
-        </td>
-
-        <td className="incree-decreement">
-          <input
-            type="text"
-            className="w-25 text"
-            value={quantity}
-            onBlur={setCartQtyHandler}
-            onChange={(e) => setQuantity(+e.target.value)}
-            onKeyDown={handleQuantityKeyDown} // Handle Enter key press
+      <div className="col-sm-7 pt-1 px-1" style={{ lineHeight: "15px" }}>
+        {item.customized && item.customized.photo_path && (
+          <img
+            src={URL.createObjectURL(item.customized.photo_path[0])}
+            alt="Customized"
+            style={{ maxWidth: "100px", float: "left", marginRight: "10px" }}
           />
-          <br />
-          <CButton
-            className={
-              parcelBtn === 1 ? "btn btn-success text-white" : "btn btn-light"
-            }
-            onClick={setParcelBtnBlur}
-          >
-            Parcel
-          </CButton>
-        </td>
+        )}
+        <font className="mb-3 font-size-14 font-w-5">{customizeProd_text}</font> <br />
+        <small className="font-size-3">
+          {item.category_name} | @
+          {originalProdRate}
 
-        <td className="pt-3">
-          {item.prod_Customized_status === 1 ? (
-            isEditing ? (
-              <input
-                type="number"
-                value={originalProdRate}
-                onChange={(e) => setOriginalProdRate(parseFloat(e.target.value))}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleProductRateChange(parseFloat(e.target.value));
-                  }
-                }}
-                onBlur={() => setIsEditing(false)}
-              />
-            ) : (
-              <span className="rate-font" onClick={() => setIsEditing(true)}>
-                <i className="fa fa-times text-danger"></i> <b className="rate-font">
-                   {item.prod_rate.toFixed(2)}
-                   
-                   </b>
-              </span>
-            )
-          ) : (
+          <br />
+
+          {item.toppings &&
+            item.toppings.map((toppingUrno) => {
+              const topping = cartItems.find((t) => t.urno === toppingUrno);
+              return (
+                <div key={toppingUrno}>
+                  {topping ? (
+                    <span>
+                      {topping.prod_name} | @ <i className="fa fa-inr"></i>
+                      {topping.prod_rate}
+                    </span>
+                  ) : null}
+                </div>
+              );
+            })}
+
+
+          {item.customized && (
             <>
-            <b className="rate-font">
-              {/* {item.prod_rate.toFixed(2)} */}
-            {itemTotalPrice1.toFixed(2)}
-            </b>
+              {item.customized.message_on_cake && (
+                <>
+                  <span style={{ fontWeight: "bold" }}>
+                    Message on Cake:{" "}
+                  </span>
+                  <span>{item.customized.message_on_cake}</span>
+                  <br />
+                </>
+              )}
+              {item.customized.message_on_card && (
+                <>
+                  <span style={{ fontWeight: "bold" }}>Message on Card:</span>
+                  <span> {item.customized.message_on_card}</span>
+                </>
+              )}
             </>
           )}
-        
 
-          {/* item remove button */}
-          <span
-            className="btn btn-danger btn-remove"
-            onClick={() => dispatch(removeFromCart(cartItems, item.urno))}
+        </small>
+
+        <div className="toppings-btn">
+          <CButton
+            style={{
+              backgroundColor: item.is_note === 1 ? "#26B99A" : "",
+              borderColor: item.is_note === 1 ? "#4cae4c" : "",
+              color: item.is_note === 1 ? "white" : "",
+            }}
+            onClick={() => noteClickHandler(cartItems, item.prod_id)}
           >
-            <i className="fa fa-trash fa-xs"></i>
-          </span>
+            <u className="text-danger">N</u>ote
+          </CButton>
 
-        </td>
-      </tr>
+          <CButton
+            style={{
+              backgroundColor: item.is_complementary === 1 ? "#26B99A" : "",
+              borderColor: item.is_complementary === 1 ? "#4cae4c" : "",
+              color: item.is_complementary === 1 ? "white" : "",
+            }}
+            onClick={() => complentaryClickHandler(cartItems, item.prod_id)}
+          >
+            <u className="text-danger">C</u>omplementary
+          </CButton>
 
 
-      <tr>
-        <td colspan="3" style={{ border: "0px" }}>
-          <CCollapse visible={visibleNote}>
-            <CFormTextarea
-              placeholder="Product Note"
-              className="cart-note"
-              rows={1}
-              // value={productNote}
-              value={productNote}
-              onChange={(e) => {
-                setProductNote(e.target.value);
+
+
+          {item.prod_Toppings_status == 1 ? (
+            <CButton
+              style={{
+                backgroundColor: item.toppings.length > 0 ? "#26B99A" : "",
+                borderColor: item.toppings.length > 0 ? "#4cae4c" : "",
+                color: item.toppings.length > 0 ? "white" : "",
               }}
-              onBlur={setProdNoteOnBlur}
-              ref={inputReference}
-            ></CFormTextarea>
-          </CCollapse>
-          <CCollapse visible={visibleComplentary}>
-            <CFormTextarea
-              placeholder="Complementary Note"
-              className="cart-note"
-              rows={1}
-              value={complentaryNote}
-              onChange={(e) => {
-                setComplentaryNote(e.target.value);
+              onClick={() => openToppingModel(item.urno, item.category_heads)}
+            >
+              <u className="text-danger">T</u>oppings
+            </CButton>
+          ) : null}
+
+
+
+
+          {item.prod_Customized_status == 1 ? (
+            <CButton
+              style={{
+                backgroundColor: Array.isArray(item.customized)
+                  ? ""
+                  : "#26B99A",
+                borderColor: Array.isArray(item.customized) ? "" : "#4cae4c",
+                color: Array.isArray(item.customized) ? "" : "white",
               }}
-              onBlur={setCompNoteOnBlur}
-            // autoFocus
-            ></CFormTextarea>
-          </CCollapse>
-        </td>
-      </tr>
+              onClick={() => setCustomizeModelVisible(!customizeModelVisible)}
+            >
+              <u className="text-danger">C</u>ustomize
+            </CButton>
+          ) : null}
+
+        </div>
+      </div>
+
+      <div className="incree-decreement col-sm-2">
+        <input
+          type="text"
+          className="w-50 text font-size-2"
+          value={quantity}
+          onBlur={setCartQtyHandler}
+          onChange={(e) => setQuantity(+e.target.value)}
+          onKeyDown={handleQuantityKeyDown} // Handle Enter key press
+          style={{ height: "25px" }}
+        />
+        <br />
+        <CButton
+          className={
+            parcelBtn === 1 ? "btn btn-success text-white" : "btn btn-light"
+          }
+          onClick={setParcelBtnBlur}
+        >
+          Parcel
+        </CButton>
+      </div>
+
+      <div className="pt-3 col-sm-3 text-center">
+        {item.prod_Customized_status === 1 ? (
+          isEditing ? (
+            <input
+              type="number"
+              style={{height: "25px"}}
+              className="w-50 font-size-2"
+              value={originalProdRate}
+              onChange={(e) => setOriginalProdRate(parseFloat(e.target.value))}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleProductRateChange(parseFloat(e.target.value));
+                }
+              }}
+              onBlur={() => setIsEditing(false)}
+            />
+          ) : (
+            <span className="rate-font" onClick={() => setIsEditing(true)}>
+              <i className="fa fa-times text-danger"></i> <font className="rate-font font-size-14 font-w-6">
+                {item.prod_rate.toFixed(2)}
+
+              </font>
+            </span>
+          )
+        ) : (
+          <>
+            <font className="rate-font font-size-14 font-w-6">
+              {itemTotalPrice1.toFixed(2)}
+            </font>
+          </>
+        )}
+
+        <span
+          className="btn btn-danger btn-remove mt-1"
+          onClick={() => dispatch(removeFromCart(cartItems, item.urno))}
+        >
+          <i className="fa fa-trash fa-xs"></i>
+        </span>
+      </div>
+
+      <div className="col-sm-12 pt-1 px-1" colspan="3" style={{ border: "0px" }}>
+        <CCollapse visible={visibleNote}>
+          <CFormTextarea
+            placeholder="Product Note"
+            className="cart-note"
+            rows={1}
+            value={productNote}
+            onChange={(e) => {
+              setProductNote(e.target.value);
+            }}
+            onBlur={setProdNoteOnBlur}
+            ref={inputReference}
+          ></CFormTextarea>
+        </CCollapse>
+        <CCollapse visible={visibleComplentary}>
+          <CFormTextarea
+            placeholder="Complementary Note"
+            className="cart-note"
+            rows={1}
+            value={complentaryNote}
+            onChange={(e) => {
+              setComplentaryNote(e.target.value);
+            }}
+            onBlur={setCompNoteOnBlur}
+          // autoFocus
+          ></CFormTextarea>
+        </CCollapse>
+      </div>
 
       <CustmizeModel
         customizeModelVisible={customizeModelVisible}
@@ -350,6 +341,7 @@ const CartItem = ({
         item={item}
         setVisibleNote={setVisibleNote}
       />
+
     </>
   );
 };

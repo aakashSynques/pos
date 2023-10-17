@@ -85,8 +85,12 @@ a {
   background: linear-gradient(359deg, #f0f2f3, rgba(255, 255, 255, 0));
 }
 
-
-.modal-header {
+.PCrow{
+  border-bottom: 1px dashed #adadad;
+  padding: 5px 0px;
+}
+    
+    .modal-header {
   padding: 5px 17px;
 }
 
@@ -101,9 +105,8 @@ a {
   margin-right: 6px;
   height: 30px;
 }
-
-.input-dro-font {
-  font-size: 14px !important;
+.selected-row {
+  background-color: #fcf8e3;
 }
 
 .img-upload-btn {
@@ -370,19 +373,12 @@ tr {
 }
 
 .cart-table {
-  th {
     font-size: 12px !important;
     margin: 0;
     color: white !important;
     font-weight: 12px !important;
     padding: 5px !important;
     background: #adadad !important;
-  }
-
-  b {
-    font-size: 15px;
-    font-family: sans-serif;
-  }
 }
 
 .label-danger {
@@ -527,6 +523,11 @@ tr {
   border: 1px solid #fffcfc;
   margin-top: 8px;
 }
+input[type="text"]:focus, .form-select:focus, textarea.form-control:focus {
+  border: 2px dashed #c93333 !important;
+  outline: none !important;
+}
+.form-select, textarea.form-control{box-shadow: none !important;}
 
 .incree-decreement button {
   border: 1px solid #cbc9c9;
@@ -625,15 +626,16 @@ tr {
 
 .toppings-btn button {
   padding: 2px 5px;
-  font-size: 9px;
-  line-height: 8px;
-  font-weight: 800;
+  font-size: 8.5px;
+  line-height: 7px;
+  font-weight: 200;
   border-radius: 3px;
-  background: none;
-  font-family: initial;
-  color: #000000a8;
+  background: white;
+  color: black;
   margin: 0 1px;
-  border: 1px solid gray;
+  border: 1px solid #8080806b;
+  letter-spacing: 0.4px;
+  font-family: sans-serif;
 }
 
 .toppings-btn-style label {
@@ -1030,13 +1032,11 @@ tr {
   padding: 3px 4px;
   line-height: 15px;
 }
-
 @media (min-width: 992px) {
   .closing-table .modal-lg {
     --bs-modal-width: 980px !important;
   }
 }
-
 .custom-suggestion {
   padding: 2px 5px;
   font-size: 1.0em;
@@ -1046,23 +1046,15 @@ tr {
   color: #000000;
   cursor: pointer;
   width: 100%;
-
-  //  position: absolute;
-  // z-index: 99;
-  // background: white;
-  // font-size: 13px;
-
 }
 
 .custom-suggestion:hover {
   background: #ffffc0;
 }
-
 .react-autosuggest__suggestions-container--open ul {
   list-style-type: none !important;
   padding-left: 0;
 }
-
 .react-autosuggest__suggestions-container--open {
   position: absolute !important;
   z-index: 99 !important;
@@ -1071,20 +1063,16 @@ tr {
   width: 30% !important;
   list-style-type: none !important;
 }
-
 #react-autowhatever-1 ul {
   list-style-type: none;
   padding-left: 10px;
 }
-
-
 .login_content h1 {
   letter-spacing: -0.05em;
   line-height: 20px;
   margin: 19px 0 20px;
   font-size: 21px;
 }
-
 .login_content h1:before {
   content: "";
   height: 1px;
@@ -1101,10 +1089,7 @@ tr {
   background: -webkit-linear-gradient(left, rgba(126,126,126,1) 0%,rgba(255,255,255,1) 100%)!important;
   right: 90px;
   margin-top: 10px;
-
 }
-
-
 .react-confirm-alert-overlay {
    z-index: 9999!important;
   background: rgb(102 102 102 / 30%)!important;
@@ -1132,36 +1117,20 @@ tr {
 }
 .react-confirm-alert-button-group button {
   background-color: green!important;
-  // color: #fff;
-  // border: none;
-  // padding: 10px 20px;
-  // margin-right: 10px;
-  // cursor: pointer;
 }
-
 .react-confirm-alert-button-group button:last-child {
   background-color: #dd0404!important;
 }.new-kot tbody tr td{       padding: 4px 5px !important;
   font-size: 14px !important;}
-
-
-
-
-  .product-serach-input input {
+  input, textarea.form-control {
     border-radius: 0 !important;
     outline: none !important;
     box-shadow: none !important;
     width: 100%;
     border: 1px solid;
-    border-color: #bbbbbb;
+    border-color: #bbbbbb6b;
     height: 35px;
   }
-  
-  .product-serach-input input[type="text"]:focus {
-    border: 2px dashed #c93333 !important;
-    outline: none !important;
-  }
-  
   .product-serach-input .custom-suggestions-container {
     max-height: 500px;
     overflow-y: auto;
@@ -1170,7 +1139,4 @@ tr {
     width: 35%;
     margin-left: -10px;
   }
-  
-
-
-  
+  tr:hover td { background: #ffffc0 !important; }

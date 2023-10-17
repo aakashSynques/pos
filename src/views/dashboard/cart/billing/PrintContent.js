@@ -55,7 +55,7 @@ const PrintContent = React.forwardRef(
             <CCol className="text-start">
               <span>Invoice#: </span>
               <br />
-              {/* <strong>{invoice_no}</strong> */}
+              <strong>{invoice_no}</strong>
               <p>{new Date().toLocaleString()}</p>
             </CCol>
             <CCol className="text-end">

@@ -59,8 +59,6 @@ const addCartItem = (cartItemsArray, cartItem) => {
 };
 
 
-
-
 const setQuantity = (cartItemsArray, productId, quantity) => {
   if (quantity == 0 || quantity == "") {
     const filteredItems = cartItemsArray.filter(
@@ -78,13 +76,9 @@ const setQuantity = (cartItemsArray, productId, quantity) => {
         }
         : item
     );
-
-    console.log('updatedItems', updatedItems)
     return updatedItems;
   }
 };
-
-
 
 
 
@@ -411,8 +405,6 @@ export const setSubmittedPickUpDateTime = (date, time) => {
   };
 };
 
-
-
 export const setRecentBookings = (recentBookings) => {
   return { type: SET_RECENT_BOOKINGS, payload: recentBookings };
 };
@@ -503,8 +495,6 @@ export const setDiscardButtonActive = (isActive) => {
   };
 };
 
-
-
 export const setPandingSaleProcess = (saleProcessData) => {
   return {
     type: SET_PANDING_SALE_PROCESS,
@@ -518,18 +508,11 @@ export const setPandingSaleProcess = (saleProcessData) => {
 
 
 export const setProductRateInCart = (cartItems, prodId, newRate) => {
-  // Find the index of the item in the cart
   const itemIndex = cartItems.findIndex((item) => item.prod_id === prodId);
-
-  // Create a copy of the cart items array to avoid mutating the state directly
   const updatedCartItems = [...cartItems];
-
-  // Update the product rate for the item at the specified index
   if (itemIndex !== -1) {
     updatedCartItems[itemIndex].prod_rate = newRate;
   }
-
-  // Return an action to update the cart with the new rate
   return {
     type: SET_PRODUCT_RATE,
     cartItems: updatedCartItems,

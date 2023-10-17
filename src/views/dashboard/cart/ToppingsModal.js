@@ -17,16 +17,11 @@ import {
 
 const ToppingsModal = ({ openToppingModel, onClose }) => {
   const dispatch = useDispatch();
-
   const cartItems = useSelector((state) => state.cart.cartItems);
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
   const [selectedUrno, setSelectedUrno] = useState();
-  const [categoryHead, setCategoryHead] = useState("");
-
-
-  const [selectedToppingsTotalPrice, setSelectedToppingsTotalPrice] = useState(0);
   const [toppingModel, setToppingModel] = useState(false);
 
   /// toppings //
@@ -205,8 +200,8 @@ const ToppingsModal = ({ openToppingModel, onClose }) => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.altKey && event.key === "c") {
-        // dispatch(clearAllToppings(cartItems, selectedUrno));
-        // setToppingModel(false);
+        dispatch(clearAllToppings(cartItems, selectedUrno));
+        setToppingModel(false);
       }
     };
     document.addEventListener("keydown", handleKeyDown);
