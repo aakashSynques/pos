@@ -88,9 +88,6 @@ const PayBillsModels = ({
     }
   }, []);
 
-
-
-
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [extrainfo, setExtrainfo] = useState(""); // Define extrainfo state
@@ -205,8 +202,10 @@ const PayBillsModels = ({
     deliveryId = 2;
   } else if (selectedDelivery == "PickUp") {
     deliveryId = 3;
-  } else {
+  } else if (selectedDelivery == "Home Delivery") {
     deliveryId = 4;
+  } else {
+    null;
   }
 
   const selectedCustomersJson =
@@ -288,7 +287,7 @@ const PayBillsModels = ({
       payAmount: paymentAmounts[paymentMode] || 0, // Use the value from paymentAmounts
     })),
   };
-  console.log('card sum up', cartSumUp)
+
   dispatch(setCartSumUp(cartSumUp));
   dispatch(setSelectedCustomerJson(selectedCustomersJson));
 
@@ -308,17 +307,13 @@ const PayBillsModels = ({
     });
   };
 
-
-  console.log('home deliveryt charges', submittedHomeDeliveryData)
-
   const resetPaymentState = () => {
     setSelectedPayments([]);
     setPaymentAmounts({});
   };
 
   const [remainingBalance, setRemainingBalance] = useState(finalPayAmount);
-  const [paymentAmountSum, setPaymentAmountSum] = useState(0); // Declare paymentAmountSum
-
+  let paymentAmountSum = 0;
   const handlePaymentAmountKeyDown = (e, paymentMode) => {
     if (e.key === "Enter") {
       const updatedPaymentAmounts = {
@@ -326,12 +321,14 @@ const PayBillsModels = ({
         [paymentMode]: parseFloat(e.target.value) || 0,
       };
       setPaymentAmounts(updatedPaymentAmounts);
-      const paymentAmountSum = Object.values(updatedPaymentAmounts).reduce(
+      console.log('updatedPaymentAmounts', updatedPaymentAmounts);
+
+      paymentAmountSum = Object.values(updatedPaymentAmounts).reduce(
         (sum, amount) => sum + parseFloat(amount || 0),
         0
       );
-      const updatedRemainingBalance = finalPayAmount - paymentAmountSum;
-      setRemainingBalance(updatedRemainingBalance);
+      const balance = paymentAmountSum - finalPayAmount;
+      setRemainingBalance(balance)
     }
   };
 
@@ -351,6 +348,12 @@ const PayBillsModels = ({
     };
   }, [selectedPayments]);
 
+  const buttonRef = useRef(null);
+  useEffect(() => {
+    if (buttonRef.current) {
+      buttonRef.current.focus();
+    }
+  }, []);
 
   return (
     <>
@@ -360,7 +363,7 @@ const PayBillsModels = ({
           onClose={onClose}
           className="bills-model-width"
         >
-          <CModalHeader onClose={onClose} className="pt-2 pb-2">
+          <CModalHeader onClose={onClose} tabindex="-1" className="pt-2 pb-2">
             <CModalTitle>Sales Summary</CModalTitle>
           </CModalHeader>
           <CModalBody className="pt-1">
@@ -528,8 +531,6 @@ const PayBillsModels = ({
                     </>
                   )}
 
-
-
                   {deliveryId == 4 && (
                     <> <br />
                       <font className="font-size-2 font-w-5">DateTime : </font>
@@ -576,8 +577,6 @@ const PayBillsModels = ({
                     </CRow>
                   </>
                 )}
-
-
 
                 <CRow className="pt-1">
                   <CCol sm={7} className="font-size-14">
@@ -640,10 +639,11 @@ const PayBillsModels = ({
                         </CCol>
                         <CCol sm={3} style={{ margin: "2px 0" }}>
                           <input
-                            type="number"
+                            type="text"
+                            style={{ height: '25px' }}
                             ref={paymentAmountInputRef}
                             value={paymentAmounts[paymentMode] || ""}
-                            className="form-control p-0 text-end rounded-0"
+                            className="form-control input-sm rounded-0 p-1 text-end font-size-2"
                             onChange={(e) =>
                               setPaymentAmounts({
                                 ...paymentAmounts,
@@ -654,6 +654,7 @@ const PayBillsModels = ({
                               handlePaymentAmountKeyDown(e, paymentMode)
                             }
                           />
+
                         </CCol>
                       </>
                     ))}
@@ -661,28 +662,18 @@ const PayBillsModels = ({
                 <hr className="mt-2 m-0 p-0" />
                 {selectedPayments.length > 0 && (
                   <CRow className="text-end pt-2">
-                    <CCol sm={8}>
-                      {remainingBalance < 0 ? (
-                        <h5 style={{ color: "blue" }} className="font-size">
-                          Overpaid :  <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
-                        </h5>
-                      ) : remainingBalance === 0 ? (
-                        <h5 style={{ color: "green" }} className="font-size">
-                          Balance : <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
-                        </h5>
-                      ) : remainingBalance > 0 ? (
-                        <h5 style={{ color: "red" }} className="font-size">
-                          Remaining : <i className="fa fa-inr"></i> {remainingBalance.toFixed(2)}
-                        </h5>
-                      ) : (
-                        <h5 style={{ color: "yellow" }} className="font-size">
-                          <i className="fa fa-inr"></i> {finalPayAmount.toFixed(2)}
-                        </h5>
-                      )}
+                    <CCol sm={12}>
+                      <b>
+                        {remainingBalance < 0
+                          ? <span className="text-danger">Balance : &nbsp;&nbsp; <i class="fa fa-inr"></i> {Math.abs(remainingBalance).toFixed(2)}</span>
+                          : remainingBalance > 0
+                            ? <span className="text-success">Advance : &nbsp;&nbsp;  <i class="fa fa-inr"></i> {remainingBalance.toFixed(2)}</span>
+                            : <span className="text-primary"><i class="fa fa-inr"></i> {remainingBalance.toFixed(2)}</span>}
+                      </b>
+
                     </CCol>
                   </CRow>
                 )}
-
               </CCol>
             </CRow>
           </CModalBody>
@@ -694,6 +685,8 @@ const PayBillsModels = ({
                   type="button"
                   color={selectedPayments.includes(1) ? "success" : "light"}
                   onClick={() => setPayment(1)}
+                  tabindex="0"
+
                 >
                   Cash
                 </CButton>

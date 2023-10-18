@@ -45,7 +45,7 @@ const CustomersSearch = () => {
   const processPendingSale = useSelector(
     (state) => state.pendingSaleProcess.pandingSaleProcess
   )
-  console.log('processPendingSale', processPendingSale)  
+ 
   const selectedCustomer = useSelector(
     (state) => state.customer.selectedCustomer
   );

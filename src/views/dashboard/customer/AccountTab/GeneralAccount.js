@@ -8,6 +8,8 @@ const GeneralAccount = () => {
     (state) => state.customerAccount.customerAcc
   );
 
+  console.log('customerAccount', customerAccount)
+
   const selectedOutletObj = useSelector(
     (state) => state.selectedOutlet.selectedOutlet
   );
@@ -17,7 +19,7 @@ const GeneralAccount = () => {
   if (customerAccount) {
     for (const custData of customerAccount) {
       // Calculate the balance for this row
-      const rowBalance = runningBalance + custData.debit - custData.credit;
+      const rowBalance = runningBalance +  custData.credit - custData.debit;
       balances.push(rowBalance);
       runningBalance = rowBalance;
     }
@@ -34,9 +36,7 @@ const GeneralAccount = () => {
     }
   }
   // Calculate total balance
-  const totalDueBalance = totalDebit - totalCredit;
-  console.log('total due', totalDueBalance)  
-
+  const totalDueBalance = totalCredit - totalDebit;
 
   return (
     <>
@@ -66,98 +66,111 @@ const GeneralAccount = () => {
         <tbody>
           {customerAccount &&
             customerAccount.map((custData, index) => {
+              const rowClassName = custData.confirm_p === 0 ? "red-row" : "";
               return (
                 <tr key={custData}>
-                  <td className="text-center">
+                  <td className="text-center text-white" >
                     {" "}
                     {custData.ah_id == 17 ? (
                       <strong></strong>
-                    ) : custData.ah_id == 4 ? (
-                      <strong></strong>
-                    ) : custData.ah_id == 11 ? (
-                      <strong className="status-btn bg-info">View</strong>
-                    ) : custData.ah_id == 3 ? (
-                      <strong
-                        className="status-btn"
-                        style={{
-                          background: "#5bc0de",
-                        }}
-                      >
-                        View
-                      </strong>
-                    ) : custData.ah_id == 5 ? (
-                      <strong
-                        className="status-btn"
-                        style={{
-                          background: "#5bc0de",
-                        }}
-                      >
-                        View
-                      </strong>
-                    ) : custData.ah_id == 14 ? (
-                      <strong
-                        className="status-btn"
-                        style={{
-                          background: "#ec971f",
-                        }}
-                      >
-                        Receipt
-                      </strong>
-                              )
-                                : custData.ah_id == 9 ||
-                      custData.ah_id == 10 ||
-                      (custData.ah_id == 15 && custData.inw_id == 0) ? (
-                      <strong
-                        className="status-btn"
-                        style={{
-                          background: "#26b99a",
-                        }}
-                      >
-                        Voucher
-                      </strong>
+                    ) :
+
+                      custData.ah_id == 11 ? (
+                        <strong className="status-btn bg-info">View</strong>
+                      ) : custData.ah_id == 3 ? (
+                        <strong
+                          className="status-btn"
+                          style={{
+                            background: "#5bc0de",
+                          }}
+                        >
+                          View
+                        </strong>
+                      ) : custData.ah_id == 5 ? (
+                        <strong
+                          className="status-btn"
+                          style={{
+                            background: "#5bc0de",
+                          }}
+                        >
+                          View
+                        </strong>
+                      ) : custData.ah_id == 14 ? (
+                        <strong
+                          className="status-btn"
+                          style={{
+                            background: "#ec971f",
+                          }}
+                        >
+                          Receipt
+                        </strong>
+                      )
+                        : custData.ah_id == 9 ||
+                          custData.ah_id == 10 ||
+                          (custData.ah_id == 15 && custData.inw_id == 0) ? (
+                          <strong
+                            className="status-btn"
+                            style={{
+                              background: "#26b99a",
+                            }}
+                          >
+                            Voucher
+                          </strong>
+                        ) : null}
+
+                    {custData.confirm_p === 0 && custData.ah_id === 4 ? (
+                      <strong className="status-btn bg-danger">Pending</strong>
                     ) : null}
                   </td>
-                  <td>{custData.narration}</td>
+                  <td id={rowClassName}>{custData.narration}</td>
 
-                  <td className="text-center">
+                  <td className="text-center" id={rowClassName}>
                     <span>
                       {custData.mode == 1 ? (
-                        <strong>Cash</strong>
+                        <font>Cash</font>
                       ) : custData.mode == 0 ? (
-                        <strong>-</strong>
+                        <font>-</font>
                       ) : custData.mode == 4 ? (
-                        <strong>PayTm</strong>
+                        <font>PayTm</font>
                       ) : custData.mode == 6 ? (
-                        <strong>W</strong>
+                        <font>W</font>
                       ) : custData.mode == 7 ? (
-                        <strong>Acc. Dept.</strong>
+                        <font>Acc. Dept.</font>
                       ) : custData.mode == 25 ? (
-                        <strong>HDFC CC</strong>
+                        <font>HDFC CC</font>
+                      ) : custData.mode == 27 ? (
+                        <font>Swiggy Dineout</font>
+                      ) : custData.mode == 13 ? (
+                        <font>Plutus CC</font>
                       ) : custData.mode == 26 ? (
-                        <strong>HDFC QR</strong>
+                        <font>HDFC QR</font>
+                      ) : custData.mode == 16 ? (
+                        <font>Cheque</font>
+                      ) : custData.mode == 5 ? (
+                        <font>NEFT</font>
                       ) : null}
                     </span>
                   </td>
-                  <td>{custData.bank}</td>
+                  <td id={rowClassName}>{custData.bank}</td>
 
-                  <td className="text-end">
+                  <td className="text-end" id={rowClassName}>
                     {custData.debit == 0 ? (
                       <span>-</span>
                     ) : (
                       <span>{custData.debit.toFixed(2)}</span>
                     )}
                   </td>
-                  <td className="text-end">
+                  <td className="text-end" id={rowClassName}>
                     {custData.credit == 0 ? (
                       <span>-</span>
                     ) : (
                       <span>{custData.credit.toFixed(2)}</span>
                     )}
                   </td>
-                  <td className="text-end" style={{ background: "#efefef" }}>
+                  <td className="text-end" style={{ background: "#efefef" }} id={rowClassName}>
                     {balances[index].toFixed(2)}
                   </td>
-                  <td>
+                  <td id={rowClassName}>
                     {/* {selectedOutletObj.outlet_name} */}
                     {custData.outlet_id === 0 ? (
                       <span>-</span>
@@ -178,7 +191,7 @@ const GeneralAccount = () => {
 
                   <td></td>
 
-                  <td>
+                  <td id={rowClassName}>
                     {" "}
                     {new Date(custData.eat)
                       .toISOString()

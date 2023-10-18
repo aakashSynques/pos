@@ -52,7 +52,6 @@ const CartItem = ({
     }, 0);
   }
   const itemTotalPrice1 = parseFloat(item.prod_rate) + totalToppingPrice1;
-  console.log('totalToppingPrice1', totalToppingPrice1)
 
 
   useEffect(() => {

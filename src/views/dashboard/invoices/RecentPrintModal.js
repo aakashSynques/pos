@@ -47,8 +47,6 @@ function RecentPrintModal({
 
   const productsInCart =
     invoiceDetails && invoiceDetails[invoice_no].productsInCart;
-  console.log('invice', productsInCart)
-
 
   const selectedCustomerJson =
     invoiceDetails && invoiceDetails[invoice_no].selectedCustomerJson;
@@ -68,7 +66,6 @@ function RecentPrintModal({
       setUrl(
         `http://pos.q4hosting.com/posinvolce/printSales/${salesid}/NOKOT?random=${randomValue}`
       );
-
 
       fetch(
         `http://pos.q4hosting.com/posinvolce/printSales/${salesid}/NOKOT?random=${randomValue}`,
@@ -179,7 +176,7 @@ function RecentPrintModal({
                 { }
                 <CCol xs={1}>Qty</CCol>
                 <CCol xs={9} className="text-start">
-                  <small className="font-size-14 text-black">     Discription</small>
+                  <small className="font-size-14 text-black">Discription</small>
                 </CCol>
                 <CCol xs={2} className=" text-center">
                   <small className="font-size-14 text-black"> Rate</small>

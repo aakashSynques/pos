@@ -12,8 +12,6 @@ import {
   CFormSelect,
   CFormTextarea,
 } from "@coreui/react";
-
-
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -23,7 +21,7 @@ const ChangeDeliveryCharge = () => {
   const dispatch = useDispatch();
 
   // State to control the visibility of the modal
-  const [visible, setVisible] = useState(false);
+  const [deliveryChargesModel, setDeliveryChargesModel] = useState(false);
 
   // Selected customer data from Redux store
   const selectedCustomer = useSelector(
@@ -45,8 +43,6 @@ const ChangeDeliveryCharge = () => {
 
   dispatch(submitDeliveryData(submittedHomeDeliveryData));
 
-
-
   function getCurrentTime() {
     const now = new Date();
     const hours = now.getHours();
@@ -56,12 +52,9 @@ const ChangeDeliveryCharge = () => {
     const timeString = `${padZero(formattedHours)}:${padZero(minutes)} ${amOrPm}`;
     return timeString;
   }
-
   function padZero(value) {
     return value < 10 ? `0${value}` : `${value}`;
   }
-
-
   const handleCopyDetails = () => {
     if (selectedCustomer) {
       setReceiverName(selectedCustomer.json.customer_name || "");
@@ -87,10 +80,9 @@ const ChangeDeliveryCharge = () => {
 
   // Function to close the modal
   const handleModalClose = () => {
-    setVisible(false);
+    setDeliveryChargesModel(false);
   };
-
-
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setDeliveryTiming(getCurrentTime());
@@ -102,7 +94,7 @@ const ChangeDeliveryCharge = () => {
 
   const handleKeyPress = (event) => {
     if (event.altKey && event.key === "d") {
-      setVisible(true);
+      setDeliveryChargesModel(true);
     }
   };
   useEffect(() => {
@@ -147,7 +139,7 @@ const ChangeDeliveryCharge = () => {
       {/* Button to open the modal */}
       <button
         className="btn btn-xs btn-warning text-white rounded-1 mt-1"
-        onClick={() => setVisible(!visible)}
+        onClick={() => setDeliveryChargesModel(!deliveryChargesModel)}
       >
         <i className="fa fa-pencil"></i> Change Delivery Details [ Alt + D ]
       </button>
@@ -157,7 +149,7 @@ const ChangeDeliveryCharge = () => {
         style={{ width: "630px" }}
         size="lg"
         backdrop="static"
-        visible={visible}
+        visible={deliveryChargesModel}
         onClose={handleModalClose}
       >
         <CModalHeader>

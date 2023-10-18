@@ -78,7 +78,7 @@ const PrintContent = React.forwardRef(
             />
           </CRow>
           <CRow className="text-start">
-            {}
+            { }
             <CCol xs={1}>Qty</CCol>
             <CCol xs={9} className="text-start">
               Discription
@@ -105,7 +105,7 @@ const PrintContent = React.forwardRef(
                     <CCol xs={10} className=" text-start">
 
 
-                    {item.customized && item.customized.photo_path && (
+                      {item.customized && item.customized.photo_path && (
                         <img
                           src={URL.createObjectURL(item.customized.photo_path[0])}
                           alt="Customized"
@@ -117,9 +117,9 @@ const PrintContent = React.forwardRef(
                         <>
                           <b>
                             {item.customized.flavor_name &&
-                            item.customized.shape_name &&
-                            item.customized.choice_name &&
-                            item.customized.size_name
+                              item.customized.shape_name &&
+                              item.customized.choice_name &&
+                              item.customized.size_name
                               ? `${item.customized.flavor_name} | ${item.customized.shape_name} | ${item.customized.choice_name} | ${item.customized.size_name}`
                               : item.prod_name}
                           </b>{" "}
@@ -201,6 +201,8 @@ const PrintContent = React.forwardRef(
               ></p>
             </CCol>
           </CRow>
+
+     
           <CRow>
             <CCol xs={10} className="text-end ">
               <h5>

@@ -6,6 +6,8 @@ import CartItem from "./CartItem";
 import PayBillsModels from "./billing/PayBillsModels";
 import AnyNotes from "./AnyNotes";
 import { ToastContainer, toast } from "react-toastify";
+import ToppingsModal from "./ToppingsModal"; // Import the new component
+
 import {
   CFormInput,
   CRow,
@@ -237,7 +239,6 @@ const CartSection = () => {
     return "0";
   };
 
-
   // HANDLE SUBMIT FOR TOPPINGS
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
@@ -355,12 +356,12 @@ const CartSection = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const handleRowClick = (index) => {
     setSelectedRow(index);
-  
+
   };
 
   return (
     <div className="cartlist">
-       <div className="table-height" style={{ overflowY: "auto", overflowX: "auto" }}>
+      <div className="table-height" style={{ overflowY: "auto", overflowX: "auto" }}>
         {cartItems.length > 0 ? (
           <div className="container">
             <div className="row cart-table" >
@@ -402,9 +403,6 @@ const CartSection = () => {
           </div>
         )}
       </div>
-
-
-
       {deliveryId == 2 && (
         <>
           <hr style={{ margin: "0px" }} />
@@ -459,7 +457,6 @@ const CartSection = () => {
             <CCol sm={6} style={{ textAlign: "right" }} className="font-size">
               <i className="fa fa-inr"></i>
               {getTotalSGSTAmount().toFixed(2)}{" "}
-              {/* Display the calculated SGST amount */}
             </CCol>
           </CRow>
           <CRow>
@@ -488,18 +485,25 @@ const CartSection = () => {
                   </button>
                 </div>
 
-                {deliveryId == 3 || deliveryId == 4 ? (
+                {deliveryId === 3 || deliveryId === 4 ? (
                   <div className="col-sm-6 font-size pl-0">
                     <button
                       className="btn pay-btn btn-warning"
                       type="button"
-                      onClick={() => setBookingModels(!bookingModels)}
+                      onClick={() => {
+                        if (deliveryId === 3 && !submittedPickUpDateTime) {
+                          setVisiblePickUp(true); // Open the date-time selection modal
+                        } else {
+                          setBookingModels(!bookingModels); // Open the booking model
+                        }
+                      }}
                       disabled={isCartEmpty || !selectedCustomer}
                     >
                       BOOKING <font size="1"></font>
                     </button>
                   </div>
                 ) : null}
+
               </CRow>
             </CCol>
 
@@ -515,13 +519,14 @@ const CartSection = () => {
             </CCol>
           </CRow>
 
-
           <hr style={{ margin: "4px 0" }} />
 
           <CRow>
             <CCol sm={4} className="font-size">
               Delivery Mode [F2]
             </CCol>
+
+
             <CCol sm={8} style={{ fontSize: "14px" }} className="font-size">
               <span className="pull-right">{selectedDelivery}</span> <br />
               <span className="pull-right">
@@ -555,8 +560,10 @@ const CartSection = () => {
                 <div className="pull-left pt-2">
                   <ChangeDeliveryCharge />
                 </div>
-              ) : null}
+              ) : null} 
             </CCol>
+
+
             <CCol sm={12}>
               <AnyNotes />
             </CCol>
@@ -575,10 +582,6 @@ const CartSection = () => {
         totalItem={getTotalItemsInCart()}
         selectedCustomer={selectedCustomer}
       />
-
-
-
-
       <BookingModels
         visible={bookingModels}
         onClose={() => setBookingModels(false)}
@@ -591,11 +594,11 @@ const CartSection = () => {
         selectedCustomer={selectedCustomer}
 
       />
-
       <ChangePickUpModel
         visiblePicKUp={visiblePicKUp}
         onClose={() => setVisiblePickUp(false)}
       />
+
       <CModal
         size="lg"
         visible={toppingModel}
@@ -677,6 +680,27 @@ const CartSection = () => {
           </CButton>
         </CModalFooter>
       </CModal>
+
+{/* <CModal
+        size="lg"
+        visible={toppingModel}
+        onClose={() => setToppingModel(false)}
+        className="topping-modals"
+      >
+        <ToppingsModal
+          toppingsWithCategoryHead={toppingsWithCategoryHead}
+          selectedToppings={selectedToppings}
+          handleToppingClick={handleToppingClick}
+          handleToppingsSubmit={handleToppingsSubmit}
+          clearAllToppings={() => {
+            dispatch(clearAllToppings(cartItems, selectedUrno));
+            setToppingModel(false);
+          }}
+          setToppingModel={setToppingModel}
+          selectedUrno={selectedUrno}
+          selectedOutletId={selectedOutletId}
+        />
+      </CModal> */}
     </div>
   );
 };
