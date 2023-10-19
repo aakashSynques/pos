@@ -242,7 +242,6 @@ const ProductsSearchBar = () => {
     }
   };
 
-
   // Handle suggestion item hover
   const handleSuggestionHover = (suggestion) => {
     focusedSuggestionIndexRef.current = suggestions.indexOf(suggestion);
@@ -258,8 +257,6 @@ const ProductsSearchBar = () => {
   useEffect(() => {
     focusFirstSuggestion();
   }, [suggestions]);
-
-
   useEffect(() => {
     const inputElement = inputRef.current;
     if (inputElement) {
@@ -271,7 +268,6 @@ const ProductsSearchBar = () => {
       }
     };
   }, [handleArrowKeyPress]);
-
   return (
     <div className="product-serach-input p-1">
       <Autosuggest
@@ -281,7 +277,7 @@ const ProductsSearchBar = () => {
         getSuggestionValue={(suggestion) => suggestion.prod_name}
         renderSuggestion={(suggestion) => (
           <div className="product-list-abslute ">
-            <div className="bg-success text-white" style={{ padding: "2px, 10px" }}>
+            <div className="bg-success text-white px-2">
               <i className="fa fa-arrow-circle-right">
               </i>&nbsp; {suggestion.category_heads}
             </div>
@@ -297,12 +293,10 @@ const ProductsSearchBar = () => {
                   className={`fa-stack fa-xs ${getTextColorClass(
                     suggestion.prod_sign
                   )}`}
-                >
-                  <i className="fa fa-square-o fa-stack-2x"></i>
+                >                  <i className="fa fa-square-o fa-stack-2x"></i>
                   <i className="fa fa-circle fa-stack-1x"></i>
                 </span>
               </div>
-
               <div className="pull-left">
                 <b className="pull-left">{suggestion.prod_name}</b>
                 <br />
