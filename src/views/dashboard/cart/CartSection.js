@@ -25,6 +25,8 @@ import KOTDeliveryOnTable from "./kotmodel/KOTDeliveryOnTable";
 import ChangePickUpModel from "./changePickUpDeliver/ChangePickUpModel";
 import ChangeDeliveryCharge from "./changeDeliveryCharges/ChangeDeliveryCharge";
 import BookingModels from "./billing/BookingModels";
+import ReceiverInfo from "./changeDeliveryCharges/ReceiverInfo";
+
 const CartSection = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const selectedOutletId = useSelector(
@@ -41,6 +43,7 @@ const CartSection = () => {
   );
 
   const submittedHomeDeliveryData = useSelector((state) => state.table.submittedHomeDeliveryData);
+
   const dispatch = useDispatch();
   const [toppingModel, setToppingModel] = useState(false);
   const [paybillsModel, setPayBillsModel] = useState(false);
@@ -50,6 +53,8 @@ const CartSection = () => {
   const [quantity, setQuantity] = useState(1);
   const [isCartEmpty, setCartEmpty] = useState(true);
   const [visiblePicKUp, setVisiblePickUp] = useState(false);
+  const [deliveryChargesModel, setDeliveryChargesModel] = useState(false);
+
   useEffect(() => {
     setCartEmpty(cartItems.length === 0);
   }, [cartItems]);
@@ -151,7 +156,6 @@ const CartSection = () => {
   }
 
   /// toppings //
-  // New state variable to store the total price of the selected toppings
   const [submittedToppings, setSubmittedToppings] = useState(false);
   const [searchToppingQuery, setSearchToppingQuery] = useState("");
   const [selectedToppings, setSelectedToppings] = useState([]);
@@ -173,11 +177,10 @@ const CartSection = () => {
   useEffect(() => {
     getToppingsData();
   }, []);
+
   const filteredToppings = toppingsData.filter((topping) =>
     topping.prod_name.toLowerCase().includes(searchToppingQuery.toLowerCase())
   );
-
-
   // TOPPING MODAL
   const openToppingModel = (urno, category_heads) => {
     setSelectedUrno(urno);
@@ -219,13 +222,13 @@ const CartSection = () => {
       }
     })
     .filter(Boolean);
-
   // GENERATE UNIQUE 4 DIGIT NUMBER FOR URNO
   function generateUniqueNumber() {
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
     return `${timestamp.toString() + randomString}`;
   }
+
 
   // GENERATE PROD_RATE FOR PROD IN CART
   const getPriceForOutlet = (product) => {
@@ -238,7 +241,6 @@ const CartSection = () => {
     }
     return "0";
   };
-
   // HANDLE SUBMIT FOR TOPPINGS
   const handleToppingsSubmit = () => {
     setSubmittedToppings(true);
@@ -296,16 +298,14 @@ const CartSection = () => {
     setToppingModel(false); // Close the toppings model after submitting
     // setSelectedToppings([]);
   };
-
   // Function to calculate the total price of the selected toppings
   const [totalToppingPrice, setTotatalToppingPrice] = useState();
+
   useEffect(() => {
     const selectedToppingsProdRates = selectedToppings.map(topping => topping.prod_rate);
     const totalToppingsPrice = selectedToppingsProdRates.reduce((total, rate) => total + rate, 0);
     setTotatalToppingPrice(totalToppingsPrice)
   }, [selectedToppings, toppingsData]);
-
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.altKey && event.key === "c") {
@@ -318,8 +318,6 @@ const CartSection = () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [cartItems, selectedUrno]);
-
-
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.altKey && event.key === "Enter") {
@@ -334,13 +332,14 @@ const CartSection = () => {
 
 
 
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && event.shiftKey) {
         if (!isCartEmpty) {
           if (selectedCustomer) {
             setPayBillsModel(true);
-            setBookingModel(true);
+            // setBookingModel(true);
           } else {
             toast.error("Enter Customer Name First");
           }
@@ -356,8 +355,8 @@ const CartSection = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const handleRowClick = (index) => {
     setSelectedRow(index);
-
   };
+
 
   return (
     <div className="cartlist">
@@ -403,6 +402,7 @@ const CartSection = () => {
           </div>
         )}
       </div>
+
       {deliveryId == 2 && (
         <>
           <hr style={{ margin: "0px" }} />
@@ -410,7 +410,6 @@ const CartSection = () => {
             selectedCustomer={selectedCustomer}
             cartItems={cartItems}
             subtotal={getSubTotalAmount()}
-
           />
         </>
       )}
@@ -478,13 +477,19 @@ const CartSection = () => {
                     className="btn pay-btn"
                     style={{ backgroundColor: "#26B99A" }}
                     type="button"
-                    onClick={() => setPayBillsModel(!paybillsModel)}
+                    onClick={() => {
+                      if (deliveryId === 3 && !submittedPickUpDateTime) {
+                        setVisiblePickUp(true); // Open the date-time selection modal
+                      } else if (deliveryId === 4 && !submittedHomeDeliveryData) {
+                        setDeliveryChargesModel(true)
+                      } else {
+                        setPayBillsModel(!paybillsModel)
+                      }
+                    }}
                     disabled={isCartEmpty || !selectedCustomer}
-                  >
-                    PAY <font size="1">[ Shift + Enter ]</font>
+                  > PAY <font size="1">[ Shift + Enter ]</font>
                   </button>
                 </div>
-
                 {deliveryId === 3 || deliveryId === 4 ? (
                   <div className="col-sm-6 font-size pl-0">
                     <button
@@ -493,6 +498,8 @@ const CartSection = () => {
                       onClick={() => {
                         if (deliveryId === 3 && !submittedPickUpDateTime) {
                           setVisiblePickUp(true); // Open the date-time selection modal
+                        } else if (deliveryId === 4 && !submittedHomeDeliveryData) {
+                          setDeliveryChargesModel(true)
                         } else {
                           setBookingModels(!bookingModels); // Open the booking model
                         }
@@ -503,7 +510,6 @@ const CartSection = () => {
                     </button>
                   </div>
                 ) : null}
-
               </CRow>
             </CCol>
 
@@ -520,54 +526,44 @@ const CartSection = () => {
           </CRow>
 
           <hr style={{ margin: "4px 0" }} />
-
           <CRow>
+
             <CCol sm={4} className="font-size">
               Delivery Mode [F2]
             </CCol>
-
-
             <CCol sm={8} style={{ fontSize: "14px" }} className="font-size">
               <span className="pull-right">{selectedDelivery}</span> <br />
               <span className="pull-right">
-                {deliveryId == 3 ? (
-                  <>
-                    <label>
-                      <strong>DateTime :</strong>
-                    </label>
-
-                    {submittedPickUpDateTime ? (
-                      <span>
-                        {submittedPickUpDateTime.date}&nbsp;
-                        {submittedPickUpDateTime.time}
-                      </span>
-                    ) : (
-                      <span>{new Date().toLocaleString() + ""}</span>
-                    )}
-                    <br />
-                    <CButton
-                      className="btn btn-xs btn-warning pull-right mt-1 text-white rounded-1"
-                      onClick={() => setVisiblePickUp(!visiblePicKUp)}
-                    >
-                      <i className="fa fa-pencil"></i> Change [ Alt + D ]
-                    </CButton>
-                  </>
-                ) : null}
+                {deliveryId == 3 ? (<>
+                  <label> <strong>DateTime :</strong> </label>
+                  {submittedPickUpDateTime ? (<span> {submittedPickUpDateTime.date}&nbsp; {submittedPickUpDateTime.time}
+                  </span>
+                  ) : (<span>{new Date().toLocaleString() + ""}</span>)}
+                  <br />
+                  <CButton className="btn btn-xs btn-warning pull-right mt-1 text-white rounded-1" onClick={() => setVisiblePickUp(!visiblePicKUp)} >
+                    <i className="fa fa-pencil"></i> Change [ Alt + D ]
+                  </CButton>
+                </>) : null}
               </span>
 
-
-              {deliveryId == 4 ? (
-                <div className="pull-left pt-2">
-                  <ChangeDeliveryCharge />
-                </div>
-              ) : null} 
+              <span className="pull-left">
+                {deliveryId == 4 ? (<>
+                  <ReceiverInfo />
+                  <br />
+                  <CButton
+                    className="btn btn-xs btn-warning text-white rounded-1 mt-1"
+                    onClick={() => setDeliveryChargesModel(!deliveryChargesModel)}>
+                    <i className="fa fa-pencil"></i> Change Delivery Details [ Alt + D ]
+                  </CButton>
+                </>) : null}
+              </span>
             </CCol>
-
-
             <CCol sm={12}>
               <AnyNotes />
             </CCol>
           </CRow>
+
+
         </CContainer>
       </div>
       {/* pay bills model */}
@@ -582,6 +578,7 @@ const CartSection = () => {
         totalItem={getTotalItemsInCart()}
         selectedCustomer={selectedCustomer}
       />
+
       <BookingModels
         visible={bookingModels}
         onClose={() => setBookingModels(false)}
@@ -592,14 +589,22 @@ const CartSection = () => {
         finalPayAmount={getFinalPayAmount()}
         totalItem={getTotalItemsInCart()}
         selectedCustomer={selectedCustomer}
-
-      />
-      <ChangePickUpModel
-        visiblePicKUp={visiblePicKUp}
-        onClose={() => setVisiblePickUp(false)}
       />
 
-      <CModal
+      {deliveryId == 3 ? (<>
+        <ChangePickUpModel
+          visiblePicKUp={visiblePicKUp}
+          onClose={() => setVisiblePickUp(false)}
+        />  </>) : null}
+
+      {deliveryId == 4 ? (<>
+        <ChangeDeliveryCharge
+          deliveryChargesModel={deliveryChargesModel}
+          setDeliveryChargesModel={setDeliveryChargesModel}
+          onClose={() => setDeliveryChargesModel(false)}
+        /></>) : null}
+
+      {/* <CModal
         size="lg"
         visible={toppingModel}
         onClose={() => setToppingModel(false)}
@@ -634,6 +639,7 @@ const CartSection = () => {
             </CInputGroup>
           </CCol>
         </CModalHeader>
+
         <CModalBody style={{ padding: "5px!important" }}>
           <div className="toppings-btn-style">
             {toppingsWithCategoryHead.map((topping) => (
@@ -641,7 +647,6 @@ const CartSection = () => {
                 <span className="toppingstyle">{topping.prod_name}</span>
                 <button
                   className={`btn btn-sm pull-right ${
-                    // selectedToppings[topping.prod_id]?.includes(topping.prod_id)
                     selectedToppings &&
                       selectedToppings.find(
                         (object) => object.prod_id === topping.prod_id
@@ -679,9 +684,8 @@ const CartSection = () => {
             Cancel [Esc]
           </CButton>
         </CModalFooter>
-      </CModal>
-
-{/* <CModal
+      </CModal> */}
+      <CModal
         size="lg"
         visible={toppingModel}
         onClose={() => setToppingModel(false)}
@@ -700,7 +704,7 @@ const CartSection = () => {
           selectedUrno={selectedUrno}
           selectedOutletId={selectedOutletId}
         />
-      </CModal> */}
+      </CModal>
     </div>
   );
 };

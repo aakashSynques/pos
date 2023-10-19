@@ -17,13 +17,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { submitDeliveryData } from "../../../../action/actions";
 
-const ChangeDeliveryCharge = () => {
+const ChangeDeliveryCharge = ({ onClose, deliveryChargesModel, setDeliveryChargesModel }) => {
   const dispatch = useDispatch();
-
-  // State to control the visibility of the modal
-  const [deliveryChargesModel, setDeliveryChargesModel] = useState(false);
-
-  // Selected customer data from Redux store
   const selectedCustomer = useSelector(
     (state) => state.customer.selectedCustomer
   );
@@ -82,7 +77,7 @@ const ChangeDeliveryCharge = () => {
   const handleModalClose = () => {
     setDeliveryChargesModel(false);
   };
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setDeliveryTiming(getCurrentTime());
@@ -91,10 +86,9 @@ const ChangeDeliveryCharge = () => {
     return () => clearInterval(interval);
   }, []);
 
-
   const handleKeyPress = (event) => {
     if (event.altKey && event.key === "d") {
-      setDeliveryChargesModel(true);
+      setDeliveryChargesModel(!deliveryChargesModel);
     }
   };
   useEffect(() => {
@@ -104,53 +98,17 @@ const ChangeDeliveryCharge = () => {
     };
   }, []);
 
+
+
   return (
-    <div>
-      {/* Display Receiver Name and Mobile */}
-      <label>
-        <b>Receiver :</b>
-      </label>
-      <span>
-        {formSubmitted && (<>
-          {submittedHomeDeliveryData.receiverName} {submittedHomeDeliveryData.receiverMobile}</>
-        )}
-      </span>{" "}
-      <br />
-      <label>
-        <b>Address : </b>
-      </label>
-      <span> {formSubmitted && (<>{submittedHomeDeliveryData.receiverAd} </>)}</span> <br />
-      <label>
-        <b>DateTime : </b>
-      </label>
-      <span>
-        {submittedHomeDeliveryData ? (
-          <>
-            {submittedHomeDeliveryData.deliveryDate}{" "}
-            {submittedHomeDeliveryData.deliveryTiming}{" "}
-          </>
-        ) : (
-          <span>{new Date().toLocaleDateString()}</span>
-        )}
-      </span>
-
-      <br />
-
-      {/* Button to open the modal */}
-      <button
-        className="btn btn-xs btn-warning text-white rounded-1 mt-1"
-        onClick={() => setDeliveryChargesModel(!deliveryChargesModel)}
-      >
-        <i className="fa fa-pencil"></i> Change Delivery Details [ Alt + D ]
-      </button>
-
-      {/* Modal for changing delivery charges */}
+    <>
+     {/* Modal for changing delivery charges */}
       <CModal
         style={{ width: "630px" }}
         size="lg"
         backdrop="static"
         visible={deliveryChargesModel}
-        onClose={handleModalClose}
+        onClose={onClose}
       >
         <CModalHeader>
           <CModalTitle>Change Delivery Charges</CModalTitle>
@@ -319,7 +277,7 @@ const ChangeDeliveryCharge = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-    </div>
+    </>
   );
 };
 

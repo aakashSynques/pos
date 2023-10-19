@@ -1,14 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { CInputGroup, CFormInput } from "@coreui/react";
 import { fetch } from "../../utils";
 import { useDispatch, useSelector, connect } from "react-redux";
 import { addToCart, setAllProducts } from "../../action/actions"; // Import the addToCart action
-import { ToastContainer, toast } from "react-toastify";
 import classnames from "classnames";
 import Autosuggest from 'react-autosuggest';
-
-
-
 // Determine the text color class based on the value of prod_sign
 const getTextColorClass = (prod_sign) => {
   return classnames({
@@ -26,7 +21,6 @@ const ProductsSearchBar = () => {
     (state) => state.selectedOutletId.selectedOutletId
   );
   const allProds = useSelector((state) => state.allProducts);
-
   const getProductSearch = async () => {
     try {
       const token = localStorage.getItem("pos_token");
@@ -43,8 +37,6 @@ const ProductsSearchBar = () => {
   useEffect(() => {
     getProductSearch();
   }, []);
-
-
   // product search state
   const filteredItems = useMemo(() => {
     const outletId = selectedOutletId;
@@ -53,28 +45,18 @@ const ProductsSearchBar = () => {
       const outletData = p.rate_chart?.[outletId]?.[0];
       return outletData && outletData.stock_availability > 0;
     });
-    const filterSearchProduct = filterProduct.filter(
-      (product) =>
-        product.prod_name.toLowerCase().search(query.toLowerCase()) !== -1 ||
-        product.prod_code.toLowerCase().search(query.toLowerCase()) !== -1
-    );
+    const filterSearchProduct = filterProduct.filter((product) => {
+      const prodName = product.prod_name || "";
+      const prodCode = product.prod_code || "";
+      return (
+        prodName.toLowerCase().includes(query.toLowerCase()) ||
+        prodCode.toLowerCase().includes(query.toLowerCase())
+      );
+    });
     return filterSearchProduct;
   }, [query, selectedOutletId, productSearch]);
 
   // groud by category heads
-  // const groupedItems = useMemo(() => {
-  //   const grouped = {};
-  //   for (const product of filteredItems) {
-  //     const categoryHeads = product.category_heads;
-  //     if (!grouped[categoryHeads]) {
-  //       grouped[categoryHeads] = [];
-  //     }
-  //     grouped[categoryHeads].push(product);
-  //   }
-  //   return grouped;
-  // }, [filteredItems]);
-
-
   const groupedItems = useMemo(() => {
     const grouped = {};
     for (const product of filteredItems) {
@@ -103,7 +85,6 @@ const ProductsSearchBar = () => {
     const randomString = Math.random().toString(36).substr(2, 5); // Using 5 characters for randomness
     return `${timestamp.toString() + randomString}`;
   }
-
   // Dispatch the addToCart action with the product and its prod_price
   const handleAddToCart = (productId) => {
     const outletId = selectedOutletId.toString();
@@ -142,7 +123,6 @@ const ProductsSearchBar = () => {
       category_heads: item.category_heads,
       recipeCount: item.recipeCount,
       is_parcel: 0,
-      // is_parcel: "",
       is_complementary: 0,
       is_complementary_note: "",
       is_note: 0,
@@ -156,37 +136,12 @@ const ProductsSearchBar = () => {
       KOT_dispatch: 0,
       urno: generateUniqueNumber(),
       associated_prod_urno: null,
-      // toppings: item.toppings,
       toppings: [],
-      // customized: item.customized,
       customized: [],
     }));
     dispatch(addToCart(cartItemsArray, ...cartItemData));
     console.log("cart arrya", dispatch(addToCart(cartItemsArray, ...cartItemData)));
-
-    console.log('cartItemData', cartItemData)
   };
-
-
-
-
-  useEffect(() => {
-    const handleShortcutKeyPress = (event) => {
-      if (event.shiftKey && event.key === "P") {
-        event.preventDefault();
-        const searchInput = document.getElementById("product-search-input");
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-    };
-    document.addEventListener("keydown", handleShortcutKeyPress);
-    return () => {
-      document.removeEventListener("keydown", handleShortcutKeyPress);
-    };
-  }, []);
-
-
 
   // Autosuggest state
   const [suggestions, setSuggestions] = useState([]);
@@ -210,7 +165,6 @@ const ProductsSearchBar = () => {
     handleAddToCart(suggestion.prod_id);
     setQuery("");
   };
-
   const inputRef = useRef(null);
   const [hoveredSuggestion, setHoveredSuggestion] = useState(null);
   const [selectedSuggestion, setSelectedSuggestion] = useState(null);
@@ -221,34 +175,11 @@ const ProductsSearchBar = () => {
       setHoveredSuggestion(suggestions[0]);
     }
   };
-  const handleArrowKeyPress = (event) => {
-    if (suggestions.length === 1) return;
-
-    if (event.key === "ArrowDown") {
-      // Move focus down to the next suggestion
-      focusedSuggestionIndexRef.current =
-        (focusedSuggestionIndexRef.current + 1) % suggestions.length;
-      setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
-    } else if (event.key === "ArrowUp") {
-      focusedSuggestionIndexRef.current =
-        (focusedSuggestionIndexRef.current - 1 + suggestions.length) %
-        suggestions.length;
-      setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
-    } else if (event.key === "Enter" || event.key === "Tab") {
-      // Handle Enter and Tab key press
-      if (hoveredSuggestion) {
-        handleSuggestionSelect(hoveredSuggestion);
-      }
-    }
-  };
-
-
   // Handle suggestion item hover
   const handleSuggestionHover = (suggestion) => {
     focusedSuggestionIndexRef.current = suggestions.indexOf(suggestion);
     setHoveredSuggestion(suggestion);
   };
-
   // Handle suggestion item selection
   const handleSuggestionSelect = (suggestion) => {
     setSelectedSuggestion(suggestion);
@@ -259,7 +190,35 @@ const ProductsSearchBar = () => {
     focusFirstSuggestion();
   }, [suggestions]);
 
-
+  // short cut key
+  const handleArrowKeyPress = (event) => {
+    if (suggestions.length === 1) return;
+    const moveSuggestion = (step) => {
+      focusedSuggestionIndexRef.current =
+        (focusedSuggestionIndexRef.current + step + suggestions.length) % suggestions.length;
+      setHoveredSuggestion(suggestions[focusedSuggestionIndexRef.current]);
+    };
+    if (event.key === "ArrowDown") {
+      moveSuggestion(1);
+    } else if (event.key === "ArrowUp") {
+      moveSuggestion(-1);
+    } else if (["Enter", "Tab"].includes(event.key) && hoveredSuggestion) {
+      handleSuggestionSelect(hoveredSuggestion);
+    }
+  };
+  useEffect(() => {
+    const handleShortcutKeyPress = (event) => {
+      if (event.shiftKey && event.key === "P") {
+        event.preventDefault();
+        const searchInput = document.getElementById("product-search-input");
+        searchInput && searchInput.focus();
+      }
+    };
+    document.addEventListener("keydown", handleShortcutKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleShortcutKeyPress);
+    };
+  }, []);
   useEffect(() => {
     const inputElement = inputRef.current;
     if (inputElement) {
@@ -272,53 +231,60 @@ const ProductsSearchBar = () => {
     };
   }, [handleArrowKeyPress]);
 
+
+  const groupedSuggestions = [];
+  Object.keys(groupedItems).forEach((categoryHead) => {
+    groupedSuggestions.push({
+      isGroupHeader: true,
+      categoryHead,
+    });
+    groupedItems[categoryHead].forEach((innerSuggestion) => {
+      groupedSuggestions.push(innerSuggestion);
+    });
+  });
+
   return (
     <div className="product-serach-input p-1">
       <Autosuggest
-        suggestions={suggestions}
+        suggestions={groupedSuggestions}
         onSuggestionsFetchRequested={onSuggestionsFetchRequested}
         onSuggestionsClearRequested={onSuggestionsClearRequested}
         getSuggestionValue={(suggestion) => suggestion.prod_name}
-        renderSuggestion={(suggestion) => (
-          <div className="product-list-abslute ">
-            <div className="bg-success text-white" style={{ padding: "2px, 10px" }}>
-              <i className="fa fa-arrow-circle-right">
-              </i>&nbsp; {suggestion.category_heads}
-            </div>
-            <div
-              className={`product-list suggestion-item ${suggestion === hoveredSuggestion ? "focused" : ""
-                }`}
-              onMouseEnter={() => handleSuggestionHover(suggestion)}
-              onMouseLeave={() => handleSuggestionHover(null)}
-              onClick={() => handleSuggestionSelect(suggestion)}
-            >
-              <div className="pull-left fa-stack fa-xs prod-sign">
-                <span
-                  className={`fa-stack fa-xs ${getTextColorClass(
-                    suggestion.prod_sign
-                  )}`}
-                >
-                  <i className="fa fa-square-o fa-stack-2x"></i>
-                  <i className="fa fa-circle fa-stack-1x"></i>
-                </span>
-              </div>
-
-              <div className="pull-left">
-                <b className="pull-left">{suggestion.prod_name}</b>
+        renderSuggestion={(suggestion) => {
+          if (suggestion.isGroupHeader) {
+            return (
+              <div className="bg-success text-white" style={{padding: "2px, 10px"}}><i className="fa fa-arrow-circle-right"></i>&nbsp;{suggestion.categoryHead}</div>
+            );
+          } else {
+            return (
+              <div
+                className={`product-list suggestion-item ${suggestion === hoveredSuggestion ? "focused" : ""}`}
+                onMouseEnter={() => handleSuggestionHover(suggestion)}
+                onMouseLeave={() => handleSuggestionHover(null)}
+                onClick={() => handleSuggestionSelect(suggestion)}
+              >
+                <div className="pull-left fa-stack fa-xs prod-sign">
+                  <span className={`fa-stack fa-xs ${getTextColorClass(suggestion.prod_sign)}`}>
+                    <i className="fa fa-square-o fa-stack-2x"></i>
+                    <i className="fa fa-circle fa-stack-1x"></i>
+                  </span>
+                </div>
+                <div className="pull-left">
+                  <b className="product-name">{suggestion.prod_name}</b>
+                  <br />
+                  <small className="product-details">
+                    Code: {suggestion.prod_code} {suggestion.category_name}
+                  </small>
+                </div>
+                <div className="product-price">
+                  <i className="fa fa-inr"></i>
+                  {getPriceForOutlet(suggestion)}
+                </div>
                 <br />
-                <small className="pull-left">
-                  Code : {suggestion.prod_code} {suggestion.category_name}
-                </small>
               </div>
-
-              <div className="product-price">
-                <i className="fa fa-inr"></i>
-                {getPriceForOutlet(suggestion)}
-              </div>
-              <br />
-            </div>
-          </div>
-        )}
+            );
+          }
+        }}
         inputProps={{
           id: "product-search-input",
           placeholder: "Search Product Code OR Name... [Shift + P]",
@@ -329,11 +295,6 @@ const ProductsSearchBar = () => {
           ref: inputRef,
         }}
         onSuggestionSelected={onSuggestionSelected}
-        renderSuggestionsContainer={({ containerProps, children }) => (
-          <div {...containerProps} className="custom-suggestions-container">
-            {children}
-          </div>
-        )}
       />
     </div>
   );

@@ -12,6 +12,8 @@ import RegisterCustomerModal from "./RegisterCustomerModal";
 import EditCustomerProfile from "./EditCustomerProfile";
 import CustAccountsModel from "./CustAccountsModel";
 import { useSelector, useDispatch } from "react-redux";
+import GetAllAccountsData from "./GetAllAccountsData";
+
 import {
   setSelectedCustomer,
   clearSelectedCustomer,
@@ -30,35 +32,26 @@ const CustomersSearch = () => {
   const [customerSearchResults, setCustomerSearchResults] = useState([]);
   const [error, setError] = useState(null);
   const [cache, setCache] = useState({});
-  // const [selectedCustomer, setSelectedCustomer] = useState(null); // New state to track the selected customer
   const [addNewCustomer, setAddNewCustomer] = useState(false);
   const [editCustomerModel, setEditCustomerModel] = useState(false);
   const [accountModel, setAccountModel] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(0); // Initialize focusedIndex
   const customerSearchInputRef = useRef(null); // Create a ref for the customer search input
   const [walkingCustomerData, setWalkingCustomerData] = useState(null);
-
-  const [handleWalkingClicked, sethandleWalkingClicked] = useState(false); // walk in button
   const buttonRef = useRef(null); // walk in button
   const isInputFocused = useSelector((state) => state.inputFocus.isInputFocus);
-
   const processPendingSale = useSelector(
     (state) => state.pendingSaleProcess.pandingSaleProcess
   )
- 
   const selectedCustomer = useSelector(
     (state) => state.customer.selectedCustomer
   );
-
-  
   const customTooltipStyle = {
     "--cui-tooltip-bg": "var(--cui-primary)",
   };
-
   const selectedOutletId = useSelector(
     (state) => state.selectedOutletId.selectedOutletId
   );
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       getProductSearch();
@@ -77,7 +70,6 @@ const CustomersSearch = () => {
       setLoading(false);
       return;
     }
-
     try {
       const token = localStorage.getItem("pos_token");
       const headers = { Authorization: `Bearer ${token}` };
@@ -102,8 +94,6 @@ const CustomersSearch = () => {
       setLoading(false);
     }
   };
-
-
   // Set the selected customer when the customer is clicked
   const handleSelectCustomer = (customerName) => {
     setQuery(customerName);
@@ -112,7 +102,6 @@ const CustomersSearch = () => {
     );
     dispatch(setSelectedCustomer(selectedCustomer));
   };
-
   const handleEditCustomer = () => {
     if (!selectedCustomer || !selectedCustomer.json) {
       return;
@@ -132,7 +121,6 @@ const CustomersSearch = () => {
       setEditCustomerModel(true);
     }
   };
-
   const MAX_RESULTS = 50; // Limit the number of search results displayed
   const displayedItems = useMemo(() => {
     if (query === "") {
@@ -162,7 +150,6 @@ const CustomersSearch = () => {
       customerSearchInputRef.current.focus();
     }
   };
-
   // Function to handle when the shift + A key button is clicked for a selected customer
   const handleAccountModel = () => {
     if (!selectedCustomer) {
@@ -171,49 +158,7 @@ const CustomersSearch = () => {
       setAccountModel(true);
     }
   };
-  useEffect(() => {
-    const handleEscKeyPress = (event) => {
-      if (accountModel && event.key === "Escape") {
-        setAccountModel(false);
-      }
-    };
 
-    window.addEventListener("keydown", handleEscKeyPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEscKeyPress);
-    };
-  }, [accountModel, setAccountModel]);
-
-  useEffect(() => {
-    const handleShortcutKeyPressCustomer = (event) => {
-      if (event.shiftKey && event.key === "A") {
-        setAccountModel(true);
-        if (selectedCustomer) {
-          handleAccountModel();
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleShortcutKeyPressCustomer);
-
-    return () => {
-      window.removeEventListener("keydown", handleShortcutKeyPressCustomer);
-    };
-  }, [isInputFocused]);
-
-  // Function to handle when the "Edit" button is clicked for a selected customer
-  useEffect(() => {
-    const handleShortcutKeyPressCustomerEdit = (event) => {
-      if (event.shiftKey && event.key === "E") {
-        handleEditCustomer();
-      }
-    };
-    window.addEventListener("keydown", handleShortcutKeyPressCustomerEdit);
-    return () => {
-      window.removeEventListener("keydown", handleShortcutKeyPressCustomerEdit);
-    };
-  }, [isInputFocused, selectedCustomer]);
 
   useEffect(() => {
     const handleShortcutKeyPressCustomer = (event) => {
@@ -233,12 +178,10 @@ const CustomersSearch = () => {
         }
       }
     };
-
     const handleShortcutKeyPressClear = (event) => {
       if (event.shiftKey && event.key === "C") {
         event.preventDefault();
         setQuery(""); // Clear the search input data
-        // Focus on the search bar input element
         const searchInput = document.getElementById("customer-search-input");
         if (searchInput) {
           searchInput.focus();
@@ -254,6 +197,7 @@ const CustomersSearch = () => {
     };
   }, [selectedCustomer]);
 
+
   // Function to group customers by cust_type_name
   const groupCustomersByType = () => {
     const groupedCustomers = {};
@@ -267,6 +211,7 @@ const CustomersSearch = () => {
     return groupedCustomers;
   };
   const groupedCustomers = groupCustomersByType();
+
 
   const handleArrowKeyPress = (event) => {
     if (event.key === "ArrowUp") {
@@ -303,13 +248,12 @@ const CustomersSearch = () => {
         handleArrowKeyPress(event);
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [focusedIndex]);
+
 
   const handleTabKeyPress = (event) => {
     if (
@@ -356,18 +300,15 @@ const CustomersSearch = () => {
       if (response && response.data && response.data.cust_win_json) {
         const walkingCustomerData = response.data.cust_win_json;
         setWalkingCustomerData(walkingCustomerData);
-        // setQuery(walkingCustomerData.customer_name);
         const walkingSelectedCustomer = {
           ...selectedCustomer,
           json: walkingCustomerData,
         };
         dispatch(setSelectedCustomer(walkingSelectedCustomer));
-        // console.log("walking customer", setSelectedCustomer());
       } else {
         toast.error("Failed to retrieve walking customer data");
       }
     } catch (err) {
-      console.error("Error retrieving walking customer data:", err);
       toast.error("An error occurred while fetching walking customer data.");
     }
   };
@@ -376,61 +317,49 @@ const CustomersSearch = () => {
   const handleWalking = () => {
     handleWalkingCustomer();
   };
+
   useEffect(() => {
-    const handleShortcutKeyPressWalking = (event) => {
-      if (!isInputFocused && event.shiftKey && event.key === "W") {
-        event.preventDefault();
-        if (!selectedCustomer) {
-          handleWalking();
+    const handleShortcutKeyPress = (event) => {
+      if (event.shiftKey) {
+        switch (event.key) {
+          case "W":
+            if (!isInputFocused && !selectedCustomer) {
+              event.preventDefault();
+              handleWalking();
+            }
+            break;
+          case "A":
+            setAccountModel(true);
+            if (selectedCustomer) {
+              handleAccountModel();
+            }
+            break;
+          case "E":
+            if (selectedCustomer) {
+              handleEditCustomer();
+            }
+            break;
+          default:
+            break;
         }
       }
     };
-
-    window.addEventListener("keydown", handleShortcutKeyPressWalking);
-
+    window.addEventListener("keydown", handleShortcutKeyPress);
     return () => {
-      window.removeEventListener("keydown", handleShortcutKeyPressWalking);
+      window.removeEventListener("keydown", handleShortcutKeyPress);
     };
-  }, [isInputFocused, selectedCustomer, handleWalking]);
+  }, [isInputFocused, selectedCustomer, handleWalking, handleAccountModel, handleEditCustomer]);
 
   const handleInputFocus = () => {
     dispatch(setInputFocused());
   };
-
   const handleInputBlur = () => {
     dispatch(setOnBlur());
   };
-
   useEffect(() => {
     setFocusedIndex(0);
   }, [customerSearchResults]);
 
-  // ============customer account api=================
-  const customer_id = selectedCustomer && selectedCustomer.json.cust_id;
-  const getAllAccountData = async () => {
-    try {
-      const token = localStorage.getItem("pos_token");
-      const headers = { Authorization: `Bearer ${token}` };
-      const body = {
-        cust_id: customer_id,
-      };
-      const response = await fetch(
-        "/api/customers/getCustomerAccount",
-        "post",
-        body,
-        headers
-      );
-
-      dispatch(setCustomerAccountJson(response.data.cust_acc_json));
-    } catch (err) {
-      console.error("Error ", err);
-    }
-  };
-  useEffect(() => {
-    if (customer_id && customer_id) {
-      getAllAccountData();
-    }
-  }, [customer_id && customer_id]);
 
   return (
     <>
@@ -506,7 +435,6 @@ const CustomersSearch = () => {
                         <i className="fa fa-edit"></i>
                       </button>
                     </CTooltip>
-
                     {/* customer clear button */}
                     <CTooltip
                       content="Clear Selected Accounts  [Shift + C]"
@@ -607,7 +535,6 @@ const CustomersSearch = () => {
                 className="text-white mt-1 rounded-1"
                 style={{ backgroundColor: "#5bc0de" }}
                 onClick={() => {
-                  sethandleWalkingClicked(true);
                   handleWalking();
                 }}
                 ref={buttonRef}
@@ -620,6 +547,11 @@ const CustomersSearch = () => {
             </CTooltip>
           </>
         )}
+
+
+
+
+
 
         {selectedCustomer && (
           <CustAccountsModel
@@ -637,7 +569,6 @@ const CustomersSearch = () => {
           }}
           searchQuery={query} // Pass the search query
         />
-
         {/* Edit customer model */}
         {selectedCustomer && (
           <EditCustomerProfile
@@ -645,6 +576,9 @@ const CustomersSearch = () => {
             onClose={() => setEditCustomerModel(false)}
             customerData={selectedCustomer.json}
           />
+        )}
+        {selectedCustomer && (
+          <GetAllAccountsData customer_id={selectedCustomer.json.cust_id} />
         )}
       </div>
     </>

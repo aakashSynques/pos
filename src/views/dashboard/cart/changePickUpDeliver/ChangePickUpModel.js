@@ -34,7 +34,6 @@ const ChangePickUpModel = ({ onClose, visiblePicKUp }) => {
     // setVisiblePickUp(false);
   };
 
-
   const [defaultTime, setDefaultTime] = useState();
   const timeOptions = [
     'Early Morning',
@@ -132,7 +131,7 @@ const ChangePickUpModel = ({ onClose, visiblePicKUp }) => {
 
 
   return (
-    <div>
+    <>
       <CModal
         size="sm"
         backdrop="static"
@@ -246,8 +245,7 @@ const ChangePickUpModel = ({ onClose, visiblePicKUp }) => {
           </CModalFooter>
         </CForm>
       </CModal>
-      <br />
-    </div>
+    </>
   );
 };
 

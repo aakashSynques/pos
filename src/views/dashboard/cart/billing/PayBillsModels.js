@@ -13,7 +13,6 @@ import {
 } from "@coreui/react";
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import ReactToPrint from "react-to-print";
 import PrintContent from "./PrintContent"; // Import the PrintContent component.
 import IPAddressData from "./IPAddressData"; // Import the IPAddressData component
 import { toast, ToastContainer } from "react-toastify";
@@ -26,9 +25,6 @@ import {
   setSelectedCustomerJson,
 } from "../../../../action/actions";
 import { BASE_URL } from "../../../../config";
-
-
-
 const PayBillsModels = ({
   visible,
   onClose,
@@ -43,7 +39,7 @@ const PayBillsModels = ({
 }) => {
   const [socket, setSocket] = useState(null);
   const componentRef = useRef();
-
+  const dispatch = useDispatch();
   const handlePrint = () => {
     if (componentRef.current) {
       componentRef.current.onPrint();
@@ -53,11 +49,6 @@ const PayBillsModels = ({
     const newSocket = io.connect(BASE_URL);
     setSocket(newSocket);
   }, []);
-
-
-
-  const dispatch = useDispatch();
-
   const selectedDelivery = useSelector(
     (state) => state.delivery.selectedDelivery
   );
@@ -75,9 +66,7 @@ const PayBillsModels = ({
   const submittedPickUpDateTime = useSelector(
     (state) => state.pickup.submittedPickUpDateTime
   );
-
-
-  const ipAddressComponentRef = useRef(); // Create a ref to access the IPAddressData component
+ const ipAddressComponentRef = useRef(); // Create a ref to access the IPAddressData component
   const publicIp = ipAddressComponentRef.current?.getPublicIp(); // Access the getPublicIp function
   // user details
   const [user, setUser] = useState(null);
@@ -87,7 +76,6 @@ const PayBillsModels = ({
       setUser(JSON.parse(storedUser));
     }
   }, []);
-
   const [submissionInProgress, setSubmissionInProgress] = useState(false);
   const [selectedPayments, setSelectedPayments] = useState([]);
   const [extrainfo, setExtrainfo] = useState(""); // Define extrainfo state
@@ -98,7 +86,6 @@ const PayBillsModels = ({
   const sgstAmount = taxableAmount * sgstRate; // Calculate SGST amount
   const cgstAmount = taxableAmount * cgstRate; // Calculate CGST amount
   const alltax = sgstAmount + cgstAmount;
-
   const [paymentAmounts, setPaymentAmounts] = useState({});
   const setPayment = (paymentMode) => {
     if (selectedPayments.includes(paymentMode)) {
@@ -131,14 +118,12 @@ const PayBillsModels = ({
         return "NEFT ";
       case 16:
         return "Cheque ";
-
       case 25:
         return "HDFC CC ";
       case 26:
         return "HDFC QR";
       case 27:
         return "Swiggy Dineout";
-
       default:
         return "Unknown";
     }
@@ -192,9 +177,6 @@ const PayBillsModels = ({
       setSubmissionInProgress(false);
     }
   };
-
-
-
   let deliveryId;
   if (selectedDelivery == "Counter Sale") {
     deliveryId = 1;
@@ -331,7 +313,6 @@ const PayBillsModels = ({
       setRemainingBalance(balance)
     }
   };
-
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && e.key === "Enter") {
@@ -500,11 +481,7 @@ const PayBillsModels = ({
                     </>
                   ) : null // If associated_prod_urno is present, return null (don't render the item)
                 ))}
-
               </CRow>
-
-
-
             </span>
 
             <CRow className="billing-note">
@@ -530,7 +507,6 @@ const PayBillsModels = ({
                       )}
                     </>
                   )}
-
                   {deliveryId == 4 && (
                     <> <br />
                       <font className="font-size-2 font-w-5">DateTime : </font>
@@ -563,12 +539,10 @@ const PayBillsModels = ({
 
                 {deliveryId === 4 && (
                   <>
-
                     <CRow>
                       <CCol sm={6}>
                         <font className="font-size-14 font-w-5">Delivery Charges </font>
                       </CCol>
-
                       <CCol sm={6} className="text-right">
                         <font className="font-size-14 font-w-5" style={{ color: "#a94442" }}> <i className="fa fa-inr"></i> {""}
                           {deliveryAmount.toFixed(2)}
@@ -778,9 +752,6 @@ const PayBillsModels = ({
                   <ToastContainer />
                 </CButton>
               </CCol>
-
-
-
             </CRow>
           </CModalFooter>
         </CModal>
@@ -788,7 +759,7 @@ const PayBillsModels = ({
 
       <IPAddressData ref={ipAddressComponentRef} />
 
-      <div className="d-none">
+      <span className="d-none">
         <PrintContent
           ref={componentRef}
           selectedCustomer={selectedCustomer}
@@ -799,7 +770,8 @@ const PayBillsModels = ({
           totalCGST={totalCGST}
           finalPayAmount={finalPayAmount}
         />
-      </div>
+      </span>
+
       <iframe
         ref={iframeRef}
         src={url}

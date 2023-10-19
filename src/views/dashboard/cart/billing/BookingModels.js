@@ -772,7 +772,7 @@ const BookingModels = ({
 
             <IPAddressData ref={ipAddressComponentRef} />
 
-            <div className="d-none">
+            <span className="d-none">
                 <PrintContent
                     ref={componentRef}
                     selectedCustomer={selectedCustomer}
@@ -783,14 +783,15 @@ const BookingModels = ({
                     totalCGST={totalCGST}
                     finalPayAmount={finalPayAmount}
                 />
-            </div>
-            <iframe
+            </span>
+          {/* <iframe
+          className="d-none"
                 ref={iframeRef}
                 src={url}
                 width="1"
                 height="1"
                 style={{ visibility: "hidden" }}
-            ></iframe>
+            ></iframe> */}
         </>
     );
 };
